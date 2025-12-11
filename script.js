@@ -1,21 +1,64 @@
 // Navigasi antar screen
 function showScreen(screenId) {
-  // Sembunyikan semua screen
   document.querySelectorAll('.screen').forEach(screen => {
     screen.classList.remove('active');
   });
-  
-  // Tampilkan screen yang dipilih
   document.getElementById(screenId).classList.add('active');
 }
 
-// Fungsi Hijack
+// Tampilkan notifikasi
+function showNotification(message) {
+  const notification = document.getElementById('notification');
+  const notificationText = document.getElementById('notificationText');
+  
+  notificationText.textContent = message;
+  notification.classList.add('show');
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 2000);
+}
+
+// Fungsi utama Hijack
 function startHijack() {
-  // Tampilkan screen hijacking
   showScreen('hijackScreen');
   
-  // URL untuk membuka Free Fire
-  const freeFireUrls = {
+  // Reset semua progress bar
+  document.querySelectorAll('.progress-bar').forEach(bar => {
+    bar.style.width = '0%';
+  });
+  
+  // Animasikan progress step by step SAMA PERSIS SS
+  const steps = [
+    { id: 'progress1', text: 'Verifying system compatibility...', time: 800 },
+    { id: 'progress2', text: 'Patching critical binaries...', time: 1600 },
+    { id: 'progress3', text: 'Bypassing security checks...', time: 2400 },
+    { id: 'progress4', text: 'Launching Free Fire...', time: 3200 }
+  ];
+  
+  steps.forEach((step, index) => {
+    setTimeout(() => {
+      const progressBar = document.getElementById(step.id);
+      const stepElement = document.getElementById(`step${index + 1}`).querySelector('.step-text');
+      
+      // Update progress bar ke 100%
+      progressBar.style.width = '100%';
+      stepElement.textContent = `✓ ${step.text.replace('...', '')}`;
+      
+      // Step terakhir: buka Free Fire
+      if (index === 3) {
+        setTimeout(() => {
+          openFreeFire();
+        }, 500);
+      }
+    }, step.time);
+  });
+}
+
+// Fungsi buka Free Fire
+function openFreeFire() {
+  // URL untuk berbagai versi Free Fire
+  const urls = {
     freefire: 'freefire://',
     freefireth: 'freefireth://',
     freefiremax: 'freefiremax://',
@@ -23,93 +66,42 @@ function startHijack() {
     appstore: 'https://apps.apple.com/app/id1300096749'
   };
   
-  // Simulasi proses hijacking
-  simulateHijackProcess();
-  
-  // Coba buka Free Fire setelah delay
-  setTimeout(() => {
-    openFreeFire(freeFireUrls);
-  }, 2500);
-}
-
-// Simulasi proses hijacking dengan animasi progress bar
-function simulateHijackProcess() {
-  const progresses = document.querySelectorAll('.progress');
-  const texts = document.querySelectorAll('.process-text');
-  
-  // Reset semua progress
-  progresses.forEach(progress => {
-    progress.style.width = '0%';
-  });
-  
-  // Animasi progress 1
-  setTimeout(() => {
-    progresses[0].style.width = '100%';
-    texts[0].textContent = '✓ System verified';
-  }, 800);
-  
-  // Animasi progress 2
-  setTimeout(() => {
-    progresses[1].style.width = '100%';
-    texts[1].textContent = '✓ Binaries patched';
-  }, 1500);
-  
-  // Animasi progress 3
-  setTimeout(() => {
-    progresses[2].style.width = '100%';
-    texts[2].textContent = '✓ Security bypassed';
-  }, 2200);
-  
-  // Animasi progress 4
-  setTimeout(() => {
-    progresses[3].style.width = '100%';
-    texts[3].textContent = 'Launching Free Fire...';
-  }, 2900);
-}
-
-// Fungsi untuk membuka Free Fire
-function openFreeFire(urls) {
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const isAndroid = /Android/i.test(navigator.userAgent);
   
-  // Deteksi jika di Vercel preview (desktop)
+  // Deteksi jika di desktop/browser
   const isDesktop = !isIOS && !isAndroid;
   
   if (isDesktop) {
-    // Di desktop, buka Play Store/App Store
+    // Di desktop, buka store di tab baru
     window.open(isIOS ? urls.appstore : urls.playstore, '_blank');
+    showNotification('Redirecting to app store...');
     return;
   }
   
   // Mobile: coba buka dengan deep link
   let appOpened = false;
   
-  // Function untuk cek apakah app berhasil dibuka
+  // Function untuk deteksi apakah app terbuka
   const startTime = Date.now();
-  const checkVisibility = () => {
+  const checkAppOpened = () => {
     const elapsed = Date.now() - startTime;
     
-    // Jika user masih di halaman web setelah 1 detik, asumsikan app gagal dibuka
+    // Jika masih di halaman web setelah 1 detik, fallback ke store
     if (elapsed > 1000 && !appOpened && document.visibilityState === 'visible') {
-      // Fallback ke store
       window.location.href = isIOS ? urls.appstore : urls.playstore;
     }
   };
   
-  // Event listener untuk visibility change
+  // Listen untuk visibility change (user pindah ke app)
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       appOpened = true;
     }
   });
   
-  // Coba berbagai URL scheme
-  const schemes = isAndroid ? 
-    [urls.freefireth, urls.freefiremax, urls.freefire] : 
-    [urls.freefire, urls.freefiremax];
-  
-  // Coba buka dengan iframe method
-  const tryOpenWithIframe = (url) => {
+  // Coba buka dengan iframe method (workaround untuk iOS/Android)
+  const tryOpenApp = (url) => {
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';
     iframe.src = url;
@@ -117,16 +109,21 @@ function openFreeFire(urls) {
     
     setTimeout(() => {
       document.body.removeChild(iframe);
-      checkVisibility();
-    }, 500);
+      checkAppOpened();
+    }, 300);
   };
   
-  // Coba semua scheme
-  schemes.forEach(scheme => {
-    tryOpenWithIframe(scheme);
-  });
+  // Coba berbagai scheme berdasarkan device
+  if (isAndroid) {
+    tryOpenApp(urls.freefireth);
+    setTimeout(() => tryOpenApp(urls.freefiremax), 100);
+    setTimeout(() => tryOpenApp(urls.freefire), 200);
+  } else if (isIOS) {
+    tryOpenApp(urls.freefire);
+    setTimeout(() => tryOpenApp(urls.freefiremax), 100);
+  }
   
-  // Fallback setelah 1.5 detik
+  // Fallback ke store setelah 1.5 detik
   setTimeout(() => {
     if (!appOpened) {
       window.location.href = isIOS ? urls.appstore : urls.playstore;
@@ -134,32 +131,32 @@ function openFreeFire(urls) {
   }, 1500);
 }
 
-// Fungsi lainnya
-function restartSpringBoard() {
-  alert('SpringBoard restart simulated!\nIn real jailbreak, this would restart the SpringBoard.');
-}
-
-function rebootUserSpace() {
-  alert('UserSpace reboot simulated!\nIn real jailbreak, this would reboot the UserSpace.');
-}
-
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
   // Set screen utama aktif
   showScreen('mainScreen');
   
-  // Update jam real-time
-  function updateTime() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('id-ID', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
+  // Tambahkan event listener untuk semua menu button
+  document.querySelectorAll('.menu-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      this.style.opacity = '0.7';
+      setTimeout(() => {
+        this.style.opacity = '1';
+      }, 200);
     });
-    // Jika ada elemen waktu di UI, bisa di-update di sini
-  }
+  });
   
-  // Update waktu setiap menit
-  setInterval(updateTime, 60000);
-  updateTime();
+  // Animasi tombol hijack
+  const hijackBtn = document.querySelector('.hijack-btn');
+  if (hijackBtn) {
+    hijackBtn.addEventListener('mousedown', () => {
+      hijackBtn.style.transform = 'scale(0.98)';
+    });
+    hijackBtn.addEventListener('mouseup', () => {
+      hijackBtn.style.transform = 'scale(1)';
+    });
+    hijackBtn.addEventListener('mouseleave', () => {
+      hijackBtn.style.transform = 'scale(1)';
+    });
+  }
 });
