@@ -2,99 +2,195 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>iOS-like Launcher</title>
-  <style>
-    /* sangat sederhana: buat tampilan kotak seperti di screenshot */
-    body{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-         display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#0f0f10}
-    .card{width:320px;background:#1e1e1f;border-radius:16px;padding:20px;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.6)}
-    .btn{display:block;width:100%;padding:12px;border-radius:10px;text-align:center;background:#ff7a00;color:#fff;text-decoration:none;font-weight:600}
-    .small{font-size:13px;color:#c7c7c7;margin-top:8px}
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000">
+  <title>Hijacked - iOS Launcher</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="card" role="main">
-    <h3>Hijacked</h3>
-    <p class="small">iOS style UI — tekan tombol untuk buka Free Fire</p>
-
-    <a href="#" id="openApp" class="btn">Hijack (Buka Free Fire)</a>
-    <p class="small" id="status"></p>
+  <!-- Screen 1: Main Menu -->
+  <div id="mainScreen" class="screen active">
+    <div class="container">
+      <div class="header">
+        <h1 class="title">Hijacked</h1>
+        <p class="os-version">OS 16.0-18.5</p>
+        <p class="author">by Paulioquet</p>
+      </div>
+      
+      <div class="menu">
+        <button class="menu-item" onclick="showScreen('settingsScreen')">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </button>
+        
+        <button class="menu-item" onclick="restartSpringBoard()">
+          <i class="fas fa-redo"></i>
+          <span>Restart SpringBoard</span>
+        </button>
+        
+        <button class="menu-item" onclick="rebootUserSpace()">
+          <i class="fas fa-power-off"></i>
+          <span>Reboot UserSpace</span>
+        </button>
+        
+        <button class="menu-item" onclick="showScreen('creditsScreen')">
+          <i class="fas fa-star"></i>
+          <span>Credits</span>
+        </button>
+      </div>
+      
+      <div class="hijack-section">
+        <button id="hijackBtn" class="hijack-btn" onclick="startHijack()">
+          <span>Hijack</span>
+        </button>
+        <p class="info-text">Tekan tombol untuk buka Free Fire</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Screen 2: Settings -->
+  <div id="settingsScreen" class="screen">
+    <div class="container">
+      <div class="header">
+        <button class="back-btn" onclick="showScreen('mainScreen')">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2>Settings</h2>
+      </div>
+      
+      <div class="settings-section">
+        <h3>EXPLOITS</h3>
+        <div class="setting-item">
+          <span>Kernel Exploit</span>
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <h3>JALBREAK SETTINGS</h3>
+        <div class="setting-item">
+          <span>Tweak Injection</span>
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <span>Verbose Logs</span>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <span>Allow JIT in Apps</span>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <h3>DISPLAY</h3>
+        <div class="setting-item">
+          <span>Theme</span>
+          <select class="theme-select">
+            <option>Dark</option>
+            <option>Light</option>
+            <option>Auto</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Screen 3: Hijacking Process -->
+  <div id="hijackScreen" class="screen">
+    <div class="container">
+      <div class="header">
+        <h1 class="title">Hijacked</h1>
+        <p class="os-version">OS 15.0-18.5</p>
+        <p class="author">by PaulBrulet</p>
+      </div>
+      
+      <div class="hijacking-container">
+        <div class="hijack-title">
+          <i class="fas fa-bolt"></i>
+          <h2>Hijacking</h2>
+        </div>
+        
+        <div class="process-list">
+          <div class="process-item">
+            <span class="process-text">Verifying system compatibility...</span>
+            <div class="process-bar">
+              <div class="progress" style="width: 70%"></div>
+            </div>
+          </div>
+          
+          <div class="process-item">
+            <span class="process-text">Patching critical binaries...</span>
+            <div class="process-bar">
+              <div class="progress" style="width: 40%"></div>
+            </div>
+          </div>
+          
+          <div class="process-item">
+            <span class="process-text">Bypassing security checks...</span>
+            <div class="process-bar">
+              <div class="progress" style="width: 20%"></div>
+            </div>
+          </div>
+          
+          <div class="process-item">
+            <span class="process-text">Launching Free Fire...</span>
+            <div class="process-bar">
+              <div class="progress" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Screen 4: Credits -->
+  <div id="creditsScreen" class="screen">
+    <div class="container">
+      <div class="header">
+        <button class="back-btn" onclick="showScreen('mainScreen')">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2>Credits</h2>
+      </div>
+      
+      <div class="credits-content">
+        <div class="credit-item">
+          <h3>Developer</h3>
+          <p>Paulioquet / PaulBrulet</p>
+        </div>
+        
+        <div class="credit-item">
+          <h3>iOS Version Support</h3>
+          <p>iOS 15.0 - 18.5</p>
+        </div>
+        
+        <div class="credit-item">
+          <h3>Special Thanks</h3>
+          <p>Free Fire Community</p>
+        </div>
+        
+        <div class="credit-item">
+          <h3>Disclaimer</h3>
+          <p class="disclaimer">This tool is for educational purposes only. Use at your own risk.</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-<script>
-const openBtn = document.getElementById('openApp');
-const status = document.getElementById('status');
-
-function isAndroid() {
-  return /Android/i.test(navigator.userAgent);
-}
-function isIOS() {
-  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
-}
-
-openBtn.addEventListener('click', (e) => {
-  e.preventDefault();
-  status.textContent = 'Mencoba membuka aplikasi…';
-
-  // --- GANTI sesuai skema/universal link resmi Free Fire ---
-  const customScheme = 'freefire://';            // contoh placeholder
-  const universalLink = 'https://your-domain.com/open/freefire'; // jika app support universal links
-  const appStoreUrl = 'https://apps.apple.com/app/id<APP_ID>';
-  const playStoreUrl = 'https://play.google.com/store/apps/details?id=<PACKAGE_NAME>';
-  // -----------------------------------------------------
-
-  if (isIOS()) {
-    // Prefer universal link (jika sudah disetup)
-    tryOpen(universalLink, appStoreUrl);
-  } else if (isAndroid()) {
-    // Android: gunakan intent fallback atau scheme
-    // contoh intent (ganti PACKAGE_NAME)
-    const intentUrl = 'intent://#Intent;package=com.dts.freefireth;scheme=freefire;end';
-    tryOpen(intentUrl, playStoreUrl);
-  } else {
-    // desktop fallback: buka web version atau beri instruksi
-    window.location.href = 'https://www.ff.garena.com/'; 
-  }
-});
-
-function tryOpen(url, fallback) {
-  // pendekatan: ubah location + jika tidak berhasil dalam 1.5s redirect ke fallback
-  const timeout = 1500;
-  let opened = false;
-
-  // for iOS Safari + most mobile browsers:
-  const now = Date.now();
-  const redirectTimer = setTimeout(() => {
-    // jika belum pindah ke app, redirect ke fallback
-    if (!opened) {
-      status.textContent = 'Aplikasi tidak ditemukan, mengarahkan ke toko...';
-      window.location.href = fallback;
-    }
-  }, timeout);
-
-  // coba buka
-  // beberapa browser menolak window.location.assign ke intent: gunakan iframe fallback
-  if (/^intent:/.test(url) || /^https?:\/\//.test(url)) {
-    window.location.href = url;
-  } else {
-    // custom scheme: gunakan iframe trick (older iOS/Android)
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = url;
-    document.body.appendChild(iframe);
-    setTimeout(()=> document.body.removeChild(iframe), timeout);
-  }
-
-  // Optional: detect visibility change (user left page)
-  const handle = () => {
-    opened = true;
-    clearTimeout(redirectTimer);
-    status.textContent = 'Aplikasi dibuka.';
-    window.removeEventListener('visibilitychange', handle);
-  };
-  window.addEventListener('visibilitychange', handle);
-}
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
