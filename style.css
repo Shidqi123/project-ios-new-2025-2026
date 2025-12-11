@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -10,13 +11,14 @@ body {
   color: #ffffff;
   height: 100vh;
   overflow: hidden;
-  background: linear-gradient(135deg, #0f0f10 0%, #1a1a1c 100%);
+  font-size: 16px;
+  line-height: 1.4;
 }
 
+/* Screen Management */
 .screen {
   display: none;
   height: 100vh;
-  padding: 20px;
 }
 
 .screen.active {
@@ -24,129 +26,137 @@ body {
 }
 
 .container {
-  max-width: 400px;
+  max-width: 320px;
   margin: 0 auto;
-  height: 100%;
+  padding: 40px 20px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* Header Styles */
-.header {
-  text-align: center;
-  padding: 40px 0 30px;
-}
-
 .title {
-  font-size: 2.5rem;
+  font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(45deg, #ff7a00, #ff0058);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  text-align: center;
+  color: #ffffff;
   margin-bottom: 5px;
+  letter-spacing: 0.5px;
 }
 
-.os-version {
-  font-size: 1rem;
-  color: #8a8a8e;
+.subtitle {
+  font-size: 14px;
+  text-align: center;
+  color: #8e8e93;
   margin-bottom: 5px;
+  font-weight: 500;
 }
 
 .author {
-  font-size: 0.9rem;
+  font-size: 13px;
+  text-align: center;
   color: #5a5a5e;
-  font-weight: 500;
-}
-
-/* Menu Styles */
-.menu {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
   margin-bottom: 40px;
 }
 
-.menu-item {
-  background: rgba(255, 255, 255, 0.05);
+/* Menu Buttons */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.menu-btn {
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
+  padding: 15px 20px;
   color: #ffffff;
-  font-size: 1.1rem;
+  font-size: 17px;
   font-weight: 500;
+  text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: left;
+  transition: background-color 0.2s;
+  width: 100%;
 }
 
-.menu-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.menu-item i {
-  font-size: 1.2rem;
-  color: #ff7a00;
-  width: 24px;
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* Hijack Button */
 .hijack-section {
-  margin-top: auto;
-  padding-bottom: 40px;
   text-align: center;
+  margin-top: auto;
+  padding-bottom: 20px;
 }
 
 .hijack-btn {
-  background: linear-gradient(45deg, #ff7a00, #ff0058);
+  background: #ff7a00;
   border: none;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 18px;
   width: 100%;
   color: white;
-  font-size: 1.3rem;
+  font-size: 20px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(255, 122, 0, 0.3);
+  transition: background-color 0.2s;
+  margin-bottom: 10px;
 }
 
 .hijack-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(255, 122, 0, 0.4);
+  background: #ff8c20;
 }
 
 .info-text {
-  margin-top: 15px;
+  font-size: 13px;
   color: #8a8a8e;
-  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 /* Settings Screen */
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-top: 10px;
+}
+
 .back-btn {
   background: none;
   border: none;
   color: #ff7a00;
-  font-size: 1.5rem;
+  font-size: 24px;
   cursor: pointer;
-  padding: 5px;
-  margin-right: 15px;
+  padding: 5px 10px;
+  margin-right: 10px;
 }
 
-.settings-section {
+.header h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.section {
   margin-bottom: 30px;
 }
 
-.settings-section h3 {
-  color: #8a8a8e;
-  font-size: 0.9rem;
-  font-weight: 600;
+.section-title {
+  font-size: 13px;
+  color: #8e8e93;
   text-transform: uppercase;
-  margin-bottom: 15px;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  padding-left: 5px;
 }
 
 .setting-item {
@@ -156,28 +166,28 @@ body {
   padding: 15px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .setting-item span {
-  font-size: 1.1rem;
+  font-size: 17px;
+  font-weight: 500;
 }
 
-/* Switch Toggle */
-.switch {
+/* Toggle Switch */
+.toggle-switch {
   position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 28px;
+  width: 51px;
+  height: 31px;
 }
 
-.switch input {
+.toggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.toggle-slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -189,24 +199,24 @@ body {
   border-radius: 34px;
 }
 
-.slider:before {
+.toggle-slider:before {
   position: absolute;
   content: "";
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
+  height: 27px;
+  width: 27px;
+  left: 2px;
+  bottom: 2px;
   background-color: white;
   transition: .4s;
   border-radius: 50%;
 }
 
-input:checked + .slider {
-  background-color: #ff7a00;
+input:checked + .toggle-slider {
+  background-color: #32d74b;
 }
 
-input:checked + .slider:before {
-  transform: translateX(22px);
+input:checked + .toggle-slider:before {
+  transform: translateX(20px);
 }
 
 /* Theme Select */
@@ -215,64 +225,59 @@ input:checked + .slider:before {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: white;
-  padding: 8px 15px;
-  font-size: 1rem;
-  min-width: 120px;
+  padding: 8px 12px;
+  font-size: 16px;
+  min-width: 100px;
 }
 
-/* Hijacking Screen */
-.hijacking-container {
+/* Hijack Process Screen (SAMA PERSIS SS) */
+.hijack-process {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   padding: 25px;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
-.hijack-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 30px;
-  color: #ff7a00;
+.process-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 25px;
+  text-align: center;
 }
 
-.hijack-title i {
-  font-size: 1.5rem;
-}
-
-.hijack-title h2 {
-  font-size: 1.8rem;
-}
-
-.process-list {
+.process-steps {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 20px;
 }
 
-.process-item {
+.process-step {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.process-text {
-  font-size: 1rem;
+.step-text {
+  font-size: 16px;
   color: #e0e0e0;
+  font-weight: 500;
 }
 
-.process-bar {
-  height: 6px;
+.step-progress {
+  height: 4px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
+  width: 100%;
 }
 
-.progress {
+.progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #ff7a00, #ff0058);
-  border-radius: 3px;
-  transition: width 0.5s ease;
+  background: #ff7a00;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.8s ease-in-out;
 }
 
 /* Credits Screen */
@@ -280,28 +285,40 @@ input:checked + .slider:before {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   padding: 25px;
-  margin-top: 30px;
 }
 
-.credit-item {
-  margin-bottom: 25px;
-}
-
-.credit-item h3 {
-  color: #ff7a00;
-  font-size: 1rem;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.credit-item p {
-  font-size: 1.1rem;
+.credits-content p {
+  font-size: 16px;
+  margin-bottom: 15px;
   color: #e0e0e0;
 }
 
-.disclaimer {
-  font-size: 0.9rem;
+.credits-content p.note {
+  font-size: 14px;
   color: #8a8a8e;
   font-style: italic;
+  margin-top: 20px;
 }
+
+/* Notification Toast */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Simple and clean, no fancy gradients */
