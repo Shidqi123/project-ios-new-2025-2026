@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>iOS-like Launcher</title>
+  <style>
+    /* sangat sederhana: buat tampilan kotak seperti di screenshot */
+    body{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#0f0f10}
+    .card{width:320px;background:#1e1e1f;border-radius:16px;padding:20px;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+    .btn{display:block;width:100%;padding:12px;border-radius:10px;text-align:center;background:#ff7a00;color:#fff;text-decoration:none;font-weight:600}
+    .small{font-size:13px;color:#c7c7c7;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="card" role="main">
+    <h3>Hijacked</h3>
+    <p class="small">iOS style UI — tekan tombol untuk buka Free Fire</p>
+
+    <a href="#" id="openApp" class="btn">Hijack (Buka Free Fire)</a>
+    <p class="small" id="status"></p>
+  </div>
+
+<script>
+const openBtn = document.getElementById('openApp');
+const status = document.getElementById('status');
+
+function isAndroid() {
+  return /Android/i.test(navigator.userAgent);
+}
+function isIOS() {
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+openBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  status.textContent = 'Mencoba membuka aplikasi…';
+
+  // --- GANTI sesuai skema/universal link resmi Free Fire ---
+  const customScheme = 'freefire://';            // contoh placeholder
+  const universalLink = 'https://your-domain.com/open/freefire'; // jika app support universal links
+  const appStoreUrl = 'https://apps.apple.com/app/id<APP_ID>';
+  const playStoreUrl = 'https://play.google.com/store/apps/details?id=<PACKAGE_NAME>';
+  // -----------------------------------------------------
+
+  if (isIOS()) {
+    // Prefer universal link (jika sudah disetup)
+    tryOpen(universalLink, appStoreUrl);
+  } else if (isAndroid()) {
+    // Android: gunakan intent fallback atau scheme
+    // contoh intent (ganti PACKAGE_NAME)
+    const intentUrl = 'intent://#Intent;package=com.dts.freefireth;scheme=freefire;end';
+    tryOpen(intentUrl, playStoreUrl);
+  } else {
+    // desktop fallback: buka web version atau beri instruksi
+    window.location.href = 'https://www.ff.garena.com/'; 
+  }
+});
+
+function tryOpen(url, fallback) {
+  // pendekatan: ubah location + jika tidak berhasil dalam 1.5s redirect ke fallback
+  const timeout = 1500;
+  let opened = false;
+
+  // for iOS Safari + most mobile browsers:
+  const now = Date.now();
+  const redirectTimer = setTimeout(() => {
+    // jika belum pindah ke app, redirect ke fallback
+    if (!opened) {
+      status.textContent = 'Aplikasi tidak ditemukan, mengarahkan ke toko...';
+      window.location.href = fallback;
+    }
+  }, timeout);
+
+  // coba buka
+  // beberapa browser menolak window.location.assign ke intent: gunakan iframe fallback
+  if (/^intent:/.test(url) || /^https?:\/\//.test(url)) {
+    window.location.href = url;
+  } else {
+    // custom scheme: gunakan iframe trick (older iOS/Android)
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    setTimeout(()=> document.body.removeChild(iframe), timeout);
+  }
+
+  // Optional: detect visibility change (user left page)
+  const handle = () => {
+    opened = true;
+    clearTimeout(redirectTimer);
+    status.textContent = 'Aplikasi dibuka.';
+    window.removeEventListener('visibilitychange', handle);
+  };
+  window.addEventListener('visibilitychange', handle);
+}
+</script>
+</body>
+</html>
