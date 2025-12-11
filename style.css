@@ -1,132 +1,453 @@
-/* Tambahkan ini ke style.css */
-
-/* Scrollable Container tanpa Scrollbar */
-.scrollable-content {
-  height: 100vh;
-  overflow-y: auto;
-  padding-right: 20px; /* Beri ruang untuk scroll */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.scrollable-content::-webkit-scrollbar {
-  display: none; /* Chrome/Safari/Opera */
-}
-
-.container {
-  max-width: 375px;
-  margin: 0 auto;
-  padding: 20px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 1;
-}
-
-/* Perbaikan untuk content agar bisa scroll */
-.content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding-top: 40px;
-  padding-bottom: 40px; /* Tambah padding bawah untuk scroll */
-}
-
-/* Extra Content untuk Scroll */
-.extra-content {
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.feature-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.feature-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 122, 0, 0.2);
-  transform: translateY(-2px);
-}
-
-.feature-card i {
-  font-size: 24px;
-  color: #ff7a00;
-  margin-bottom: 10px;
-}
-
-.feature-card h4 {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: #fff;
-}
-
-.feature-card p {
-  font-size: 13px;
-  color: #8a8a8e;
-  line-height: 1.4;
-}
-
-.info-box {
-  background: rgba(255, 122, 0, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 15px;
-  border: 1px solid rgba(255, 122, 0, 0.2);
-  margin-top: 10px;
-}
-
-.info-box p {
-  font-size: 14px;
-  color: #ffa726;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.info-box i {
-  font-size: 16px;
-}
-
-/* Settings Content bisa scroll */
-.settings-content {
-  flex: 1;
-  padding-bottom: 40px;
-}
-
-/* Credits Content bisa scroll */
-.credits-content {
-  flex: 1;
-  padding-bottom: 40px;
-}
-
-/* Hilangkan overflow hidden dari body */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background: #000;
-  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #000000;
+  color: #ffffff;
   height: 100vh;
-  /* HAPUS overflow: hidden; */
+  overflow: hidden;
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 /* Screen Management */
 .screen {
   display: none;
   height: 100vh;
-  position: relative;
 }
 
 .screen.active {
   display: block;
+}
+
+.container {
+  max-width: 320px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Header Styles */
+.title {
+  font-size: 36px;
+  font-weight: 900;
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.subtitle {
+  font-size: 15px;
+  text-align: center;
+  color: #8e8e93;
+  margin-bottom: 6px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.author {
+  font-size: 13px;
+  text-align: center;
+  color: #5a5a5e;
+  margin-bottom: 45px;
+  font-weight: 400;
+}
+
+/* Menu Buttons */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.menu-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px 20px;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  backdrop-filter: blur(10px);
+}
+
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Hijack Button */
+.hijack-section {
+  text-align: center;
+  margin-top: auto;
+  padding-bottom: 20px;
+}
+
+.hijack-btn {
+  background: linear-gradient(135deg, #ff7a00, #ff5500);
+  border: none;
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  color: white;
+  font-size: 22px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 20px rgba(255, 122, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.hijack-btn:hover {
+  background: linear-gradient(135deg, #ff8c20, #ff6600);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 122, 0, 0.4);
+}
+
+.hijack-btn:active {
+  transform: translateY(0);
+}
+
+.info-text {
+  font-size: 13px;
+  color: #8a8a8e;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+/* Hijack Process Screen */
+.hijack-process {
+  background: rgba(30, 30, 30, 0.8);
+  border-radius: 20px;
+  padding: 25px;
+  margin-top: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+}
+
+/* Hijacking Header with Animated Icon */
+.hijack-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.animated-icon {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+}
+
+.icon-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff7a00, #ff0058);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  animation: rotate 4s linear infinite;
+}
+
+.icon-inner {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 4px;
+  transform: rotate(45deg);
+}
+
+.icon-pulse {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  background: rgba(255, 122, 0, 0.3);
+  z-index: 1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.process-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+/* Process Steps */
+.process-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.process-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.step-icon {
+  font-size: 22px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  opacity: 0.9;
+}
+
+.step-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.step-text {
+  font-size: 16px;
+  color: #e0e0e0;
+  font-weight: 500;
+  min-height: 20px;
+  font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+}
+
+.step-text.typing {
+  border-right: 2px solid #ff7a00;
+  padding-right: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: blinkCursor 0.7s infinite;
+}
+
+.step-progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #ff7a00, #ff5500);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(255, 122, 0, 0.5);
+}
+
+/* Animations */
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+}
+
+@keyframes blinkCursor {
+  0%, 100% { border-color: #ff7a00; }
+  50% { border-color: transparent; }
+}
+
+/* Settings Screen */
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-top: 10px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #ff7a00;
+  font-size: 26px;
+  cursor: pointer;
+  padding: 5px 15px 5px 5px;
+  margin-right: 5px;
+}
+
+.header h2 {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 13px;
+  color: #8e8e93;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-left: 5px;
+  letter-spacing: 0.5px;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.setting-item span {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  width: 51px;
+  height: 31px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #4a4a4e;
+  transition: .3s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 27px;
+  width: 27px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: #32d74b;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+/* Theme Select */
+.theme-select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  min-width: 120px;
+  font-weight: 500;
+}
+
+/* Credits Screen */
+.credits-content {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.credits-content p {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.credits-content p.note {
+  font-size: 14px;
+  color: #8a8a8e;
+  font-style: italic;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Notification Toast */
+.notification {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(30, 30, 30, 0.95);
+  color: white;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
