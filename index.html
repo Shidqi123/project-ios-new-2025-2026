@@ -4,191 +4,169 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000">
-  <title>Hijacked - iOS Launcher</title>
+  <title>Hijacked</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <!-- Screen 1: Main Menu -->
   <div id="mainScreen" class="screen active">
     <div class="container">
-      <div class="header">
+      <div class="content">
         <h1 class="title">Hijacked</h1>
-        <p class="os-version">OS 16.0-18.5</p>
+        <p class="subtitle">OS 16.0-18.5</p>
         <p class="author">by Paulioquet</p>
-      </div>
-      
-      <div class="menu">
-        <button class="menu-item" onclick="showScreen('settingsScreen')">
-          <i class="fas fa-cog"></i>
-          <span>Settings</span>
-        </button>
         
-        <button class="menu-item" onclick="restartSpringBoard()">
-          <i class="fas fa-redo"></i>
-          <span>Restart SpringBoard</span>
-        </button>
+        <div class="menu">
+          <button class="menu-btn" onclick="showScreen('settingsScreen')">
+            Settings
+          </button>
+          <button class="menu-btn" onclick="showNotification('Restart SpringBoard')">
+            Restart SpringBoard
+          </button>
+          <button class="menu-btn" onclick="showNotification('Reboot UserSpace')">
+            Reboot UserSpace
+          </button>
+          <button class="menu-btn" onclick="showScreen('creditsScreen')">
+            Credits
+          </button>
+        </div>
         
-        <button class="menu-item" onclick="rebootUserSpace()">
-          <i class="fas fa-power-off"></i>
-          <span>Reboot UserSpace</span>
-        </button>
-        
-        <button class="menu-item" onclick="showScreen('creditsScreen')">
-          <i class="fas fa-star"></i>
-          <span>Credits</span>
-        </button>
-      </div>
-      
-      <div class="hijack-section">
-        <button id="hijackBtn" class="hijack-btn" onclick="startHijack()">
-          <span>Hijack</span>
-        </button>
-        <p class="info-text">Tekan tombol untuk buka Free Fire</p>
+        <div class="hijack-section">
+          <button class="hijack-btn" onclick="startHijack()">
+            Hijack
+          </button>
+          <p class="info-text">iOS style UI — press button to open Free Fire</p>
+        </div>
       </div>
     </div>
   </div>
-  
+
   <!-- Screen 2: Settings -->
   <div id="settingsScreen" class="screen">
     <div class="container">
       <div class="header">
-        <button class="back-btn" onclick="showScreen('mainScreen')">
-          <i class="fas fa-arrow-left"></i>
-        </button>
+        <button class="back-btn" onclick="showScreen('mainScreen')">←</button>
         <h2>Settings</h2>
       </div>
       
-      <div class="settings-section">
-        <h3>EXPLOITS</h3>
-        <div class="setting-item">
-          <span>Kernel Exploit</span>
-          <label class="switch">
-            <input type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-      
-      <div class="settings-section">
-        <h3>JALBREAK SETTINGS</h3>
-        <div class="setting-item">
-          <span>Tweak Injection</span>
-          <label class="switch">
-            <input type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="setting-item">
-          <span>Verbose Logs</span>
-          <label class="switch">
-            <input type="checkbox">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="setting-item">
-          <span>Allow JIT in Apps</span>
-          <label class="switch">
-            <input type="checkbox">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-      
-      <div class="settings-section">
-        <h3>DISPLAY</h3>
-        <div class="setting-item">
-          <span>Theme</span>
-          <select class="theme-select">
-            <option>Dark</option>
-            <option>Light</option>
-            <option>Auto</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Screen 3: Hijacking Process -->
-  <div id="hijackScreen" class="screen">
-    <div class="container">
-      <div class="header">
-        <h1 class="title">Hijacked</h1>
-        <p class="os-version">OS 15.0-18.5</p>
-        <p class="author">by PaulBrulet</p>
-      </div>
-      
-      <div class="hijacking-container">
-        <div class="hijack-title">
-          <i class="fas fa-bolt"></i>
-          <h2>Hijacking</h2>
+      <div class="content">
+        <div class="section">
+          <h3 class="section-title">EXPLOITS</h3>
+          <div class="setting-item">
+            <span>Kernel Exploit</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="kernel" checked>
+              <label for="kernel" class="toggle-slider"></label>
+            </div>
+          </div>
         </div>
         
-        <div class="process-list">
-          <div class="process-item">
-            <span class="process-text">Verifying system compatibility...</span>
-            <div class="process-bar">
-              <div class="progress" style="width: 70%"></div>
+        <div class="section">
+          <h3 class="section-title">JALBREAK SETTINGS</h3>
+          <div class="setting-item">
+            <span>Tweak Injection</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="tweak" checked>
+              <label for="tweak" class="toggle-slider"></label>
             </div>
           </div>
-          
-          <div class="process-item">
-            <span class="process-text">Patching critical binaries...</span>
-            <div class="process-bar">
-              <div class="progress" style="width: 40%"></div>
+          <div class="setting-item">
+            <span>Verbose Logs</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="logs">
+              <label for="logs" class="toggle-slider"></label>
             </div>
           </div>
-          
-          <div class="process-item">
-            <span class="process-text">Bypassing security checks...</span>
-            <div class="process-bar">
-              <div class="progress" style="width: 20%"></div>
+          <div class="setting-item">
+            <span>Allow JIT in Apps</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="jit">
+              <label for="jit" class="toggle-slider"></label>
             </div>
           </div>
+        </div>
+        
+        <div class="section">
+          <h3 class="section-title">DISPLAY</h3>
+          <div class="setting-item">
+            <span>Theme</span>
+            <select class="theme-select">
+              <option>Dark</option>
+              <option>Light</option>
+              <option>Auto</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Hijacking Process (SAMA PERSIS SS) -->
+  <div id="hijackScreen" class="screen">
+    <div class="container">
+      <div class="content">
+        <h1 class="title">Hijacked</h1>
+        <p class="subtitle">OS 15.0-18.5</p>
+        <p class="author">by PaulBrulet</p>
+        
+        <div class="hijack-process">
+          <h2 class="process-title">Hijacking</h2>
           
-          <div class="process-item">
-            <span class="process-text">Launching Free Fire...</span>
-            <div class="process-bar">
-              <div class="progress" style="width: 0%"></div>
+          <div class="process-steps">
+            <div class="process-step" id="step1">
+              <div class="step-text">Verifying system compatibility...</div>
+              <div class="step-progress">
+                <div class="progress-bar" id="progress1"></div>
+              </div>
+            </div>
+            
+            <div class="process-step" id="step2">
+              <div class="step-text">Patching critical binaries...</div>
+              <div class="step-progress">
+                <div class="progress-bar" id="progress2"></div>
+              </div>
+            </div>
+            
+            <div class="process-step" id="step3">
+              <div class="step-text">Bypassing security checks...</div>
+              <div class="step-progress">
+                <div class="progress-bar" id="progress3"></div>
+              </div>
+            </div>
+            
+            <div class="process-step" id="step4">
+              <div class="step-text">Launching Free Fire...</div>
+              <div class="step-progress">
+                <div class="progress-bar" id="progress4"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
+
   <!-- Screen 4: Credits -->
   <div id="creditsScreen" class="screen">
     <div class="container">
       <div class="header">
-        <button class="back-btn" onclick="showScreen('mainScreen')">
-          <i class="fas fa-arrow-left"></i>
-        </button>
+        <button class="back-btn" onclick="showScreen('mainScreen')">←</button>
         <h2>Credits</h2>
       </div>
-      
-      <div class="credits-content">
-        <div class="credit-item">
-          <h3>Developer</h3>
-          <p>Paulioquet / PaulBrulet</p>
-        </div>
-        
-        <div class="credit-item">
-          <h3>iOS Version Support</h3>
-          <p>iOS 15.0 - 18.5</p>
-        </div>
-        
-        <div class="credit-item">
-          <h3>Special Thanks</h3>
-          <p>Free Fire Community</p>
-        </div>
-        
-        <div class="credit-item">
-          <h3>Disclaimer</h3>
-          <p class="disclaimer">This tool is for educational purposes only. Use at your own risk.</p>
+      <div class="content">
+        <div class="credits-content">
+          <p>Developer: Paulioquet</p>
+          <p>iOS Support: 15.0-18.5</p>
+          <p>Free Fire Integration</p>
+          <p class="note">This tool bypasses security to launch games directly</p>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="notification" class="notification">
+    <span id="notificationText"></span>
   </div>
 
   <script src="script.js"></script>
