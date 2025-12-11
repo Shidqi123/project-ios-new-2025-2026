@@ -124,14 +124,11 @@ function startHijack() {
 }
 
 // Fungsi buka Free Fire
-// Fungsi buka Free Fire yang lebih agresif untuk iOS
 function openFreeFire() {
   const urls = {
     freefire: 'freefire://',
     freefireth: 'freefireth://',
     freefiremax: 'freefiremax://',
-    freefireIntl: 'com.garena.ffth://',
-    freefireMaxIntl: 'com.garena.freefiremax://',
     playstore: 'https://play.google.com/store/apps/details?id=com.dts.freefireth',
     appstore: 'https://apps.apple.com/app/id1300096749'
   };
@@ -140,123 +137,41 @@ function openFreeFire() {
   const isAndroid = /Android/i.test(navigator.userAgent);
   const isDesktop = !isIOS && !isAndroid;
   
-  // Jika desktop, buka store
   if (isDesktop) {
     window.open(isIOS ? urls.appstore : urls.playstore, '_blank');
     return;
   }
   
-  // Untuk iOS: coba langsung buka app
-  if (isIOS) {
-    // Coba semua kemungkinan deep link untuk Free Fire
-    const iosSchemes = [
-      'freefire://',
-      'freefireth://', 
-      'freefiremax://',
-      'com.garena.ffth://',
-      'com.garena.freefiremax://',
-      'com.dts.freefireth://',
-      'garena.ffth://'
-    ];
-    
-    // Waktu mulai
-    const startTime = Date.now();
-    let appOpened = false;
-    
-    // Cek apakah app terbuka
-    const checkAppOpened = () => {
-      const elapsed = Date.now() - startTime;
-      if (elapsed > 2000 && !appOpened && document.hasFocus()) {
-        // Jika app tidak terbuka, arahkan ke App Store
-        window.location.href = urls.appstore;
-      }
-    };
-    
-    // Event listener untuk visibility change
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') {
-        appOpened = true;
-      }
-    });
-    
-    // Blur event (saat user keluar dari browser)
-    window.addEventListener('blur', () => {
-      appOpened = true;
-    });
-    
-    // Coba buka app dengan semua skema yang mungkin
-    iosSchemes.forEach((scheme, index) => {
-      setTimeout(() => {
-        if (!appOpened) {
-          const iframe = document.createElement('iframe');
-          iframe.style.display = 'none';
-          iframe.src = scheme;
-          document.body.appendChild(iframe);
-          
-          setTimeout(() => {
-            if (iframe.parentNode) {
-              document.body.removeChild(iframe);
-            }
-          }, 100);
-        }
-      }, index * 300);
-    });
-    
-    // Set timeout untuk redirect ke App Store
-    setTimeout(() => {
-      if (!appOpened) {
-        window.location.href = urls.appstore;
-      }
-    }, 2500);
-    
-    return;
-  }
+  let appOpened = false;
+  const startTime = Date.now();
   
-  // Untuk Android (tetap sama seperti sebelumnya)
-  if (isAndroid) {
-    let appOpened = false;
-    const startTime = Date.now();
-    
-    const checkAppOpened = () => {
-      const elapsed = Date.now() - startTime;
-      if (elapsed > 1000 && !appOpened && document.visibilityState === 'visible') {
-        window.location.href = urls.playstore;
-      }
-    };
-    
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') {
-        appOpened = true;
-      }
-    });
-    
-    // Coba semua deep link
-    const androidSchemes = ['freefireth://', 'freefiremax://', 'freefire://'];
-    
-    androidSchemes.forEach((scheme, index) => {
-      setTimeout(() => {
-        if (!appOpened) {
-          const iframe = document.createElement('iframe');
-          iframe.style.display = 'none';
-          iframe.src = scheme;
-          document.body.appendChild(iframe);
-          
-          setTimeout(() => {
-            if (iframe.parentNode) {
-              document.body.removeChild(iframe);
-            }
-          }, 200);
-        }
-      }, index * 200);
-    });
+  const checkAppOpened = () => {
+    const elapsed = Date.now() - startTime;
+    if (elapsed > 1000 && !appOpened && document.visibilityState === 'visible') {
+      window.location.href = isIOS ? urls.appstore : urls.playstore;
+    }
+  };
+  
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      appOpened = true;
+    }
+  });
+  
+  // Coba buka dengan deep link
+  const tryOpenApp = (url) => {
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
     
     setTimeout(() => {
-      if (!appOpened) {
-        window.location.href = urls.playstore;
+      if (iframe.parentNode) {
+        document.body.removeChild(iframe);
       }
-    }, 2000);
-  }
-}
+      checkAppOpened();
+    }, 300);
+  };
   
   if (isAndroid) {
     tryOpenApp(urls.freefireth);
