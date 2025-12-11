@@ -85,7 +85,7 @@
           <div class="hijack-card">
             <button class="hijack-btn" onclick="startHijack()">
               <div class="btn-content">
-                <span class="btn-text">Saii</span>
+                <span class="btn-text">Hijack</span>
                 <div class="btn-arrow">
                   <i class="fas fa-arrow-right"></i>
                 </div>
@@ -315,6 +315,90 @@
     <span id="notificationText"></span>
   </div>
 
-  <script src="script.js"></script>
+  <!-- SIMPLE JAVASCRIPT FIX -->
+  <script>
+    // Fallback jika script.js error
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      document.getElementById(screenId).classList.add('active');
+    }
+    
+    function showNotification(message) {
+      const notification = document.getElementById('notification');
+      const notificationText = document.getElementById('notificationText');
+      
+      notificationText.textContent = message;
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 2000);
+    }
+    
+    // FUNGSI UTAMA YANG SEDERHANA
+    function startHijack() {
+      console.log('Hijack button clicked!');
+      
+      // Tampilkan screen hijack dulu
+      showScreen('hijackScreen');
+      
+      // Progress cepat
+      setTimeout(() => {
+        document.getElementById('progressBar').style.width = '100%';
+        document.querySelector('.progress-percent').textContent = '100%';
+        document.querySelector('.progress-label span').textContent = 'Launching...';
+      }, 500);
+      
+      // Setelah 1 detik, buka Free Fire
+      setTimeout(() => {
+        openFreeFire();
+      }, 1500);
+    }
+    
+    // Fungsi buka Free Fire langsung
+    function openFreeFire() {
+      console.log('Opening Free Fire...');
+      
+      // URL untuk berbagai versi Free Fire
+      const urls = [
+        'freefireth://',      // Free Fire Thailand
+        'freefiremax://',     // Free Fire MAX
+        'freefire://',        // Free Fire Global
+        'com.dts.freefireth://' // Package name
+      ];
+      
+      // Coba semua URL
+      for (let url of urls) {
+        try {
+          console.log('Trying:', url);
+          window.location.href = url;
+          
+          // Beri waktu untuk app terbuka
+          setTimeout(() => {
+            if (document.hasFocus()) {
+              // Jika masih di browser, coba URL lain
+              console.log('App not opened, trying next...');
+            }
+          }, 300);
+        } catch (e) {
+          console.error('Error with URL:', url, e);
+        }
+      }
+      
+      // Fallback ke Play Store setelah 2 detik
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          window.open('https://play.google.com/store/apps/details?id=com.dts.freefireth', '_blank');
+        }
+      }, 2000);
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Saikuto loaded!');
+    });
+  </script>
 </body>
 </html>
