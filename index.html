@@ -315,9 +315,9 @@
     <span id="notificationText"></span>
   </div>
 
-  <!-- SIMPLE JAVASCRIPT FIX -->
+  <!-- JAVASCRIPT KHUSUS UNTUK iOS -->
   <script>
-    // Fallback jika script.js error
+    // Fungsi navigasi screen
     function showScreen(screenId) {
       document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
@@ -325,6 +325,7 @@
       document.getElementById(screenId).classList.add('active');
     }
     
+    // Tampilkan notifikasi
     function showNotification(message) {
       const notification = document.getElementById('notification');
       const notificationText = document.getElementById('notificationText');
@@ -337,67 +338,175 @@
       }, 2000);
     }
     
-    // FUNGSI UTAMA YANG SEDERHANA
+    // FUNGSI UTAMA UNTUK iOS
     function startHijack() {
-      console.log('Hijack button clicked!');
+      console.log('Tombol Hijack ditekan di iOS');
       
-      // Tampilkan screen hijack dulu
+      // Tampilkan screen hijack process
       showScreen('hijackScreen');
       
-      // Progress cepat
+      // Animasi progress bar cepat
       setTimeout(() => {
         document.getElementById('progressBar').style.width = '100%';
         document.querySelector('.progress-percent').textContent = '100%';
         document.querySelector('.progress-label span').textContent = 'Launching...';
       }, 500);
       
-      // Setelah 1 detik, buka Free Fire
+      // Setelah 1.5 detik, buka Free Fire
       setTimeout(() => {
-        openFreeFire();
+        openFreeFireOnIOS();
       }, 1500);
     }
     
-    // Fungsi buka Free Fire langsung
-    function openFreeFire() {
-      console.log('Opening Free Fire...');
+    // Fungsi khusus buka Free Fire di iOS
+    function openFreeFireOnIOS() {
+      console.log('Membuka Free Fire di iOS...');
       
-      // URL untuk berbagai versi Free Fire
-      const urls = [
-        'freefireth://',      // Free Fire Thailand
-        'freefiremax://',     // Free Fire MAX
-        'freefire://',        // Free Fire Global
-        'com.dts.freefireth://' // Package name
+      // Daftar URL scheme untuk Free Fire di iOS
+      const iosSchemes = [
+        'freefire://',                    // Free Fire Global
+        'freefireth://',                  // Free Fire Thailand
+        'freefiremax://',                 // Free Fire MAX
+        'com.dts.freefireth://',          // Package name
+        'garena.ffth://',                 // Garena scheme
+        'id1300096749://',                // App Store ID
+        'itms-apps://itunes.apple.com/app/id1300096749' // App Store langsung
       ];
       
-      // Coba semua URL
-      for (let url of urls) {
-        try {
-          console.log('Trying:', url);
-          window.location.href = url;
-          
-          // Beri waktu untuk app terbuka
-          setTimeout(() => {
-            if (document.hasFocus()) {
-              // Jika masih di browser, coba URL lain
-              console.log('App not opened, trying next...');
-            }
-          }, 300);
-        } catch (e) {
-          console.error('Error with URL:', url, e);
-        }
+      // Cek apakah user menggunakan iOS
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      
+      if (!isIOS) {
+        // Jika bukan iOS, buka untuk Android/desktop
+        window.open('https://play.google.com/store/apps/details?id=com.dts.freefireth', '_blank');
+        return;
       }
       
-      // Fallback ke Play Store setelah 2 detik
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          window.open('https://play.google.com/store/apps/details?id=com.dts.freefireth', '_blank');
+      // Untuk iOS, coba semua scheme
+      let appOpened = false;
+      const startTime = Date.now();
+      
+      // Cek jika app berhasil dibuka
+      const checkIfAppOpened = () => {
+        const elapsed = Date.now() - startTime;
+        if (elapsed > 2000 && !appOpened && document.hasFocus()) {
+          console.log('App tidak terbuka, redirect ke App Store...');
+          // Redirect ke App Store jika app tidak terbuka
+          window.location.href = 'https://apps.apple.com/app/id1300096749';
         }
-      }, 2000);
+      };
+      
+      // Deteksi jika app terbuka (user keluar dari Safari)
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          appOpened = true;
+          console.log('App berhasil dibuka!');
+        }
+      });
+      
+      window.addEventListener('blur', () => {
+        appOpened = true;
+        console.log('Window blur - app terbuka');
+      });
+      
+      // Coba semua scheme satu per satu
+      iosSchemes.forEach((scheme, index) => {
+        setTimeout(() => {
+          if (!appOpened) {
+            console.log('Mencoba scheme:', scheme);
+            
+            // Method 1: Direct location
+            try {
+              window.location.href = scheme;
+            } catch (e) {
+              console.log('Error dengan direct location:', e);
+            }
+            
+            // Method 2: Iframe method (lebih reliable untuk iOS)
+            setTimeout(() => {
+              if (!appOpened) {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.style.visibility = 'hidden';
+                iframe.style.position = 'absolute';
+                iframe.style.width = '1px';
+                iframe.style.height = '1px';
+                iframe.src = scheme;
+                document.body.appendChild(iframe);
+                
+                // Hapus iframe setelah beberapa saat
+                setTimeout(() => {
+                  if (iframe.parentNode) {
+                    document.body.removeChild(iframe);
+                  }
+                }, 1000);
+              }
+            }, 100);
+          }
+        }, index * 300); // Delay antar percobaan
+      });
+      
+      // Set timeout untuk fallback ke App Store
+      setTimeout(checkIfAppOpened, 2500);
+      
+      // Fallback tambahan setelah 3 detik
+      setTimeout(() => {
+        if (!appOpened && document.hasFocus()) {
+          console.log('Fallback ke App Store...');
+          // Force open App Store
+          window.location.href = 'itms-apps://itunes.apple.com/app/id1300096749';
+          
+          // Backup jika masih gagal
+          setTimeout(() => {
+            if (document.hasFocus()) {
+              window.open('https://apps.apple.com/app/id1300096749', '_blank');
+            }
+          }, 1000);
+        }
+      }, 3500);
     }
     
-    // Initialize
+    // Fungsi langsung tanpa animasi (opsional)
+    function openFreeFireDirect() {
+      // Coba langsung buka Free Fire TH
+      window.location.href = 'freefireth://';
+      
+      // Fallback setelah 1 detik
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          window.location.href = 'itms-apps://itunes.apple.com/app/id1300096749';
+        }
+      }, 1000);
+    }
+    
+    // Inisialisasi
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('Saikuto loaded!');
+      console.log('Saikuto iOS version loaded!');
+      console.log('User Agent:', navigator.userAgent);
+      
+      // Hover effect untuk cards
+      document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          card.style.transform = 'translateY(-2px)';
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'translateY(0)';
+        });
+      });
+      
+      // Animasi tombol hijack
+      const hijackBtn = document.querySelector('.hijack-btn');
+      if (hijackBtn) {
+        hijackBtn.addEventListener('mousedown', () => {
+          hijackBtn.style.transform = 'scale(0.98)';
+        });
+        hijackBtn.addEventListener('mouseup', () => {
+          hijackBtn.style.transform = 'scale(1) translateY(-2px)';
+        });
+        hijackBtn.addEventListener('mouseleave', () => {
+          hijackBtn.style.transform = 'scale(1)';
+        });
+      }
     });
   </script>
 </body>
