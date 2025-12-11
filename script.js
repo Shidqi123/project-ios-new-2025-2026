@@ -19,38 +19,106 @@ function showNotification(message) {
   }, 2000);
 }
 
-// Fungsi utama Hijack
+// Typewriter effect untuk animasi teks
+function typeWriter(element, text, speed, callback) {
+  let i = 0;
+  element.textContent = '';
+  
+  function type() {
+    if (i < text.length) {
+      element.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    } else {
+      // Hentikan blinking cursor setelah selesai
+      element.style.animation = 'none';
+      element.style.borderRight = 'none';
+      
+      if (callback) callback();
+    }
+  }
+  
+  type();
+}
+
+// Fungsi utama Hijack dengan animasi lengkap
 function startHijack() {
   showScreen('hijackScreen');
   
-  // Reset semua progress bar
+  // Reset semua progress bar dan teks
   document.querySelectorAll('.progress-bar').forEach(bar => {
     bar.style.width = '0%';
   });
   
-  // Animasikan progress step by step SAMA PERSIS SS
+  document.querySelectorAll('.step-text').forEach(text => {
+    text.textContent = '';
+    text.style.animation = 'blinkCursor 0.7s infinite';
+    text.style.borderRight = '2px solid #ff7a00';
+  });
+  
+  // Teks untuk setiap step (SAMA PERSIS SS)
   const steps = [
-    { id: 'progress1', text: 'Verifying system compatibility...', time: 800 },
-    { id: 'progress2', text: 'Patching critical binaries...', time: 1600 },
-    { id: 'progress3', text: 'Bypassing security checks...', time: 2400 },
-    { id: 'progress4', text: 'Launching Free Fire...', time: 3200 }
+    { 
+      id: 'text1', 
+      text: 'Verifying system compatibility...',
+      icon: '⟳',
+      time: 0,
+      typingSpeed: 40
+    },
+    { 
+      id: 'text2', 
+      text: 'Patching critical binaries...',
+      icon: '⚙',
+      time: 1200,
+      typingSpeed: 40
+    },
+    { 
+      id: 'text3', 
+      text: 'Bypassing security checks...',
+      icon: '🛡',
+      time: 2400,
+      typingSpeed: 40
+    },
+    { 
+      id: 'text4', 
+      text: 'Launching Free Fire...',
+      icon: '🚀',
+      time: 3600,
+      typingSpeed: 50
+    }
   ];
   
+  // Animasikan setiap step
   steps.forEach((step, index) => {
     setTimeout(() => {
-      const progressBar = document.getElementById(step.id);
-      const stepElement = document.getElementById(`step${index + 1}`).querySelector('.step-text');
+      const textElement = document.getElementById(step.id);
+      const progressBar = document.getElementById(`progress${index + 1}`);
+      const stepIcon = document.getElementById(`step${index + 1}`).querySelector('.step-icon');
       
-      // Update progress bar ke 100%
-      progressBar.style.width = '100%';
-      stepElement.textContent = `✓ ${step.text.replace('...', '')}`;
+      // Update icon
+      stepIcon.textContent = step.icon;
       
-      // Step terakhir: buka Free Fire
-      if (index === 3) {
+      // Mulai animasi typing
+      typeWriter(textElement, step.text, step.typingSpeed, () => {
+        // Setelah typing selesai, jalankan progress bar
         setTimeout(() => {
-          openFreeFire();
-        }, 500);
-      }
+          progressBar.style.width = '100%';
+          
+          // Ganti icon jadi centang hijau
+          setTimeout(() => {
+            stepIcon.textContent = '✓';
+            stepIcon.style.color = '#32d74b';
+            
+            // Step terakhir: buka Free Fire
+            if (index === 3) {
+              setTimeout(() => {
+                openFreeFire();
+              }, 800);
+            }
+          }, 300);
+        }, 300);
+      });
+      
     }, step.time);
   });
 }
@@ -68,39 +136,31 @@ function openFreeFire() {
   
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const isAndroid = /Android/i.test(navigator.userAgent);
-  
-  // Deteksi jika di desktop/browser
   const isDesktop = !isIOS && !isAndroid;
   
   if (isDesktop) {
-    // Di desktop, buka store di tab baru
     window.open(isIOS ? urls.appstore : urls.playstore, '_blank');
-    showNotification('Redirecting to app store...');
     return;
   }
   
-  // Mobile: coba buka dengan deep link
+  // Mobile device
   let appOpened = false;
-  
-  // Function untuk deteksi apakah app terbuka
   const startTime = Date.now();
+  
   const checkAppOpened = () => {
     const elapsed = Date.now() - startTime;
-    
-    // Jika masih di halaman web setelah 1 detik, fallback ke store
     if (elapsed > 1000 && !appOpened && document.visibilityState === 'visible') {
       window.location.href = isIOS ? urls.appstore : urls.playstore;
     }
   };
   
-  // Listen untuk visibility change (user pindah ke app)
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       appOpened = true;
     }
   });
   
-  // Coba buka dengan iframe method (workaround untuk iOS/Android)
+  // Coba buka dengan deep link
   const tryOpenApp = (url) => {
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';
@@ -108,22 +168,24 @@ function openFreeFire() {
     document.body.appendChild(iframe);
     
     setTimeout(() => {
-      document.body.removeChild(iframe);
+      if (iframe.parentNode) {
+        document.body.removeChild(iframe);
+      }
       checkAppOpened();
     }, 300);
   };
   
-  // Coba berbagai scheme berdasarkan device
+  // Coba berbagai scheme
   if (isAndroid) {
-    tryOpenApp(urls.freefireth);
-    setTimeout(() => tryOpenApp(urls.freefiremax), 100);
-    setTimeout(() => tryOpenApp(urls.freefire), 200);
+    tryOpenApp(urls.freefireth);  // Priority 1: Free Fire TH
+    setTimeout(() => tryOpenApp(urls.freefiremax), 100);  // Priority 2: Free Fire MAX
+    setTimeout(() => tryOpenApp(urls.freefire), 200);     // Priority 3: Free Fire Original
   } else if (isIOS) {
-    tryOpenApp(urls.freefire);
-    setTimeout(() => tryOpenApp(urls.freefiremax), 100);
+    tryOpenApp(urls.freefire);    // Priority 1: Free Fire
+    setTimeout(() => tryOpenApp(urls.freefiremax), 100);  // Priority 2: Free Fire MAX
   }
   
-  // Fallback ke store setelah 1.5 detik
+  // Fallback ke store
   setTimeout(() => {
     if (!appOpened) {
       window.location.href = isIOS ? urls.appstore : urls.playstore;
@@ -133,16 +195,15 @@ function openFreeFire() {
 
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
-  // Set screen utama aktif
   showScreen('mainScreen');
   
-  // Tambahkan event listener untuk semua menu button
+  // Animasi tombol
   document.querySelectorAll('.menu-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-      this.style.opacity = '0.7';
+      this.style.transform = 'scale(0.95)';
       setTimeout(() => {
-        this.style.opacity = '1';
-      }, 200);
+        this.style.transform = 'scale(1)';
+      }, 150);
     });
   });
   
@@ -150,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const hijackBtn = document.querySelector('.hijack-btn');
   if (hijackBtn) {
     hijackBtn.addEventListener('mousedown', () => {
-      hijackBtn.style.transform = 'scale(0.98)';
+      hijackBtn.style.transform = 'scale(0.95)';
     });
     hijackBtn.addEventListener('mouseup', () => {
       hijackBtn.style.transform = 'scale(1)';
@@ -159,4 +220,11 @@ document.addEventListener('DOMContentLoaded', () => {
       hijackBtn.style.transform = 'scale(1)';
     });
   }
+  
+  // Auto update time untuk efek real-time (opsional)
+  function updateTime() {
+    const now = new Date();
+    // Bisa ditambahkan jika butuh waktu real-time
+  }
+  setInterval(updateTime, 60000);
 });
