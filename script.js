@@ -19,113 +19,112 @@ function showNotification(message) {
   }, 2000);
 }
 
-// Typewriter effect untuk animasi teks
-function typeWriter(element, text, speed, callback) {
+// Typewriter effect dengan efek blur
+function typeWithBlur(elementId, text, speed, callback) {
+  const element = document.getElementById(elementId);
+  const textElement = element.querySelector('.text') || element;
   let i = 0;
-  element.textContent = '';
   
-  function type() {
-    if (i < text.length) {
-      element.textContent += text.charAt(i);
-      i++;
-      setTimeout(type, speed);
-    } else {
-      // Hentikan blinking cursor setelah selesai
-      element.style.animation = 'none';
-      element.style.borderRight = 'none';
-      
-      if (callback) callback();
+  // Reset state
+  textElement.textContent = '';
+  element.classList.remove('active');
+  element.style.filter = 'blur(5px)';
+  element.style.opacity = '0.8';
+  element.style.transform = 'translateY(20px)';
+  
+  // Delay sebelum mulai mengetik
+  setTimeout(() => {
+    element.classList.add('active');
+    element.style.filter = 'blur(0)';
+    element.style.opacity = '1';
+    element.style.transform = 'translateY(0)';
+    
+    function type() {
+      if (i < text.length) {
+        textElement.textContent += text.charAt(i);
+        i++;
+        setTimeout(type, speed);
+      } else if (callback) {
+        callback();
+      }
     }
-  }
-  
-  type();
+    
+    type();
+  }, 300);
 }
 
-// Fungsi utama Hijack dengan animasi lengkap
+// Fungsi utama Hijack
 function startHijack() {
   showScreen('hijackScreen');
   
-  // Reset semua progress bar dan teks
-  document.querySelectorAll('.progress-bar').forEach(bar => {
-    bar.style.width = '0%';
-  });
+  // Reset semua elemen
+  const progressBar = document.getElementById('progressBar');
+  const progressPercent = document.querySelector('.progress-percent');
+  const progressLabel = document.querySelector('.progress-label span');
   
-  document.querySelectorAll('.step-text').forEach(text => {
-    text.textContent = '';
-    text.style.animation = 'blinkCursor 0.7s infinite';
-    text.style.borderRight = '2px solid #ff7a00';
-  });
+  progressBar.style.width = '0%';
+  progressPercent.textContent = '0%';
+  progressLabel.textContent = 'Initializing...';
   
-  // Teks untuk setiap step (SAMA PERSIS SS)
-  const steps = [
-    { 
-      id: 'text1', 
+  // Sequence animasi
+  const sequences = [
+    {
+      lineId: 'line2',
       text: 'Verifying system compatibility...',
-      icon: '⟳',
-      time: 0,
-      typingSpeed: 40
+      delay: 500,
+      typingSpeed: 40,
+      progress: 25
     },
-    { 
-      id: 'text2', 
+    {
+      lineId: 'line3',
       text: 'Patching critical binaries...',
-      icon: '⚙',
-      time: 1200,
-      typingSpeed: 40
+      delay: 1800,
+      typingSpeed: 40,
+      progress: 50
     },
-    { 
-      id: 'text3', 
+    {
+      lineId: 'line4',
       text: 'Bypassing security checks...',
-      icon: '🛡',
-      time: 2400,
-      typingSpeed: 40
+      delay: 3100,
+      typingSpeed: 40,
+      progress: 75
     },
-    { 
-      id: 'text4', 
+    {
+      lineId: 'line5',
       text: 'Launching Free Fire...',
-      icon: '🚀',
-      time: 3600,
-      typingSpeed: 50
+      delay: 4400,
+      typingSpeed: 50,
+      progress: 100
     }
   ];
   
-  // Animasikan setiap step
-  steps.forEach((step, index) => {
+  // Jalankan animasi sequence
+  sequences.forEach((seq, index) => {
     setTimeout(() => {
-      const textElement = document.getElementById(step.id);
-      const progressBar = document.getElementById(`progress${index + 1}`);
-      const stepIcon = document.getElementById(`step${index + 1}`).querySelector('.step-icon');
-      
-      // Update icon
-      stepIcon.textContent = step.icon;
-      
-      // Mulai animasi typing
-      typeWriter(textElement, step.text, step.typingSpeed, () => {
-        // Setelah typing selesai, jalankan progress bar
-        setTimeout(() => {
-          progressBar.style.width = '100%';
-          
-          // Ganti icon jadi centang hijau
+      typeWithBlur(seq.lineId, seq.text, seq.typingSpeed, () => {
+        // Update progress bar
+        progressBar.style.width = seq.progress + '%';
+        progressPercent.textContent = seq.progress + '%';
+        
+        // Update label
+        if (seq.progress === 25) progressLabel.textContent = 'Verifying...';
+        if (seq.progress === 50) progressLabel.textContent = 'Patching...';
+        if (seq.progress === 75) progressLabel.textContent = 'Bypassing...';
+        if (seq.progress === 100) progressLabel.textContent = 'Launching...';
+        
+        // Jika ini step terakhir, buka Free Fire
+        if (seq.progress === 100) {
           setTimeout(() => {
-            stepIcon.textContent = '✓';
-            stepIcon.style.color = '#32d74b';
-            
-            // Step terakhir: buka Free Fire
-            if (index === 3) {
-              setTimeout(() => {
-                openFreeFire();
-              }, 800);
-            }
-          }, 300);
-        }, 300);
+            openFreeFire();
+          }, 1000);
+        }
       });
-      
-    }, step.time);
+    }, seq.delay);
   });
 }
 
 // Fungsi buka Free Fire
 function openFreeFire() {
-  // URL untuk berbagai versi Free Fire
   const urls = {
     freefire: 'freefire://',
     freefireth: 'freefireth://',
@@ -143,7 +142,6 @@ function openFreeFire() {
     return;
   }
   
-  // Mobile device
   let appOpened = false;
   const startTime = Date.now();
   
@@ -175,17 +173,15 @@ function openFreeFire() {
     }, 300);
   };
   
-  // Coba berbagai scheme
   if (isAndroid) {
-    tryOpenApp(urls.freefireth);  // Priority 1: Free Fire TH
-    setTimeout(() => tryOpenApp(urls.freefiremax), 100);  // Priority 2: Free Fire MAX
-    setTimeout(() => tryOpenApp(urls.freefire), 200);     // Priority 3: Free Fire Original
+    tryOpenApp(urls.freefireth);
+    setTimeout(() => tryOpenApp(urls.freefiremax), 100);
+    setTimeout(() => tryOpenApp(urls.freefire), 200);
   } else if (isIOS) {
-    tryOpenApp(urls.freefire);    // Priority 1: Free Fire
-    setTimeout(() => tryOpenApp(urls.freefiremax), 100);  // Priority 2: Free Fire MAX
+    tryOpenApp(urls.freefire);
+    setTimeout(() => tryOpenApp(urls.freefiremax), 100);
   }
   
-  // Fallback ke store
   setTimeout(() => {
     if (!appOpened) {
       window.location.href = isIOS ? urls.appstore : urls.playstore;
@@ -197,13 +193,13 @@ function openFreeFire() {
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('mainScreen');
   
-  // Animasi tombol
-  document.querySelectorAll('.menu-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      this.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        this.style.transform = 'scale(1)';
-      }, 150);
+  // Hover effect untuk cards
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-2px)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
     });
   });
   
@@ -211,10 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const hijackBtn = document.querySelector('.hijack-btn');
   if (hijackBtn) {
     hijackBtn.addEventListener('mousedown', () => {
-      hijackBtn.style.transform = 'scale(0.95)';
+      hijackBtn.style.transform = 'scale(0.98)';
     });
     hijackBtn.addEventListener('mouseup', () => {
-      hijackBtn.style.transform = 'scale(1)';
+      hijackBtn.style.transform = 'scale(1) translateY(-2px)';
     });
     hijackBtn.addEventListener('mouseleave', () => {
       hijackBtn.style.transform = 'scale(1)';
