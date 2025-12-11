@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000">
-  <title>Saikuto - iOS Only</title>
+  <title>Saikuto</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -26,7 +26,7 @@
         <div class="header-glitch">
           <h1 class="title glitch" data-text="SaiKuto">SaiKuto</h1>
           <div class="version-info">
-            <p class="subtitle">iOS 16.0-18.5</p>
+            <p class="subtitle">OS 16.0-18.5</p>
             <p class="author">by Kutoo</p>
           </div>
         </div>
@@ -92,7 +92,7 @@
               </div>
               <div class="btn-pulse"></div>
             </button>
-            <p class="info-text">iOS Exclusive — Opens Free Fire on iPhone/iPad</p>
+            <p class="info-text">Tap to open Free Fire on iPhone/iPad</p>
           </div>
         </div>
       </div>
@@ -200,7 +200,7 @@
             </div>
             <div class="logo-text">
               <h1 class="hijack-title">SaiKuto</h1>
-              <p class="hijack-subtitle">iOS 15.0-18.5</p>
+              <p class="hijack-subtitle">OS 15.0-18.5</p>
               <p class="hijack-author">by Kutoo</p>
             </div>
           </div>
@@ -285,23 +285,23 @@
         </div>
         
         <div class="info-card">
-          <h4><i class="fas fa-apple"></i> iOS Exclusive</h4>
-          <p>Only works on iPhone/iPad</p>
+          <h4><i class="fas fa-mobile-alt"></i> iOS Support</h4>
+          <p>15.0 - 18.5</p>
         </div>
         
         <div class="info-card">
           <h4><i class="fas fa-gamepad"></i> Free Fire Integration</h4>
-          <p>Direct game launch for iOS</p>
+          <p>Direct game launch system</p>
         </div>
         
         <div class="info-card">
-          <h4><i class="fas fa-shield-alt"></i> iOS Security Bypass</h4>
-          <p>Kernel-level access on iOS</p>
+          <h4><i class="fas fa-shield-alt"></i> Security Bypass</h4>
+          <p>Kernel-level access granted</p>
         </div>
         
         <div class="disclaimer">
           <i class="fas fa-exclamation-triangle"></i>
-          <p>This tool is for iOS only. Use at your own risk.</p>
+          <p>This tool is for educational purposes only. Use at your own risk.</p>
         </div>
       </div>
     </div>
@@ -315,24 +315,9 @@
     <span id="notificationText"></span>
   </div>
 
-  <!-- JAVASCRIPT KHUSUS UNTUK iOS SAJA -->
+  <!-- SIMPLE WORKING JAVASCRIPT -->
   <script>
-    // Deteksi device
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    
-    // Jika bukan iOS, tampilkan warning
-    if (!isIOS) {
-      document.addEventListener('DOMContentLoaded', () => {
-        alert('⚠️ This tool is for iOS (iPhone/iPad) only!\nPlease open on an iOS device.');
-        document.querySelector('.info-text').textContent = 'iOS ONLY — Open on iPhone/iPad';
-        document.querySelector('.hijack-btn').disabled = true;
-        document.querySelector('.hijack-btn').style.opacity = '0.5';
-        document.querySelector('.hijack-btn').style.cursor = 'not-allowed';
-      });
-    }
-    
-    // Fungsi navigasi screen
+    // Navigasi antar screen
     function showScreen(screenId) {
       document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
@@ -353,205 +338,148 @@
       }, 2000);
     }
     
-    // FUNGSI UTAMA - iOS ONLY
+    // FUNGSI UTAMA - SIMPLE & WORKING
     function startHijack() {
-      // Cek jika bukan iOS
-      if (!isIOS) {
-        showNotification('iOS devices only!');
-        return;
-      }
+      console.log('Hijack button clicked');
       
-      console.log('🚀 Starting Hijack on iOS...');
-      
-      // Tampilkan screen hijack process
+      // Tampilkan screen hijack dulu
       showScreen('hijackScreen');
       
-      // Animasi progress
-      setTimeout(() => {
-        document.getElementById('progressBar').style.width = '25%';
-        document.querySelector('.progress-percent').textContent = '25%';
-        document.querySelector('.progress-label span').textContent = 'Checking iOS...';
-      }, 300);
-      
-      setTimeout(() => {
-        document.getElementById('progressBar').style.width = '50%';
-        document.querySelector('.progress-percent').textContent = '50%';
-        document.querySelector('.progress-label span').textContent = 'Launching Free Fire...';
-      }, 800);
-      
+      // Progress animasi cepat
       setTimeout(() => {
         document.getElementById('progressBar').style.width = '100%';
         document.querySelector('.progress-percent').textContent = '100%';
-        document.querySelector('.progress-label span').textContent = 'Complete!';
+        document.querySelector('.progress-label span').textContent = 'Launching Free Fire...';
         
         // Buka Free Fire setelah progress selesai
-        openFreeFireIOS();
-      }, 1500);
+        setTimeout(() => {
+          openFreeFireDirect();
+        }, 500);
+      }, 1000);
     }
     
-    // Fungsi buka Free Fire di iOS (NO ANDROID, NO PLAY STORE)
-    function openFreeFireIOS() {
-      console.log('🎮 Opening Free Fire on iOS...');
+    // FUNGSI LANGSUNG BUKA FREE FIRE (SIMPLE VERSION)
+    function openFreeFireDirect() {
+      console.log('Opening Free Fire...');
       
       // Daftar semua URL scheme Free Fire untuk iOS
-      const iosFreeFireSchemes = [
-        'freefire://',                    // Free Fire Global
-        'freefireth://',                  // Free Fire Thailand
-        'freefiremax://',                 // Free Fire MAX
-        'com.dts.freefireth://',          // Bundle ID
-        'garena.ffth://',                 // Garena scheme
-        'id1300096749://',                // App Store ID
-        'itms-apps://itunes.apple.com/app/id1300096749?action=write-review' // App Store deep
+      const freeFireURLs = [
+        'freefireth://',      // Free Fire Thailand
+        'freefiremax://',     // Free Fire MAX  
+        'freefire://',        // Free Fire Global
+        'com.dts.freefireth://', // Bundle ID
+        'garena.ffth://'      // Garena scheme
       ];
       
-      // App Store URL sebagai fallback
-      const appStoreURL = 'https://apps.apple.com/app/id1300096749';
-      const directAppStore = 'itms-apps://itunes.apple.com/app/id1300096749';
+      // App Store URL untuk fallback
+      const appStoreURL = 'itms-apps://itunes.apple.com/app/id1300096749';
+      const webAppStoreURL = 'https://apps.apple.com/app/id1300096749';
       
+      // Cek apakah di iOS
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      
+      if (!isIOS) {
+        // Jika bukan iOS, buka Play Store (tapi Anda bisa hapus ini)
+        window.open('https://play.google.com/store/apps/details?id=com.dts.freefireth', '_blank');
+        return;
+      }
+      
+      // Untuk iOS: Coba semua URL scheme
       let appOpened = false;
-      const startTime = Date.now();
       
-      // Deteksi jika app berhasil dibuka
-      const detectAppOpen = () => {
-        // Jika browser kehilangan focus, berarti app terbuka
-        if (document.hidden || !document.hasFocus()) {
-          appOpened = true;
-          console.log('✅ Free Fire opened successfully!');
-          return true;
-        }
-        return false;
-      };
-      
-      // Event listener untuk deteksi app open
-      document.addEventListener('visibilitychange', () => {
+      // Deteksi jika app terbuka
+      document.addEventListener('visibilitychange', function() {
         if (document.hidden) {
           appOpened = true;
+          console.log('App opened successfully!');
         }
       });
       
-      window.addEventListener('pagehide', () => {
+      window.addEventListener('blur', function() {
         appOpened = true;
+        console.log('Window blurred - app opened');
       });
       
-      window.addEventListener('blur', () => {
-        appOpened = true;
-      });
-      
-      // Method 1: Coba semua scheme secara berurutan
-      function tryAllSchemes() {
-        console.log('🔄 Trying all Free Fire schemes...');
-        
-        iosFreeFireSchemes.forEach((scheme, index) => {
-          setTimeout(() => {
-            if (!appOpened) {
-              console.log(`Trying: ${scheme}`);
-              
-              // Coba dengan window.location
-              try {
-                window.location.href = scheme;
-              } catch (e) {
-                console.log(`Failed with location: ${scheme}`);
-              }
-              
-              // Coba dengan iframe method (lebih reliable di iOS)
-              setTimeout(() => {
-                if (!appOpened) {
-                  const iframe = document.createElement('iframe');
-                  iframe.style.cssText = 'display:none;visibility:hidden;position:absolute;width:1px;height:1px;';
-                  iframe.src = scheme;
-                  document.body.appendChild(iframe);
-                  
-                  setTimeout(() => {
-                    if (iframe.parentNode) {
-                      document.body.removeChild(iframe);
-                    }
-                  }, 500);
-                }
-              }, 100);
+      // Coba semua Free Fire URLs
+      freeFireURLs.forEach((url, index) => {
+        setTimeout(() => {
+          if (!appOpened) {
+            console.log('Trying URL:', url);
+            
+            // Method 1: Direct location
+            try {
+              window.location.href = url;
+            } catch(e) {
+              console.log('Error with direct:', e);
             }
-          }, index * 400);
-        });
-      }
+            
+            // Method 2: Iframe (lebih reliable di iOS)
+            setTimeout(() => {
+              if (!appOpened) {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = url;
+                document.body.appendChild(iframe);
+                
+                setTimeout(() => {
+                  if (iframe.parentNode) {
+                    document.body.removeChild(iframe);
+                  }
+                }, 300);
+              }
+            }, 150);
+          }
+        }, index * 400);
+      });
       
-      // Method 2: Universal link fallback
-      function tryUniversalLink() {
+      // Fallback ke App Store setelah 3 detik
+      setTimeout(() => {
         if (!appOpened) {
-          console.log('🔗 Trying Universal Link...');
-          // Universal link untuk Free Fire (jika ada)
-          window.location.href = 'https://freefire.onelink.me/yube/garenaffth';
-        }
-      }
-      
-      // Method 3: Redirect ke App Store jika app tidak terinstall
-      function redirectToAppStore() {
-        if (!appOpened) {
-          console.log('📱 Redirecting to App Store...');
+          console.log('Fallback to App Store');
           
           // Coba direct App Store link
-          window.location.href = directAppStore;
+          window.location.href = appStoreURL;
           
-          // Backup dengan window open
+          // Backup dengan web App Store
           setTimeout(() => {
-            if (!appOpened && document.hasFocus()) {
-              window.open(appStoreURL, '_blank');
+            if (document.hasFocus()) {
+              window.open(webAppStoreURL, '_blank');
             }
           }, 1000);
         }
-      }
-      
-      // Mulai proses
-      tryAllSchemes();
-      
-      // Cek setelah 2 detik
-      setTimeout(() => {
-        if (!detectAppOpen()) {
-          tryUniversalLink();
-        }
-      }, 2000);
-      
-      // Final fallback setelah 4 detik
-      setTimeout(() => {
-        if (!detectAppOpen()) {
-          redirectToAppStore();
-        }
-      }, 4000);
-      
-      // Debug info
-      console.log('📱 iOS Device:', navigator.userAgent);
-      console.log('🕒 Start time:', new Date().toLocaleTimeString());
+      }, 3000);
     }
     
-    // Fungsi cepat tanpa animasi (untuk testing)
-    function openFreeFireDirect() {
-      if (!isIOS) return;
-      
-      // Langsung coba buka Free Fire TH
+    // ALTERNATIF: Fungsi yang lebih sederhana
+    function openFreeFireSimple() {
+      // Coba langsung Free Fire Thailand dulu
       window.location.href = 'freefireth://';
       
-      // Fallback cepat
+      // Jika gagal, coba Free Fire MAX
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          window.location.href = 'freefiremax://';
+        }
+      }, 800);
+      
+      // Jika masih gagal, ke App Store
       setTimeout(() => {
         if (document.hasFocus()) {
           window.location.href = 'itms-apps://itunes.apple.com/app/id1300096749';
         }
-      }, 800);
+      }, 1600);
     }
     
     // Inisialisasi
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('📱 Saikuto iOS Edition Loaded');
-      console.log('Device:', navigator.platform);
-      console.log('iOS:', isIOS);
-      console.log('Safari:', isSafari);
+      console.log('Saikuto loaded');
       
-      // Update text berdasarkan device
-      if (isIOS) {
-        document.querySelector('.info-text').textContent = 'Tap to open Free Fire on your iOS device';
-        console.log('✅ Ready for iOS');
-      } else {
-        console.log('❌ Not an iOS device');
-      }
+      // Cek device
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      console.log('Is iOS?', isIOS);
+      console.log('User Agent:', navigator.userAgent);
       
-      // Hover effects
+      // Hover effect untuk cards
       document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('mouseenter', () => {
           card.style.transform = 'translateY(-2px)';
@@ -560,6 +488,20 @@
           card.style.transform = 'translateY(0)';
         });
       });
+      
+      // Animasi tombol hijack
+      const hijackBtn = document.querySelector('.hijack-btn');
+      if (hijackBtn) {
+        hijackBtn.addEventListener('mousedown', () => {
+          hijackBtn.style.transform = 'scale(0.98)';
+        });
+        hijackBtn.addEventListener('mouseup', () => {
+          hijackBtn.style.transform = 'scale(1) translateY(-2px)';
+        });
+        hijackBtn.addEventListener('mouseleave', () => {
+          hijackBtn.style.transform = 'scale(1)';
+        });
+      }
     });
   </script>
 </body>
