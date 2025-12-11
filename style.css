@@ -10,10 +10,22 @@ body {
   background: #000;
   color: #fff;
   height: 100vh;
-  overflow: hidden;
   font-size: 16px;
   line-height: 1.5;
 }
+
+.container {
+  max-width: 375px;
+  margin: 0 auto;
+  padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  overflow-y: auto;
+}
+
 
 /* Background Effects */
 .animated-bg {
