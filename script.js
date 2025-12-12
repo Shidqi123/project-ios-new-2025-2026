@@ -106,110 +106,149 @@ function isIOSDevice() {
   return isIOS || isIPad;
 }
 
-// Fungsi untuk membuka aplikasi dengan scheme URL
-function openAppWithScheme(scheme, fallback) {
-  return new Promise((resolve) => {
-    const iframe = document.createElement('iframe');
-    iframe.style.cssText = 'display:none;border:0;width:0;height:0;';
-    iframe.src = scheme;
-    
-    document.body.appendChild(iframe);
-    
-    // Cek apakah aplikasi terbuka
-    setTimeout(() => {
-      const appOpened = !document.hasFocus();
-      
-      // Hapus iframe
-      setTimeout(() => {
-        if (iframe.parentNode) {
-          document.body.removeChild(iframe);
-        }
-      }, 100);
-      
-      // Jika aplikasi tidak terbuka dan ada fallback, coba fallback
-      if (!appOpened && fallback) {
-        setTimeout(() => {
-          window.location.href = fallback;
-        }, 300);
-      }
-      
-      resolve(appOpened);
-    }, 500);
-  });
+// Method khusus untuk iOS tanpa popup
+function iosLaunchApp(scheme) {
+  // Method 1: Menggunakan iframe (tanpa popup)
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'display:none;border:none;width:0;height:0;';
+  iframe.src = scheme;
+  document.body.appendChild(iframe);
+  
+  // Method 2: Menggunakan window.location dengan timeout
+  setTimeout(() => {
+    window.location.href = scheme;
+  }, 150);
+  
+  // Method 3: Menggunakan window.open (iOS terkadang membutuhkan ini)
+  setTimeout(() => {
+    const win = window.open(scheme, '_blank');
+    if (win) {
+      win.focus();
+    }
+  }, 300);
+  
+  // Method 4: Menggunakan anchor click
+  setTimeout(() => {
+    const link = document.createElement('a');
+    link.href = scheme;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, 450);
+  
+  // Hapus iframe setelah beberapa saat
+  setTimeout(() => {
+    if (iframe.parentNode) {
+      document.body.removeChild(iframe);
+    }
+  }, 1000);
 }
 
-// Silent Launch langsung ke aplikasi Free Fire
+// Silent Launch HANYA dengan scheme URL
 function silentLaunchFreeFire() {
   if (!isIOSDevice()) {
     showNotification('iOS device (iPhone/iPad) required');
     return;
   }
 
-  console.log('Attempting to launch Free Fire...');
+  console.log('Attempting direct launch to Free Fire...');
   
-  // Daftar scheme URLs untuk Free Fire (tanpa App Store)
-  const freeFireSchemes = [
-    // Free Fire MAX
-    'freefiremax://',
-    'com.dts.freefiremax://',
-    'com.garena.game.freefiremax://',
+  // Tentukan versi berdasarkan iOS version atau preference
+  const useMaxVersion = true; // Default ke MAX
+  
+  if (useMaxVersion) {
+    // Coba Free Fire MAX dulu
+    console.log('Trying Free Fire MAX...');
     
-    // Free Fire Original
-    'freefiremobile://',
-    'com.dts.freefireth://',
-    'com.garena.game.freefire://',
-    'freefire://',
+    // Scheme URLs untuk Free Fire MAX
+    const maxSchemes = [
+      'freefiremax://',
+      'com.dts.freefiremax://',
+      'com.garena.freefiremax://',
+      'ffmax://',
+      'garena-ffmax://'
+    ];
     
-    // Scheme alternatif
-    'garena-freefire://',
-    'ff-game://',
-    'fflaunch://'
-  ];
-  
-  // URL fallback khusus untuk Indonesia (tanpa region lock)
-  const indonesiaFallback = 'https://apps.apple.com/id/app/free-fire/id1300096749';
-  const indonesiaFallbackMax = 'https://apps.apple.com/id/app/free-fire-max/id1583327865';
-  
-  let currentIndex = 0;
-  
-  function tryNextScheme() {
-    if (currentIndex < freeFireSchemes.length) {
-      const scheme = freeFireSchemes[currentIndex];
-      const fallback = scheme.includes('max') ? indonesiaFallbackMax : indonesiaFallback;
+    // Coba semua scheme MAX
+    maxSchemes.forEach((scheme, index) => {
+      setTimeout(() => {
+        console.log(`Trying MAX scheme: ${scheme}`);
+        iosLaunchApp(scheme);
+      }, index * 500);
+    });
+    
+    // Setelah mencoba MAX, coba regular version
+    setTimeout(() => {
+      console.log('Trying Free Fire Regular...');
+      const regularSchemes = [
+        'freefire://',
+        'freefiremobile://',
+        'com.dts.freefireth://',
+        'com.garena.freefire://',
+        'ff://',
+        'garena-ff://'
+      ];
       
-      console.log(`Trying scheme: ${scheme}`);
-      
-      openAppWithScheme(scheme, fallback).then((appOpened) => {
-        if (!appOpened) {
-          currentIndex++;
-          
-          if (currentIndex < freeFireSchemes.length) {
-            // Coba scheme berikutnya dengan delay
-            setTimeout(tryNextScheme, 300);
-          } else {
-            // Semua scheme gagal, tampilkan pilihan
-            showNotification('Free Fire not installed');
-            setTimeout(() => {
-              // Tampilkan pilihan install
-              if (confirm('Free Fire is not installed. Would you like to install Free Fire MAX (recommended) or Free Fire Original?')) {
-                const installMax = confirm('Install Free Fire MAX with better graphics?\nOK for MAX, Cancel for Original');
-                if (installMax) {
-                  window.location.href = indonesiaFallbackMax;
-                } else {
-                  window.location.href = indonesiaFallback;
-                }
-              }
-            }, 1000);
-          }
-        } else {
-          console.log('Successfully opened with scheme:', scheme);
-        }
+      regularSchemes.forEach((scheme, index) => {
+        setTimeout(() => {
+          console.log(`Trying Regular scheme: ${scheme}`);
+          iosLaunchApp(scheme);
+        }, index * 500);
       });
-    }
+    }, maxSchemes.length * 500);
+    
+  } else {
+    // Coba Free Fire Regular dulu
+    console.log('Trying Free Fire Regular...');
+    
+    const regularSchemes = [
+      'freefire://',
+      'freefiremobile://',
+      'com.dts.freefireth://',
+      'com.garena.freefire://',
+      'ff://',
+      'garena-ff://'
+    ];
+    
+    regularSchemes.forEach((scheme, index) => {
+      setTimeout(() => {
+        console.log(`Trying Regular scheme: ${scheme}`);
+        iosLaunchApp(scheme);
+      }, index * 500);
+    });
   }
   
-  // Mulai mencoba scheme pertama
-  tryNextScheme();
+  // Tampilkan petunjuk jika masih di web setelah beberapa detik
+  setTimeout(() => {
+    if (document.hasFocus()) {
+      showNotification('Tap "Open" if prompted');
+      
+      // Tampilkan petunjuk tambahan
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          const useExternalBrowser = confirm(
+            'Free Fire launch might work better in Safari.\n' +
+            'Copy this URL and open in Safari:\n' +
+            'freefiremax://\n\n' +
+            'Click OK to copy, Cancel to stay.'
+          );
+          
+          if (useExternalBrowser) {
+            // Copy scheme ke clipboard
+            const textArea = document.createElement('textarea');
+            textArea.value = 'freefiremax://';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            showNotification('URL copied to clipboard. Open Safari and paste in address bar.');
+          }
+        }
+      }, 3000);
+    }
+  }, 5000);
 }
 
 // Inisialisasi
@@ -219,27 +258,37 @@ document.addEventListener('DOMContentLoaded', () => {
   // Setup untuk tombol launch
   const launchBtn = document.querySelector('.launch-btn, .saii-btn');
   if (launchBtn) {
-    launchBtn.addEventListener('mousedown', () => {
-      launchBtn.style.transform = 'scale(0.98)';
-    });
-    launchBtn.addEventListener('mouseup', () => {
-      launchBtn.style.transform = 'scale(1)';
-    });
-    launchBtn.addEventListener('mouseleave', () => {
-      launchBtn.style.transform = 'scale(1)';
+    // Hapus semua event listener sebelumnya
+    const newLaunchBtn = launchBtn.cloneNode(true);
+    launchBtn.parentNode.replaceChild(newLaunchBtn, launchBtn);
+    
+    // Setup event listeners baru
+    newLaunchBtn.addEventListener('mousedown', () => {
+      newLaunchBtn.style.transform = 'scale(0.98)';
     });
     
-    // Touch events untuk iPad
-    launchBtn.addEventListener('touchstart', () => {
-      launchBtn.style.transform = 'scale(0.98)';
-    });
-    launchBtn.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      launchBtn.style.transform = 'scale(1)';
+    newLaunchBtn.addEventListener('mouseup', () => {
+      newLaunchBtn.style.transform = 'scale(1)';
       startSaii();
     });
     
-    launchBtn.addEventListener('click', (e) => {
+    newLaunchBtn.addEventListener('mouseleave', () => {
+      newLaunchBtn.style.transform = 'scale(1)';
+    });
+    
+    // Touch events untuk iPad
+    newLaunchBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      newLaunchBtn.style.transform = 'scale(0.98)';
+    });
+    
+    newLaunchBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      newLaunchBtn.style.transform = 'scale(1)';
+      startSaii();
+    });
+    
+    newLaunchBtn.addEventListener('click', (e) => {
       e.preventDefault();
       startSaii();
     });
@@ -247,24 +296,14 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Card hover effects
   document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      card.style.transform = 'translateY(-2px)';
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'translateY(0)';
-    });
-    
-    // Jika card diklik, langsung launch juga
     card.addEventListener('click', (e) => {
-      if (e.target.closest('.card')) {
-        startSaii();
-      }
+      e.preventDefault();
+      startSaii();
     });
     
     card.addEventListener('touchend', (e) => {
-      if (e.target.closest('.card')) {
-        startSaii();
-      }
+      e.preventDefault();
+      startSaii();
     });
   });
 });
