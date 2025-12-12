@@ -115,7 +115,7 @@ function startSaii() {
         // Jika ini step terakhir, buka Free Fire
         if (seq.progress === 100) {
           setTimeout(() => {
-            openFreeFire();
+            openFreeFireIOS();
           }, 1000);
         }
       });
@@ -123,96 +123,120 @@ function startSaii() {
   });
 }
 
-// Fungsi buka Free Fire Indonesia
-function openFreeFire() {
-  // Deep links untuk Free Fire Indonesia
-  const urls = {
-    // Deep link untuk Free Fire Indonesia (Global)
-    freefire_indonesia: 'freefire://',
-    
-    // Deep link untuk Free Fire MAX Indonesia
-    freefire_max: 'freefiremax://',
-    
-    // Fallback ke Play Store/App Store
-    playstore_indonesia: 'https://play.google.com/store/apps/details?id=com.dts.freefireth',
-    appstore_indonesia: 'https://apps.apple.com/id/app/free-fire/id1300096749'
-  };
-  
-  // Deteksi platform
+// Fungsi khusus untuk buka Free Fire di iOS
+function openFreeFireIOS() {
+  // Cek apakah ini benar-benar iOS
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const isAndroid = /Android/i.test(navigator.userAgent);
-  const isDesktop = !isIOS && !isAndroid;
   
-  // Jika desktop, langsung arahkan ke Play Store/App Store Indonesia
-  if (isDesktop) {
-    window.open(isIOS ? urls.appstore_indonesia : urls.playstore_indonesia, '_blank');
+  if (!isIOS) {
+    // Jika bukan iOS, tampilkan pesan
+    showNotification('This tool is for iOS devices only');
+    setTimeout(() => {
+      window.location.href = 'https://www.apple.com/ios/';
+    }, 2000);
     return;
   }
   
-  // Timer untuk deteksi apakah aplikasi berhasil terbuka
-  let appOpened = false;
-  const startTime = Date.now();
+  // Deep links untuk Free Fire di iOS
+  const freefireIOSLinks = [
+    'freefire://',                    // URL Scheme biasa
+    'freefiremax://',                 // URL Scheme Free Fire MAX
+    'com.garena.games.ffios://',      // Bundle ID URL Scheme
+    'https://ff.garena.com/',         // Universal Link
+    'itms-apps://itunes.apple.com/app/id1300096749' // Direct App Store
+  ];
   
-  // Fungsi untuk mengecek apakah app terbuka berdasarkan visibility change
-  function checkIfAppOpened() {
-    const elapsed = Date.now() - startTime;
-    
-    // Jika setelah 1 detik masih visible (app tidak terbuka), redirect ke store
-    if (elapsed > 1000 && !appOpened && document.visibilityState === 'visible') {
-      window.location.href = isIOS ? urls.appstore_indonesia : urls.playstore_indonesia;
+  console.log('iOS device detected, launching Free Fire...');
+  
+  // Teknik 1: Coba URL Scheme langsung
+  function tryDirectScheme() {
+    try {
+      // Coba Free Fire biasa
+      window.location.href = freefireIOSLinks[0];
+      
+      // Set timeout untuk cek apakah berhasil
+      setTimeout(() => {
+        // Jika setelah 800ms masih di halaman ini, coba link lain
+        if (document.visibilityState !== 'hidden') {
+          tryIframeMethod();
+        }
+      }, 800);
+      
+      return true;
+    } catch (e) {
+      console.log('Direct scheme failed:', e);
+      return false;
     }
   }
   
-  // Event listener untuk detect ketika tab menjadi hidden (app terbuka)
-  document.addEventListener('visibilitychange', function() {
+  // Teknik 2: Gunakan iframe (fallback)
+  function tryIframeMethod() {
+    try {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.style.visibility = 'hidden';
+      iframe.style.width = '0';
+      iframe.style.height = '0';
+      
+      // Coba beberapa scheme
+      iframe.src = freefireIOSLinks[0];
+      document.body.appendChild(iframe);
+      
+      // Set timeout untuk coba scheme kedua
+      setTimeout(() => {
+        if (document.visibilityState !== 'hidden') {
+          // Coba Free Fire MAX
+          iframe.src = freefireIOSLinks[1];
+        }
+      }, 300);
+      
+      // Set timeout untuk universal link
+      setTimeout(() => {
+        if (document.visibilityState !== 'hidden') {
+          // Coba universal link
+          window.location.href = freefireIOSLinks[3];
+        }
+      }, 600);
+      
+      // Hapus iframe setelah beberapa detik
+      setTimeout(() => {
+        if (iframe.parentNode) {
+          document.body.removeChild(iframe);
+        }
+      }, 2000);
+      
+      return true;
+    } catch (e) {
+      console.log('Iframe method failed:', e);
+      return false;
+    }
+  }
+  
+  // Teknik 3: Direct App Store
+  function openAppStore() {
+    setTimeout(() => {
+      window.location.href = freefireIOSLinks[4];
+    }, 1000);
+  }
+  
+  // Event listener untuk detect app terbuka
+  let appLaunched = false;
+  
+  document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
-      appOpened = true; // Aplikasi berhasil dibuka
+      appLaunched = true;
+      console.log('Free Fire app launched successfully!');
     }
   });
   
-  // Fungsi untuk mencoba membuka deep link dengan iframe
-  function tryOpenDeepLink(url) {
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = url;
-    document.body.appendChild(iframe);
-    
-    // Hapus iframe setelah 300ms
-    setTimeout(() => {
-      if (iframe.parentNode) {
-        document.body.removeChild(iframe);
-      }
-    }, 300);
-  }
+  // Mulai proses
+  tryDirectScheme();
   
-  // Priority: Coba Free Fire Indonesia dulu, lalu Free Fire MAX
-  if (isAndroid) {
-    // Coba Free Fire Indonesia biasa
-    tryOpenDeepLink(urls.freefire_indonesia);
-    
-    // Tunggu sedikit lalu coba Free Fire MAX
-    setTimeout(() => {
-      if (!appOpened) {
-        tryOpenDeepLink(urls.freefire_max);
-      }
-    }, 500);
-    
-  } else if (isIOS) {
-    // Untuk iOS, coba Free Fire Indonesia
-    tryOpenDeepLink(urls.freefire_indonesia);
-    
-    // Tunggu sedikit lalu coba Free Fire MAX
-    setTimeout(() => {
-      if (!appOpened) {
-        tryOpenDeepLink(urls.freefire_max);
-      }
-    }, 500);
-  }
-  
-  // Set timeout untuk fallback ke Play Store/App Store Indonesia
+  // Fallback ke App Store jika setelah 2 detik belum terbuka
   setTimeout(() => {
-    if (!appOpened) {
-      window.location.href = isIOS ? urls.appstore_indonesia : urls.playstore_indonesia;
+    if (!appLaunched && document.visibilityState !== 'hidden') {
+      console.log('App not launched, opening App Store...');
+      openAppStore();
     }
   }, 2000);
 }
