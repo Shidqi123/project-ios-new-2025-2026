@@ -53,8 +53,8 @@ function typeWithBlur(elementId, text, speed, callback) {
   }, 300);
 }
 
-// Fungsi utama Hijack
-function startHijack() {
+// Fungsi utama Saii
+function startSaii() {
   showScreen('hijackScreen');
   
   // Reset semua elemen
@@ -203,17 +203,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  // Animasi tombol hijack
-  const hijackBtn = document.querySelector('.hijack-btn');
-  if (hijackBtn) {
-    hijackBtn.addEventListener('mousedown', () => {
-      hijackBtn.style.transform = 'scale(0.98)';
+  // Animasi tombol saii
+  const saiiBtn = document.querySelector('.saii-btn');
+  if (saiiBtn) {
+    saiiBtn.addEventListener('mousedown', () => {
+      saiiBtn.style.transform = 'scale(0.98)';
     });
-    hijackBtn.addEventListener('mouseup', () => {
-      hijackBtn.style.transform = 'scale(1) translateY(-2px)';
+    saiiBtn.addEventListener('mouseup', () => {
+      saiiBtn.style.transform = 'scale(1) translateY(-2px)';
     });
-    hijackBtn.addEventListener('mouseleave', () => {
-      hijackBtn.style.transform = 'scale(1)';
+    saiiBtn.addEventListener('mouseleave', () => {
+      saiiBtn.style.transform = 'scale(1)';
     });
   }
 });
