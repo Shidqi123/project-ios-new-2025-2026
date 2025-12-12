@@ -510,6 +510,100 @@ body {
   animation: glow 2s infinite;
 }
 
+/* Free Fire Features Screen */
+.ff-features-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 20px;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 150px;
+}
+
+.feature-slider {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, #ff7a00, #ff0058);
+  border-radius: 3px;
+  outline: none;
+}
+
+.feature-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: 2px solid #ff7a00;
+  box-shadow: 0 0 10px rgba(255, 122, 0, 0.5);
+}
+
+.feature-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: 2px solid #ff7a00;
+}
+
+.slider-value {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 600;
+  color: #ff7a00;
+  font-size: 14px;
+}
+
+/* Quick Apply Buttons */
+.quick-apply {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.apply-btn, .launch-btn {
+  padding: 18px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.apply-btn {
+  background: linear-gradient(135deg, #00ccff, #0099ff);
+  color: white;
+}
+
+.launch-btn {
+  background: linear-gradient(135deg, #ff7a00, #ff0058);
+  color: white;
+}
+
+.apply-btn:hover, .launch-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.apply-btn:active, .launch-btn:active {
+  transform: translateY(0);
+}
+
 /* Animations */
 @keyframes float {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
@@ -832,14 +926,14 @@ input:checked + .toggle-slider:before {
 }
 
 /* Touch-friendly improvements for iPad */
-.saii-btn, .card {
+.saii-btn, .card, .apply-btn, .launch-btn {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   cursor: pointer;
 }
 
 /* Prevent text selection on tap */
-.saii-btn, .card, .screen {
+.saii-btn, .card, .screen, .apply-btn, .launch-btn {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -848,11 +942,7 @@ input:checked + .toggle-slider:before {
 
 /* Better hover for touch devices */
 @media (hover: none) and (pointer: coarse) {
-  .card:hover {
-    transform: none !important;
-  }
-  
-  .saii-btn:hover {
+  .card:hover, .saii-btn:hover, .apply-btn:hover, .launch-btn:hover {
     transform: none !important;
   }
 }
@@ -864,7 +954,30 @@ input:checked + .toggle-slider:before {
     font-size: 1.1em;
   }
   
-  .card {
+  .card, .setting-item {
     padding: 20px;
   }
+  
+  .feature-slider {
+    width: 180px;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 122, 0, 0.5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 122, 0, 0.7);
 }
