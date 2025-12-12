@@ -145,25 +145,15 @@ function isIOSDevice() {
 function openFreeFireIOS() {
   console.log('User Agent:', navigator.userAgent);
   console.log('Platform:', navigator.platform);
-  
-  // Cek apakah ini iOS dengan deteksi yang lebih baik
+
   if (!isIOSDevice()) {
     showNotification('iOS/iPad device required');
-    console.log('Not an iOS device');
     return;
   }
-  
-  console.log('iOS/iPad detected, proceeding...');
-  
-  // URL untuk Free Fire iOS (skema yang benar)
-  const freefireSchemes = [
-    'freefire://',                    // Skema standar Free Fire
-    'freefiremax://',                 // Skema Free Fire MAX
-    'com.dts.freefireth://',          // Bundle ID Free Fire
-    'com.garena.games.ffios://',      // Bundle ID alternatif
-    'itms-apps://itunes.apple.com/app/id1300096749?action=write-review', // Deep link App Store
-    'https://apps.apple.com/app/id1300096749' // Web App Store
-  ];
+
+  // Langsung buka App Store (atau auto-launch jika FF sudah terinstall)
+  window.location.href = "https://apps.apple.com/app/id1300096749";
+}
   
   // Flag untuk tracking
   let appOpened = false;
