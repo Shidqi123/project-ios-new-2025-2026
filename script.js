@@ -53,7 +53,7 @@ function typeWithBlur(elementId, text, speed, callback) {
   }, 300);
 }
 
-// Fungsi utama Saii
+// Fungsi utama Saii - langsung ke Free Fire biasa
 function startSaii() {
   showScreen('saiiScreen');
   
@@ -106,16 +106,16 @@ function isIOSDevice() {
   return isIOS || isIPad;
 }
 
-// Silent Launch langsung ke Free Fire
+// Silent Launch langsung ke Free Fire biasa
 function silentLaunchFreeFire() {
   if (!isIOSDevice()) {
     showNotification('iOS device (iPhone/iPad) required');
     return;
   }
 
-  console.log('Launching Free Fire directly...');
+  console.log('Launching Free Fire...');
   
-  // Multiple launch methods untuk meningkatkan keberhasilan
+  // Multiple launch methods untuk Free Fire biasa
   const launchMethods = [
     // 1. Scheme URL langsung (jika sudah terinstall)
     () => {
@@ -126,19 +126,23 @@ function silentLaunchFreeFire() {
       setTimeout(() => document.body.removeChild(iframe), 100);
     },
     
-    // 2. Universal Link App Store (fallback)
+    // 2. Alternate scheme
+    () => {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = 'com.dts.freefireth://';
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 100);
+    },
+    
+    // 3. Universal Link App Store (fallback)
     () => {
       window.location.href = 'https://apps.apple.com/app/id1300096749';
     },
     
-    // 3. Direct App Store link
+    // 4. Direct App Store link
     () => {
       window.location.href = 'itms-apps://itunes.apple.com/app/id1300096749';
-    },
-    
-    // 4. Alternative App Store link
-    () => {
-      window.location.href = 'itms-apps://apps.apple.com/us/app/free-fire/id1300096749';
     }
   ];
   
@@ -183,41 +187,39 @@ document.addEventListener('DOMContentLoaded', () => {
   preloadLink.href = 'https://apps.apple.com';
   document.head.appendChild(preloadLink);
   
-  document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      card.style.transform = 'translateY(-2px)';
+  // Setup untuk tombol launch utama
+  const launchBtn = document.querySelector('.launch-btn');
+  if (launchBtn) {
+    launchBtn.addEventListener('mousedown', () => {
+      launchBtn.style.transform = 'scale(0.98)';
     });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'translateY(0)';
+    launchBtn.addEventListener('mouseup', () => {
+      launchBtn.style.transform = 'scale(1)';
     });
-  });
-  
-  const saiiBtn = document.querySelector('.saii-btn');
-  if (saiiBtn) {
-    saiiBtn.addEventListener('mousedown', () => {
-      saiiBtn.style.transform = 'scale(0.98)';
-    });
-    saiiBtn.addEventListener('mouseup', () => {
-      saiiBtn.style.transform = 'scale(1) translateY(-2px)';
-    });
-    saiiBtn.addEventListener('mouseleave', () => {
-      saiiBtn.style.transform = 'scale(1)';
+    launchBtn.addEventListener('mouseleave', () => {
+      launchBtn.style.transform = 'scale(1)';
     });
     
-    // Tambahkan touch events untuk iPad
-    saiiBtn.addEventListener('touchstart', () => {
-      saiiBtn.style.transform = 'scale(0.98)';
+    // Touch events untuk iPad
+    launchBtn.addEventListener('touchstart', () => {
+      launchBtn.style.transform = 'scale(0.98)';
     });
-    saiiBtn.addEventListener('touchend', () => {
-      saiiBtn.style.transform = 'scale(1)';
+    launchBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      launchBtn.style.transform = 'scale(1)';
+      startSaii();
+    });
+    
+    launchBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       startSaii();
     });
   }
   
-  // Tambahkan click handler untuk launch button
-  const launchBtn = document.getElementById('launchBtn');
-  if (launchBtn) {
-    launchBtn.addEventListener('click', startSaii);
-    launchBtn.addEventListener('touchend', startSaii);
+  // Tambahan: Auto-launch jika ada parameter URL tertentu
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('auto') === 'true') {
+    // Auto start setelah delay kecil
+    setTimeout(startSaii, 500);
   }
 });
