@@ -96,16 +96,16 @@
         <!-- Saii Section -->
         <div class="saii-section">
           <div class="saii-card">
-            <button class="saii-btn" onclick="launchGame()">
+            <button class="saii-btn" onclick="startSaii()">
               <div class="btn-content">
-                <span class="btn-text">Launch Free Fire</span>
+                <span class="btn-text">Saii</span>
                 <div class="btn-arrow">
-                  <i class="fas fa-rocket"></i>
+                  <i class="fas fa-arrow-right"></i>
                 </div>
               </div>
               <div class="btn-pulse"></div>
             </button>
-            <p class="info-text">Activate features before launching!</p>
+            <p class="info-text">iOS style UI — press button to open Free Fire</p>
           </div>
         </div>
       </div>
@@ -229,14 +229,14 @@
               <div class="icon-ring"></div>
               <div class="icon-pulse"></div>
             </div>
-            <h2 class="process-title">Launching Free Fire</h2>
+            <h2 class="process-title">Saii Process</h2>
           </div>
           
           <!-- Terminal Output -->
           <div class="terminal-output">
             <div class="terminal-line" id="line1">
               <span class="prompt">$></span>
-              <span class="command">sudo ./launcher.sh --game freefire</span>
+              <span class="command">sudo ./saii.sh --target freefire</span>
             </div>
             
             <div class="terminal-line typing" id="line2">
@@ -359,11 +359,11 @@
           </div>
         </div>
         
-        <!-- Quick Launch Button -->
-        <div class="quick-launch">
-          <button class="launch-btn" onclick="launchGame()">
-            <i class="fas fa-rocket"></i>
-            LAUNCH FREE FIRE
+        <!-- Quick Apply Button -->
+        <div class="quick-apply">
+          <button class="apply-btn" onclick="applyFeatures()">
+            <i class="fas fa-check-circle"></i>
+            APPLY FEATURES
           </button>
         </div>
       </div>
