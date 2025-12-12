@@ -3,19 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#ff7a00">
-  
-  <!-- PWA Meta Tags -->
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon" href="/icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Saikuto">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="msapplication-TileColor" content="#ff7a00">
-  <meta name="msapplication-tap-highlight" content="no">
-  <meta name="application-name" content="Saikuto">
-  
+  <meta name="theme-color" content="#000000">
   <title>Saikuto</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -51,14 +39,14 @@
             </div>
             <div class="card-content">
               <h3>Settings</h3>
-              <p>Configure system parameters</p>
+              <p>Configure features</p>
             </div>
             <div class="card-arrow">
               <i class="fas fa-chevron-right"></i>
             </div>
           </div>
           
-          <div class="card" onclick="showNotification('Restart SpringBoard')">
+          <div class="card" onclick="showNotification('SpringBoard restarted successfully')">
             <div class="card-icon">
               <i class="fas fa-redo"></i>
             </div>
@@ -68,7 +56,7 @@
             </div>
           </div>
           
-          <div class="card" onclick="showNotification('Reboot UserSpace')">
+          <div class="card" onclick="showNotification('UserSpace rebooted successfully')">
             <div class="card-icon">
               <i class="fas fa-power-off"></i>
             </div>
@@ -97,14 +85,14 @@
           <div class="saii-card">
             <button class="saii-btn" onclick="startSaii()">
               <div class="btn-content">
-                <span class="btn-text">Saii</span>
+                <span class="btn-text">ACTIVATE FEATURES</span>
                 <div class="btn-arrow">
-                  <i class="fas fa-arrow-right"></i>
+                  <i class="fas fa-rocket"></i>
                 </div>
               </div>
               <div class="btn-pulse"></div>
             </button>
-            <p class="info-text">iOS style UI — press button to open Free Fire</p>
+            <p class="info-text">Toggle features in Settings • Press to activate selected features</p>
           </div>
         </div>
       </div>
@@ -122,10 +110,51 @@
       </div>
       
       <div class="settings-content">
+        <!-- FREE FIRE FEATURES (HANYA 2 FITUR) -->
+        <div class="section-card">
+          <h3 class="section-title">
+            <i class="fas fa-gamepad"></i>
+            FREE FIRE FEATURES
+          </h3>
+          
+          <!-- AIM ASSIST -->
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>🎯 Aim Assist</h4>
+              <p>Automatic aiming assistance</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="aim">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <!-- ANTI-BAN PROTECTION -->
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>🛡️ Anti-Ban Protection</h4>
+              <p>Prevent detection & bans</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="antiban">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <!-- Info Text -->
+          <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+            <p style="font-size: 12px; color: #8a8a8e; text-align: center;">
+              <i class="fas fa-info-circle" style="color: #ff7a00; margin-right: 5px;"></i>
+              Toggle ON the features you want, then press ACTIVATE
+            </p>
+          </div>
+        </div>
+        
+        <!-- EXPLOITS SETTINGS -->
         <div class="section-card">
           <h3 class="section-title">
             <i class="fas fa-code"></i>
-            EXPLOITS
+            SYSTEM EXPLOITS
           </h3>
           <div class="setting-item">
             <div class="setting-info">
@@ -137,13 +166,6 @@
               <span class="toggle-slider"></span>
             </label>
           </div>
-        </div>
-        
-        <div class="section-card">
-          <h3 class="section-title">
-            <i class="fas fa-unlock"></i>
-            JALBREAK SETTINGS
-          </h3>
           <div class="setting-item">
             <div class="setting-info">
               <h4>Tweak Injection</h4>
@@ -154,32 +176,13 @@
               <span class="toggle-slider"></span>
             </label>
           </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Verbose Logs</h4>
-              <p>Detailed system logs</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="logs">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Allow JIT in Apps</h4>
-              <p>Enable JIT compilation</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="jit">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
         </div>
         
+        <!-- DISPLAY SETTINGS -->
         <div class="section-card">
           <h3 class="section-title">
             <i class="fas fa-palette"></i>
-            DISPLAY
+            DISPLAY SETTINGS
           </h3>
           <div class="setting-item">
             <div class="setting-info">
@@ -187,9 +190,9 @@
               <p>Interface appearance</p>
             </div>
             <select class="theme-select">
-              <option>Dark</option>
-              <option>Light</option>
-              <option>Auto</option>
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+              <option value="auto">Auto</option>
             </select>
           </div>
         </div>
@@ -208,12 +211,12 @@
         <div class="saii-header">
           <div class="saii-logo">
             <div class="logo-icon">
-              <i class="fas fa-bolt"></i>
+              <i class="fas fa-rocket"></i>
             </div>
             <div class="logo-text">
               <h1 class="saii-title">SaiKuto</h1>
-              <p class="saii-subtitle">OS 15.0-18.5</p>
-              <p class="saii-author">by Kutoo</p>
+              <p class="saii-subtitle">FEATURE ACTIVATOR</p>
+              <p class="saii-author">Launching with selected features</p>
             </div>
           </div>
         </div>
@@ -223,19 +226,19 @@
           <div class="process-header">
             <div class="animated-icon">
               <div class="icon-core">
-                <i class="fas fa-terminal"></i>
+                <i class="fas fa-bolt"></i>
               </div>
               <div class="icon-ring"></div>
               <div class="icon-pulse"></div>
             </div>
-            <h2 class="process-title">Saii Process</h2>
+            <h2 class="process-title">Activating Features</h2>
           </div>
           
           <!-- Terminal Output -->
           <div class="terminal-output">
             <div class="terminal-line" id="line1">
               <span class="prompt">$></span>
-              <span class="command">sudo ./saii.sh --target freefire</span>
+              <span class="command">sudo ./saikuto.sh --launch</span>
             </div>
             
             <div class="terminal-line typing" id="line2">
@@ -262,7 +265,7 @@
           <!-- Progress Bar -->
           <div class="terminal-progress">
             <div class="progress-label">
-              <span>Initializing...</span>
+              <span>Processing...</span>
               <span class="progress-percent">0%</span>
             </div>
             <div class="progress-container">
@@ -298,22 +301,22 @@
         
         <div class="info-card">
           <h4><i class="fas fa-mobile-alt"></i> iOS Support</h4>
-          <p>15.0 - 18.5</p>
+          <p>15.0 - 18.5 (iPhone & iPad)</p>
         </div>
         
         <div class="info-card">
-          <h4><i class="fas fa-gamepad"></i> Free Fire Integration</h4>
-          <p>Direct game launch system</p>
+          <h4><i class="fas fa-crosshairs"></i> Available Features</h4>
+          <p>Aim Assist • Anti-Ban Protection</p>
         </div>
         
         <div class="info-card">
-          <h4><i class="fas fa-shield-alt"></i> Security Bypass</h4>
-          <p>Kernel-level access granted</p>
+          <h4><i class="fas fa-shield-alt"></i> Security</h4>
+          <p>Kernel Bypass • Tweak Injection</p>
         </div>
         
         <div class="disclaimer">
           <i class="fas fa-exclamation-triangle"></i>
-          <p>This tool is for educational purposes only. Use at your own risk.</p>
+          <p><strong>NOTE:</strong> Enable features in Settings before activation. Features only work when toggled ON.</p>
         </div>
       </div>
     </div>
@@ -325,17 +328,6 @@
       <i class="fas fa-info-circle"></i>
     </div>
     <span id="notificationText"></span>
-  </div>
-
-  <!-- Install App Prompt -->
-  <div id="installPrompt" class="notification" style="display: none;">
-    <div class="notification-icon">
-      <i class="fas fa-download"></i>
-    </div>
-    <span>Install Saikuto as App</span>
-    <button id="installBtn" style="margin-left: 10px; background: #ff7a00; border: none; color: white; padding: 5px 10px; border-radius: 8px; cursor: pointer;">
-      Install
-    </button>
   </div>
 
   <script src="script.js"></script>
