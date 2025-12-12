@@ -1,11 +1,10 @@
-const CACHE_NAME = 'saikuto-v1';
+const CACHE_NAME = 'saikuto-v2';
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/script.js',
-  '/manifest.json',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+  '/manifest.json'
 ];
 
 // Install Service Worker
@@ -19,31 +18,23 @@ self.addEventListener('install', event => {
   );
 });
 
-// Fetch Strategy (Cache First, Network Fallback)
+// Fetch Strategy
 self.addEventListener('fetch', event => {
-  // Skip non-GET requests
   if (event.request.method !== 'GET') return;
-  
-  // Skip chrome-extension requests
-  if (event.request.url.startsWith('chrome-extension://')) return;
   
   event.respondWith(
     caches.match(event.request)
       .then(cachedResponse => {
-        // Return cached if exists
         if (cachedResponse) {
           return cachedResponse;
         }
         
-        // Otherwise fetch from network
         return fetch(event.request)
           .then(response => {
-            // Don't cache if not a valid response
             if (!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
             
-            // Clone the response
             const responseToCache = response.clone();
             
             caches.open(CACHE_NAME)
@@ -54,7 +45,6 @@ self.addEventListener('fetch', event => {
             return response;
           })
           .catch(() => {
-            // If offline and no cache, you could return a fallback page
             if (event.request.headers.get('accept').includes('text/html')) {
               return caches.match('/index.html');
             }
@@ -70,19 +60,10 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     })
   );
-  return self.clients.claim();
-});
-
-// Background Sync (optional for better PWA experience)
-self.addEventListener('sync', event => {
-  if (event.tag === 'sync-data') {
-    console.log('Background sync triggered');
-  }
 });
