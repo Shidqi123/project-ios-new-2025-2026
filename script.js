@@ -115,7 +115,7 @@ function startSaii() {
         // Jika ini step terakhir, buka Free Fire
         if (seq.progress === 100) {
           setTimeout(() => {
-            silentLaunchFreeFire();
+            openFreeFireIOS();
           }, 1000);
         }
       });
@@ -123,144 +123,108 @@ function startSaii() {
   });
 }
 
-// Deteksi iOS
+// Deteksi iOS yang lebih akurat (termasuk iPad)
 function isIOSDevice() {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  return /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+  
+  // Deteksi iOS (termasuk iPad)
+  const iosRegex = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+  
+  // Deteksi Safari di iOS
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  
+  // Deteksi iOS version
+  const isIOS = iosRegex || 
+                (/Mac/.test(navigator.userAgent) && 'ontouchend' in document) || // iPad dengan macOS mode
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPad Pro
+  
+  return isIOS;
 }
 
-// Teknik khusus untuk menghindari prompt iOS
-function silentLaunchFreeFire() {
+// Fungsi untuk buka Free Fire di iOS
+function openFreeFireIOS() {
+  console.log('User Agent:', navigator.userAgent);
+  console.log('Platform:', navigator.platform);
+  
+  // Cek apakah ini iOS dengan deteksi yang lebih baik
   if (!isIOSDevice()) {
-    showNotification('iOS device required');
+    showNotification('iOS/iPad device required');
+    console.log('Not an iOS device');
     return;
   }
   
-  console.log('Starting silent launch...');
+  console.log('iOS/iPad detected, proceeding...');
   
-  // Buat tombol hidden untuk trigger user interaction
-  const hiddenButton = document.createElement('button');
-  hiddenButton.style.position = 'absolute';
-  hiddenButton.style.width = '1px';
-  hiddenButton.style.height = '1px';
-  hiddenButton.style.opacity = '0';
-  hiddenButton.style.pointerEvents = 'none';
-  document.body.appendChild(hiddenButton);
+  // URL untuk Free Fire iOS (skema yang benar)
+  const freefireSchemes = [
+    'freefire://',                    // Skema standar Free Fire
+    'freefiremax://',                 // Skema Free Fire MAX
+    'com.dts.freefireth://',          // Bundle ID Free Fire
+    'com.garena.games.ffios://',      // Bundle ID alternatif
+    'itms-apps://itunes.apple.com/app/id1300096749?action=write-review', // Deep link App Store
+    'https://apps.apple.com/app/id1300096749' // Web App Store
+  ];
   
-  // Simpan timestamp
+  // Flag untuk tracking
+  let appOpened = false;
   const startTime = Date.now();
-  let appLaunched = false;
   
   // Event listener untuk detect app terbuka
-  const handleVisibilityChange = () => {
+  const visibilityHandler = () => {
     if (document.hidden || document.visibilityState === 'hidden') {
-      appLaunched = true;
-      console.log('App launched successfully!');
+      appOpened = true;
+      console.log('App successfully launched!');
     }
   };
   
-  document.addEventListener('visibilitychange', handleVisibilityChange);
+  document.addEventListener('visibilitychange', visibilityHandler);
   
-  // Fungsi untuk coba buka dengan teknik iframe khusus
-  function tryStealthOpen() {
-    try {
-      // Teknik 1: Hidden iframe dengan user interaction
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.style.visibility = 'hidden';
-      iframe.style.width = '0';
-      iframe.style.height = '0';
-      iframe.style.border = '0';
-      
-      // Simulasikan user click pada hidden button dulu
-      hiddenButton.click();
-      
-      // Tunggu sedikit untuk event propagation
-      setTimeout(() => {
-        // Coba Free Fire biasa
-        iframe.src = 'freefire://';
-        document.body.appendChild(iframe);
-        console.log('Trying freefire://');
-        
-        // Tunggu dan coba Free Fire MAX
-        setTimeout(() => {
-          if (!appLaunched && (Date.now() - startTime) < 2000) {
-            iframe.src = 'freefiremax://';
-            console.log('Trying freefiremax://');
-          }
-        }, 400);
-        
-        // Cleanup
-        setTimeout(() => {
-          if (iframe.parentNode) {
-            document.body.removeChild(iframe);
-          }
-        }, 3000);
-      }, 50);
-      
-      return true;
-    } catch (e) {
-      console.log('Stealth open failed:', e);
-      return false;
-    }
+  // Fungsi untuk cek timeout
+  function isTimeout() {
+    return (Date.now() - startTime) > 2500; // 2.5 detik
   }
   
-  // Fungsi untuk direct open (fallback)
-  function tryDirectOpen() {
-    try {
-      // Trigger click pada hidden button untuk user interaction context
-      hiddenButton.click();
-      
-      // Tunggu microtask
-      setTimeout(() => {
-        window.location.href = 'freefire://';
-      }, 10);
-      
-      return true;
-    } catch (e) {
-      console.log('Direct open failed:', e);
-      return false;
+  // Fungsi utama untuk coba buka app
+  function tryOpenApp(schemeIndex = 0) {
+    if (schemeIndex >= freefireSchemes.length || appOpened || isTimeout()) {
+      // Jika semua skema dicoba atau timeout, buka App Store
+      if (!appOpened) {
+        console.log('Opening App Store...');
+        document.removeEventListener('visibilitychange', visibilityHandler);
+        window.location.href = freefireSchemes[freefireSchemes.length - 1]; // Web App Store
+      }
+      return;
     }
-  }
-  
-  // Fungsi untuk buka App Store
-  function openAppStore() {
-    // Deep link ke App Store (lebih smooth)
-    window.location.href = 'itms-apps://itunes.apple.com/app/id1300096749';
     
-    // Fallback ke web setelah delay
+    const scheme = freefireSchemes[schemeIndex];
+    console.log(`Trying scheme ${schemeIndex + 1}: ${scheme}`);
+    
+    // Teknik: Gunakan window.location langsung
+    try {
+      window.location.href = scheme;
+    } catch (e) {
+      console.log(`Error with scheme ${scheme}:`, e);
+    }
+    
+    // Tunggu 500ms, lalu coba skema berikutnya jika belum terbuka
     setTimeout(() => {
-      if (!document.hidden) {
-        window.location.href = 'https://apps.apple.com/app/id1300096749';
+      if (!appOpened && !isTimeout()) {
+        tryOpenApp(schemeIndex + 1);
       }
-    }, 1000);
+    }, 500);
   }
   
-  // Strategy 1: Coba teknik stealth pertama
-  tryStealthOpen();
+  // Mulai proses
+  tryOpenApp(0);
   
-  // Strategy 2: Jika setelah 800ms belum terbuka, coba direct
+  // Fallback timeout (3 detik)
   setTimeout(() => {
-    if (!appLaunched && (Date.now() - startTime) < 2500) {
-      console.log('Trying direct open...');
-      tryDirectOpen();
+    if (!appOpened) {
+      console.log('Timeout, opening App Store...');
+      document.removeEventListener('visibilitychange', visibilityHandler);
+      window.location.href = 'https://apps.apple.com/app/id1300096749';
     }
-  }, 800);
-  
-  // Strategy 3: Jika setelah 2.5 detik belum terbuka, ke App Store
-  setTimeout(() => {
-    if (!appLaunched) {
-      console.log('Fallback to App Store...');
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      
-      // Cleanup hidden button
-      if (hiddenButton.parentNode) {
-        document.body.removeChild(hiddenButton);
-      }
-      
-      openAppStore();
-    }
-  }, 2500);
+  }, 3000);
 }
 
 // Inisialisasi
@@ -290,4 +254,10 @@ document.addEventListener('DOMContentLoaded', () => {
       saiiBtn.style.transform = 'scale(1)';
     });
   }
+  
+  // Log device info
+  console.log('Device Info:');
+  console.log('- User Agent:', navigator.userAgent);
+  console.log('- Platform:', navigator.platform);
+  console.log('- iOS Device?', isIOSDevice());
 });
