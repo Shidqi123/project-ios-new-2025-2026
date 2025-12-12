@@ -3,7 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#ff7a00">
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Saikuto">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="msapplication-TileColor" content="#ff7a00">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="application-name" content="Saikuto">
+  
   <title>Saikuto</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -40,19 +52,6 @@
             <div class="card-content">
               <h3>Settings</h3>
               <p>Configure system parameters</p>
-            </div>
-            <div class="card-arrow">
-              <i class="fas fa-chevron-right"></i>
-            </div>
-          </div>
-          
-          <div class="card" onclick="showScreen('freefireScreen')">
-            <div class="card-icon">
-              <i class="fas fa-gamepad"></i>
-            </div>
-            <div class="card-content">
-              <h3>Free Fire Features</h3>
-              <p>Aimbot & Headshot</p>
             </div>
             <div class="card-arrow">
               <i class="fas fa-chevron-right"></i>
@@ -271,106 +270,12 @@
               <div class="progress-glow"></div>
             </div>
           </div>
-          
-          <!-- Back Button -->
-          <button class="back-to-menu" onclick="backToMenu()">
-            <i class="fas fa-arrow-left"></i>
-            Back to Menu
-          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Screen 4: Free Fire Features -->
-  <div id="freefireScreen" class="screen">
-    <div class="container">
-      <div class="header-nav">
-        <button class="back-btn" onclick="showScreen('mainScreen')">
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        <h2 class="page-title">Free Fire Features</h2>
-      </div>
-      
-      <div class="ff-features-content">
-        <!-- AIM Features -->
-        <div class="section-card">
-          <h3 class="section-title">
-            <i class="fas fa-crosshairs"></i>
-            AIM ASSIST
-          </h3>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Aim Assist</h4>
-              <p>Auto target enemy</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="aimAssist" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Headshot Rate</h4>
-              <p>Headshot probability</p>
-            </div>
-            <div class="slider-container">
-              <input type="range" min="0" max="100" value="90" class="feature-slider" id="headshotRate">
-              <span class="slider-value" id="headshotValue">90%</span>
-            </div>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Lock Target Speed</h4>
-              <p>Auto lock target speed</p>
-            </div>
-            <div class="slider-container">
-              <input type="range" min="1" max="10" value="7" class="feature-slider" id="lockSpeed">
-              <span class="slider-value" id="lockSpeedValue">7</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- SAFETY Features -->
-        <div class="section-card">
-          <h3 class="section-title">
-            <i class="fas fa-shield-alt"></i>
-            SAFETY
-          </h3>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Anti-Ban</h4>
-              <p>Bypass detection system</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="antiBan" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Auto Update</h4>
-              <p>Update features automatically</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="autoUpdate" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-        
-        <!-- Quick Apply Button -->
-        <div class="quick-apply">
-          <button class="apply-btn" onclick="applyFeatures()">
-            <i class="fas fa-check-circle"></i>
-            APPLY FEATURES
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen 5: Credits -->
+  <!-- Screen 4: Credits -->
   <div id="creditsScreen" class="screen">
     <div class="container">
       <div class="header-nav">
@@ -397,8 +302,8 @@
         </div>
         
         <div class="info-card">
-          <h4><i class="fas fa-gamepad"></i> Free Fire Features</h4>
-          <p>Aimbot • Headshot Rate • Anti-Ban</p>
+          <h4><i class="fas fa-gamepad"></i> Free Fire Integration</h4>
+          <p>Direct game launch system</p>
         </div>
         
         <div class="info-card">
@@ -408,7 +313,7 @@
         
         <div class="disclaimer">
           <i class="fas fa-exclamation-triangle"></i>
-          <p>For educational purposes only. Use at your own risk.</p>
+          <p>This tool is for educational purposes only. Use at your own risk.</p>
         </div>
       </div>
     </div>
@@ -420,6 +325,17 @@
       <i class="fas fa-info-circle"></i>
     </div>
     <span id="notificationText"></span>
+  </div>
+
+  <!-- Install App Prompt -->
+  <div id="installPrompt" class="notification" style="display: none;">
+    <div class="notification-icon">
+      <i class="fas fa-download"></i>
+    </div>
+    <span>Install Saikuto as App</span>
+    <button id="installBtn" style="margin-left: 10px; background: #ff7a00; border: none; color: white; padding: 5px 10px; border-radius: 8px; cursor: pointer;">
+      Install
+    </button>
   </div>
 
   <script src="script.js"></script>
