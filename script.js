@@ -106,156 +106,115 @@ function isIOSDevice() {
   return isIOS || isIPad;
 }
 
-// Silent Launch yang otomatis coba kedua versi
+// Fungsi untuk membuka aplikasi dengan scheme URL
+function openAppWithScheme(scheme, fallback) {
+  return new Promise((resolve) => {
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'display:none;border:0;width:0;height:0;';
+    iframe.src = scheme;
+    
+    document.body.appendChild(iframe);
+    
+    // Cek apakah aplikasi terbuka
+    setTimeout(() => {
+      const appOpened = !document.hasFocus();
+      
+      // Hapus iframe
+      setTimeout(() => {
+        if (iframe.parentNode) {
+          document.body.removeChild(iframe);
+        }
+      }, 100);
+      
+      // Jika aplikasi tidak terbuka dan ada fallback, coba fallback
+      if (!appOpened && fallback) {
+        setTimeout(() => {
+          window.location.href = fallback;
+        }, 300);
+      }
+      
+      resolve(appOpened);
+    }, 500);
+  });
+}
+
+// Silent Launch langsung ke aplikasi Free Fire
 function silentLaunchFreeFire() {
   if (!isIOSDevice()) {
     showNotification('iOS device (iPhone/iPad) required');
     return;
   }
 
-  console.log('Launching Free Fire (trying both versions)...');
+  console.log('Attempting to launch Free Fire...');
   
-  // Semua scheme URLs untuk Free Fire biasa dan MAX
-  const launchMethods = [
-    // 1. Coba Free Fire MAX dulu (prioritas tinggi)
-    () => {
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'freefiremax://';
-      document.body.appendChild(iframe);
-      setTimeout(() => document.body.removeChild(iframe), 100);
-    },
+  // Daftar scheme URLs untuk Free Fire (tanpa App Store)
+  const freeFireSchemes = [
+    // Free Fire MAX
+    'freefiremax://',
+    'com.dts.freefiremax://',
+    'com.garena.game.freefiremax://',
     
-    // 2. Coba Free Fire MAX alternate scheme
-    () => {
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'com.dts.freefiremax://';
-      document.body.appendChild(iframe);
-      setTimeout(() => document.body.removeChild(iframe), 100);
-    },
+    // Free Fire Original
+    'freefiremobile://',
+    'com.dts.freefireth://',
+    'com.garena.game.freefire://',
+    'freefire://',
     
-    // 3. Coba Free Fire biasa
-    () => {
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'freefiremobile://';
-      document.body.appendChild(iframe);
-      setTimeout(() => document.body.removeChild(iframe), 100);
-    },
-    
-    // 4. Coba Free Fire biasa alternate scheme
-    () => {
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'com.dts.freefireth://';
-      document.body.appendChild(iframe);
-      setTimeout(() => document.body.removeChild(iframe), 100);
-    },
-    
-    // 5. Universal Link App Store Free Fire MAX
-    () => {
-      window.location.href = 'https://apps.apple.com/app/id1583327865';
-    },
-    
-    // 6. Universal Link App Store Free Fire biasa
-    () => {
-      window.location.href = 'https://apps.apple.com/app/id1300096749';
-    }
+    // Scheme alternatif
+    'garena-freefire://',
+    'ff-game://',
+    'fflaunch://'
   ];
   
-  // Coba semua methods secara berurutan
-  let currentMethod = 0;
-  let launched = false;
+  // URL fallback khusus untuk Indonesia (tanpa region lock)
+  const indonesiaFallback = 'https://apps.apple.com/id/app/free-fire/id1300096749';
+  const indonesiaFallbackMax = 'https://apps.apple.com/id/app/free-fire-max/id1583327865';
   
-  function tryNextMethod() {
-    if (currentMethod < launchMethods.length && !launched) {
-      try {
-        launchMethods[currentMethod]();
-        
-        // Cek apakah launch berhasil (aplikasi terbuka)
-        setTimeout(() => {
-          if (!document.hasFocus() && !launched) {
-            // Aplikasi berhasil terbuka
-            launched = true;
-            console.log('Launch successful with method', currentMethod + 1);
-          }
-        }, 100);
-        
-      } catch (e) {
-        console.log(`Method ${currentMethod + 1} failed, trying next...`);
-      }
-      currentMethod++;
+  let currentIndex = 0;
+  
+  function tryNextScheme() {
+    if (currentIndex < freeFireSchemes.length) {
+      const scheme = freeFireSchemes[currentIndex];
+      const fallback = scheme.includes('max') ? indonesiaFallbackMax : indonesiaFallback;
       
-      // Delay antar method
-      if (currentMethod < launchMethods.length && !launched) {
-        setTimeout(tryNextMethod, 200);
-      }
+      console.log(`Trying scheme: ${scheme}`);
+      
+      openAppWithScheme(scheme, fallback).then((appOpened) => {
+        if (!appOpened) {
+          currentIndex++;
+          
+          if (currentIndex < freeFireSchemes.length) {
+            // Coba scheme berikutnya dengan delay
+            setTimeout(tryNextScheme, 300);
+          } else {
+            // Semua scheme gagal, tampilkan pilihan
+            showNotification('Free Fire not installed');
+            setTimeout(() => {
+              // Tampilkan pilihan install
+              if (confirm('Free Fire is not installed. Would you like to install Free Fire MAX (recommended) or Free Fire Original?')) {
+                const installMax = confirm('Install Free Fire MAX with better graphics?\nOK for MAX, Cancel for Original');
+                if (installMax) {
+                  window.location.href = indonesiaFallbackMax;
+                } else {
+                  window.location.href = indonesiaFallback;
+                }
+              }
+            }, 1000);
+          }
+        } else {
+          console.log('Successfully opened with scheme:', scheme);
+        }
+      });
     }
   }
   
-  // Mulai dengan method pertama
-  tryNextMethod();
-  
-  // Fallback ke App Store jika semua gagal
-  setTimeout(() => {
-    if (document.hasFocus() && !launched) {
-      // Masih di web, coba App Store secara random
-      const randomStore = Math.random() > 0.5 ? 
-        'https://apps.apple.com/app/id1583327865' : // Free Fire MAX
-        'https://apps.apple.com/app/id1300096749';  // Free Fire biasa
-      window.location.href = randomStore;
-    }
-  }, 2500);
+  // Mulai mencoba scheme pertama
+  tryNextScheme();
 }
 
-// Smart detection untuk cek versi mana yang terinstall
-function detectInstalledVersion() {
-  return new Promise((resolve) => {
-    const versions = [
-      { name: 'max', scheme: 'freefiremax://' },
-      { name: 'regular', scheme: 'freefiremobile://' }
-    ];
-    
-    let detected = 'regular'; // default
-    
-    versions.forEach(version => {
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = version.scheme;
-      
-      iframe.onload = function() {
-        setTimeout(() => {
-          if (!document.hasFocus()) {
-            detected = version.name;
-          }
-        }, 100);
-      };
-      
-      document.body.appendChild(iframe);
-      setTimeout(() => document.body.removeChild(iframe), 50);
-    });
-    
-    setTimeout(() => resolve(detected), 300);
-  });
-}
-
-// Inisialisasi dengan smart detection
+// Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('mainScreen');
-  
-  // Preload resources
-  const preloadLinks = [
-    'https://apps.apple.com',
-    'https://itunes.apple.com'
-  ];
-  
-  preloadLinks.forEach(url => {
-    const preloadLink = document.createElement('link');
-    preloadLink.rel = 'preconnect';
-    preloadLink.href = url;
-    document.head.appendChild(preloadLink);
-  });
   
   // Setup untuk tombol launch
   const launchBtn = document.querySelector('.launch-btn, .saii-btn');
@@ -308,10 +267,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-  
-  // Auto-start jika ada parameter
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('launch') === 'true') {
-    setTimeout(startSaii, 1000);
-  }
 });
