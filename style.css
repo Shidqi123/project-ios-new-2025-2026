@@ -218,13 +218,13 @@ body {
   font-size: 14px;
 }
 
-/* Hijack Button */
-.hijack-section {
+/* Saii Button */
+.saii-section {
   margin-top: auto;
   padding-bottom: 20px;
 }
 
-.hijack-card {
+.saii-card {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px);
   border-radius: 20px;
@@ -232,7 +232,7 @@ body {
   border: 1px solid rgba(255, 122, 0, 0.2);
 }
 
-.hijack-btn {
+.saii-btn {
   position: relative;
   background: linear-gradient(135deg, #ff7a00, #ff0058);
   border: none;
@@ -248,12 +248,12 @@ body {
   transition: all 0.3s ease;
 }
 
-.hijack-btn:hover {
+.saii-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(255, 122, 0, 0.4);
 }
 
-.hijack-btn:active {
+.saii-btn:active {
   transform: translateY(0);
 }
 
@@ -292,7 +292,7 @@ body {
   opacity: 0.9;
 }
 
-/* Hijack Process Screen */
+/* Saii Process Screen */
 .terminal-bg {
   position: absolute;
   top: 0;
@@ -304,15 +304,15 @@ body {
   z-index: -1;
 }
 
-.hijack-content {
+.saii-content {
   padding-top: 40px;
 }
 
-.hijack-header {
+.saii-header {
   margin-bottom: 30px;
 }
 
-.hijack-logo {
+.saii-logo {
   display: flex;
   align-items: center;
   gap: 15px;
@@ -330,7 +330,7 @@ body {
   font-size: 28px;
 }
 
-.hijack-title {
+.saii-title {
   font-size: 36px;
   font-weight: 900;
   margin-bottom: 5px;
@@ -339,13 +339,13 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-.hijack-subtitle {
+.saii-subtitle {
   font-size: 16px;
   color: #8a8a8e;
   margin-bottom: 5px;
 }
 
-.hijack-author {
+.saii-author {
   font-size: 14px;
   color: #5a5a5e;
 }
