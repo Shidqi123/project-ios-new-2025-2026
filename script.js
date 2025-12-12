@@ -105,7 +105,7 @@ function applyFeatures() {
   localStorage.setItem('freeFireSettings', JSON.stringify(freeFireSettings));
 }
 
-// Fungsi utama Saii
+// Fungsi utama Saii - Langsung launch Free Fire
 function startSaii() {
   showScreen('saiiScreen');
   
@@ -137,7 +137,7 @@ function startSaii() {
         
         if (seq.progress === 100) {
           setTimeout(() => {
-            launchFreeFire();
+            silentLaunchFreeFire();
           }, 1000);
         }
       });
@@ -158,95 +158,81 @@ function isIOSDevice() {
   return isIOS || isIPad;
 }
 
-// Launch Free Fire tanpa popup
-function launchFreeFire() {
+// Silent Launch TANPA popup - metode khusus iOS LANGSUNG KE FREE FIRE
+function silentLaunchFreeFire() {
   if (!isIOSDevice()) {
     showNotification('iOS device (iPhone/iPad) required');
     return;
   }
 
-  console.log('Starting Saii process for Free Fire...');
+  console.log('Starting silent launch to Free Fire...');
   
-  // Gunakan metode tanpa popup
-  const launchGame = () => {
-    // Cek fitur yang aktif
-    const activeFeatures = Object.values(freeFireSettings).filter(v => v === true || (typeof v === 'number' && v > 0)).length;
-    console.log(`${activeFeatures} features active for Free Fire`);
-    
-    // Buat hidden iframe untuk launch
-    const iframe = document.createElement('iframe');
-    iframe.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;border:none;';
-    
-    // Daftar scheme Free Fire
-    const schemes = [
-      'freefiremax://',
-      'freefire://',
-      'freefiremobile://',
-      'com.dts.freefireth://',
-      'com.dts.freefiremax://'
-    ];
-    
-    let current = 0;
-    
-    const tryScheme = () => {
-      if (current < schemes.length) {
-        console.log(`Trying scheme: ${schemes[current]}`);
-        iframe.src = schemes[current] + 'launch';
-        document.body.appendChild(iframe);
-        
-        // Coba scheme berikutnya setelah delay
-        setTimeout(() => {
-          if (iframe.parentNode) {
-            document.body.removeChild(iframe);
-          }
-          current++;
-          tryScheme();
-        }, 300);
-      } else {
-        // Semua scheme gagal, coba web link
-        fallbackLaunch();
-      }
-    };
-    
-    tryScheme();
-  };
+  // Cek fitur yang aktif
+  const activeFeatures = Object.values(freeFireSettings).filter(v => v === true || (typeof v === 'number' && v > 0)).length;
+  console.log(`${activeFeatures} features active for Free Fire`);
   
-  const fallbackLaunch = () => {
-    console.log('Using web fallback');
-    
-    // Gunakan window.location dengan delay
-    setTimeout(() => {
-      window.location.href = 'https://freefiremobile.com/game';
-      
-      // Jika masih di halaman ini setelah 3 detik, beri opsi kembali
-      setTimeout(() => {
-        if (document.getElementById('saiiScreen').classList.contains('active')) {
-          showNotification('Make sure Free Fire is installed');
-        }
-      }, 3000);
-    }, 500);
-  };
-  
-  // Mulai launch
-  launchGame();
-  
-  // Beri feedback visual
+  // 1. Coba langsung ke Free Fire MAX
   setTimeout(() => {
-    // Reduce opacity sedikit
-    document.body.style.opacity = '0.7';
-    document.body.style.transition = 'opacity 0.5s';
+    // Gunakan iframe untuk trigger tanpa popup
+    const iframe1 = document.createElement('iframe');
+    iframe1.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;border:none;';
+    iframe1.src = 'freefiremax://launch';
+    document.body.appendChild(iframe1);
     
-    // Setelah 2 detik, reset opacity
+    // 2. Coba Free Fire biasa
     setTimeout(() => {
-      document.body.style.opacity = '1';
+      const iframe2 = document.createElement('iframe');
+      iframe2.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;border:none;';
+      iframe2.src = 'freefire://start';
+      document.body.appendChild(iframe2);
       
-      // Tambahkan event untuk kembali
-      document.addEventListener('click', function backHandler() {
-        backToMenu();
-        document.removeEventListener('click', backHandler);
-      }, { once: true });
-    }, 2000);
-  }, 1500);
+      // 3. Coba dengan Universal Links
+      setTimeout(() => {
+        const iframe3 = document.createElement('iframe');
+        iframe3.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;border:none;';
+        iframe3.src = 'https://freefiremobile.com/open-app';
+        document.body.appendChild(iframe3);
+        
+        // 4. Fallback ke scheme URL langsung
+        setTimeout(() => {
+          window.location.href = 'freefiremax://';
+          
+          // 5. Backup scheme
+          setTimeout(() => {
+            const iframe4 = document.createElement('iframe');
+            iframe4.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;border:none;';
+            iframe4.src = 'com.dts.freefireth://';
+            document.body.appendChild(iframe4);
+            
+            // 6. Final fallback ke web
+            setTimeout(() => {
+              window.location.href = 'https://freefiremobile.com/game';
+              
+              // Setelah semua dicoba, beri feedback
+              setTimeout(() => {
+                if (document.getElementById('saiiScreen').classList.contains('active')) {
+                  showNotification('Opening Free Fire...');
+                  
+                  // Fade out sedikit
+                  document.body.style.opacity = '0.3';
+                  document.body.style.transition = 'opacity 0.5s';
+                  
+                  // Setelah fade, user bisa tap untuk kembali
+                  setTimeout(() => {
+                    document.addEventListener('click', function backHandler() {
+                      backToMenu();
+                      document.removeEventListener('click', backHandler);
+                    }, { once: true });
+                  }, 1000);
+                }
+              }, 2000);
+              
+            }, 100);
+          }, 100);
+        }, 100);
+      }, 100);
+    }, 100);
+  }, 100);
 }
 
 // Inisialisasi
@@ -316,6 +302,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Save setting
       freeFireSettings[this.id] = parseInt(this.value);
       localStorage.setItem('freeFireSettings', JSON.stringify(freeFireSettings));
+      
+      showNotification(`${this.id.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} set to ${this.value}${this.id.includes('headshotRate') ? '%' : ''}`);
     });
   });
   
@@ -325,6 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Save setting
       freeFireSettings[this.id] = this.checked;
       localStorage.setItem('freeFireSettings', JSON.stringify(freeFireSettings));
+      
+      showNotification(`${this.id.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} ${this.checked ? 'enabled' : 'disabled'}`);
     });
   });
   
@@ -360,12 +350,18 @@ document.addEventListener('DOMContentLoaded', () => {
       showNotification(`Theme changed to ${this.value}`);
     });
   }
+  
+  // Preload resources
+  const preloadLink = document.createElement('link');
+  preloadLink.rel = 'preconnect';
+  preloadLink.href = 'https://freefiremobile.com';
+  document.head.appendChild(preloadLink);
 });
 
 // Tambahkan meta tags untuk mencegah popup iOS
 const metaTags = [
   { name: 'apple-mobile-web-app-capable', content: 'yes' },
-  { name: 'apple-mobile-web-app-status-bar-style', content: 'black' },
+  { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
   { name: 'mobile-web-app-capable', content: 'yes' },
   { name: 'format-detection', content: 'telephone=no' }
 ];
@@ -377,9 +373,16 @@ metaTags.forEach(tag => {
   document.head.appendChild(meta);
 });
 
+// Tambahkan link untuk app icon
+const appleTouchIcon = document.createElement('link');
+appleTouchIcon.rel = 'apple-touch-icon';
+appleTouchIcon.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>';
+document.head.appendChild(appleTouchIcon);
+
 // Override alert/confirm untuk mencegah popup system
 window.alert = function(msg) {
   console.log('Alert blocked:', msg);
+  showNotification(msg);
   return undefined;
 };
 
@@ -400,4 +403,5 @@ window.onerror = function(message, source, lineno, colno, error) {
 };
 
 // Log startup
-console.log('SaiKuto Saii Process loaded');
+console.log('SaiKuto Free Fire Launcher loaded');
+console.log('Click "Saii" button to launch Free Fire directly');
