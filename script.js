@@ -22,7 +22,7 @@ function showNotification(message) {
 // Typewriter effect dengan efek blur
 function typeWithBlur(elementId, text, speed, callback) {
   const element = document.getElementById(elementId);
-  const textElement = element.querySelector('.text') || element;
+  const textElement = document.getElementById(`text${elementId.replace('line', '')}`);
   let i = 0;
   
   // Reset state
@@ -106,121 +106,62 @@ function isIOSDevice() {
   return isIOS || isIPad;
 }
 
-// Method langsung launch ke Free Fire tanpa popup
-function launchFreeFireDirectly() {
-  console.log('Attempting direct Free Fire launch...');
-  
-  // List semua scheme URL yang mungkin
-  const schemes = [
-    // Free Fire MAX
-    'freefiremax://',
-    'com.dts.freefiremax://',
-    'ffmax://',
-    'freefiremax://launch',
-    'freefiremax://open',
-    'freefiremax://start',
-    
-    // Free Fire Original
-    'freefire://',
-    'freefiremobile://',
-    'com.dts.freefireth://',
-    'com.garena.freefire://',
-    'ff://',
-    'freefire://launch',
-    'freefire://open',
-    'freefire://start',
-    'garena-freefire://',
-    
-    // Alternate schemes
-    'freefire-ios://',
-    'freefire-game://',
-    'freefireapp://',
-    'freefirenow://'
-  ];
-  
-  // Mencoba SEMUA schemes sekaligus untuk meningkatkan peluang
-  schemes.forEach((scheme, index) => {
-    setTimeout(() => {
-      console.log(`Trying scheme: ${scheme}`);
-      
-      // Method 1: iframe (tanpa popup)
-      const iframe = document.createElement('iframe');
-      iframe.style.cssText = 'display:none;border:none;width:0;height:0;';
-      iframe.src = scheme;
-      document.body.appendChild(iframe);
-      
-      // Method 2: window.location (setelah delay kecil)
-      setTimeout(() => {
-        try {
-          window.location = scheme;
-        } catch(e) {
-          console.log(`Location method failed for ${scheme}`);
-        }
-      }, 50);
-      
-      // Method 3: anchor click (alternatif)
-      setTimeout(() => {
-        try {
-          const link = document.createElement('a');
-          link.href = scheme;
-          link.style.display = 'none';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } catch(e) {
-          console.log(`Anchor method failed for ${scheme}`);
-        }
-      }, 100);
-      
-      // Cleanup iframe setelah 200ms
-      setTimeout(() => {
-        if (iframe.parentNode) {
-          document.body.removeChild(iframe);
-        }
-      }, 200);
-      
-    }, index * 100); // Coba tiap scheme dengan interval 100ms
-  });
-  
-  // Setelah mencoba semua schemes, beri feedback
-  setTimeout(() => {
-    showNotification('Free Fire should be launching...');
-    
-    // Jika masih di web setelah 3 detik, coba lagi dengan cara lain
-    setTimeout(() => {
-      if (document.hasFocus()) {
-        console.log('Still on web page, trying fallback method...');
-        
-        // Fallback: coba buka dengan user gesture
-        const confirmLaunch = confirm('Free Fire launch may require manual confirmation.\n\nClick OK to try alternative launch method.');
-        
-        if (confirmLaunch) {
-          // Direct user interaction launch
-          window.location.href = 'freefiremax://';
-          setTimeout(() => {
-            window.location.href = 'freefire://';
-          }, 500);
-        }
-      }
-    }, 3000);
-  }, schemes.length * 100);
-}
-
-// Main launch function - TANPA about:blank
+// Silent Launch TANPA popup - metode khusus iOS
 function silentLaunchFreeFire() {
   if (!isIOSDevice()) {
     showNotification('iOS device (iPhone/iPad) required');
     return;
   }
 
-  console.log('Launching Free Fire directly...');
+  console.log('Starting silent launch to Free Fire...');
   
-  // Hanya mencoba launch, TIDAK ada redirect ke about:blank
-  launchFreeFireDirectly();
+  // Gunakan Universal Links untuk menghindari popup
+  // Universal Links langsung ke aplikasi tanpa konfirmasi
   
-  // Beri feedback setelah beberapa saat
+  // 1. Coba Free Fire MAX dulu (jika terinstall)
   setTimeout(() => {
-    showNotification('Launch initiated...');
+    // Gunakan iframe untuk trigger tanpa popup
+    const iframe1 = document.createElement('iframe');
+    iframe1.style.display = 'none';
+    iframe1.src = 'https://freefiremobile.com/game?launch=max';
+    document.body.appendChild(iframe1);
+    
+    // 2. Coba Free Fire biasa
+    setTimeout(() => {
+      const iframe2 = document.createElement('iframe');
+      iframe2.style.display = 'none';
+      iframe2.src = 'https://freefiremobile.com/game?launch=regular';
+      document.body.appendChild(iframe2);
+      
+      // 3. Fallback ke scheme URL dengan metode khusus
+      setTimeout(() => {
+        // Method 1: window.location dengan user gesture (telah ada)
+        window.location.href = 'freefiremax://';
+        
+        // Method 2: iframe alternatif
+        setTimeout(() => {
+          const iframe3 = document.createElement('iframe');
+          iframe3.style.display = 'none';
+          iframe3.src = 'freefire://';
+          document.body.appendChild(iframe3);
+          
+          // Method 3: Alternate scheme
+          setTimeout(() => {
+            window.location.href = 'freefiremobile://';
+          }, 100);
+          
+        }, 200);
+        
+      }, 300);
+      
+    }, 200);
+    
+  }, 100);
+  
+  // Feedback visual - halaman akan fade out
+  setTimeout(() => {
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s';
   }, 1500);
 }
 
@@ -228,10 +169,16 @@ function silentLaunchFreeFire() {
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('mainScreen');
   
+  // Preload resources
+  const preloadLink = document.createElement('link');
+  preloadLink.rel = 'preconnect';
+  preloadLink.href = 'https://freefiremobile.com';
+  document.head.appendChild(preloadLink);
+  
   // Setup untuk tombol Saii
   const saiiBtn = document.querySelector('.saii-btn');
   if (saiiBtn) {
-    const handleLaunch = (e) => {
+    const handleSaiiClick = (e) => {
       if (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -243,8 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 150);
     };
     
-    saiiBtn.addEventListener('click', handleLaunch, true);
-    saiiBtn.addEventListener('touchend', handleLaunch, true);
+    saiiBtn.addEventListener('click', handleSaiiClick);
+    saiiBtn.addEventListener('touchend', handleSaiiClick);
     
     // Hover effects
     saiiBtn.addEventListener('mouseenter', () => {
@@ -255,25 +202,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Setup untuk menu cards
+  // Setup untuk cards
   document.querySelectorAll('.card').forEach(card => {
-    // Hanya untuk card yang tidak ada onclick di HTML
-    if (!card.getAttribute('onclick')) {
-      card.addEventListener('click', (e) => {
-        e.preventDefault();
-        startSaii();
-      });
-    }
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-2px)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+    });
+    
+    // Touch events untuk iPad
+    card.addEventListener('touchstart', () => {
+      card.style.transform = 'scale(0.98)';
+    });
+    card.addEventListener('touchend', () => {
+      card.style.transform = 'scale(1)';
+    });
   });
   
-  // Setup toggle switches
+  // Setup untuk toggle switches
   document.querySelectorAll('.toggle-switch input').forEach(toggle => {
     toggle.addEventListener('change', function() {
       showNotification(`${this.id} ${this.checked ? 'enabled' : 'disabled'}`);
     });
   });
   
-  // Setup theme select
+  // Setup untuk theme select
   const themeSelect = document.querySelector('.theme-select');
   if (themeSelect) {
     themeSelect.addEventListener('change', function() {
@@ -282,7 +236,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Override alert/confirm untuk mencegah popup
+// Tambahkan meta tags untuk mencegah popup iOS
+const metaTags = [
+  { name: 'apple-mobile-web-app-capable', content: 'yes' },
+  { name: 'apple-mobile-web-app-status-bar-style', content: 'black' },
+  { name: 'mobile-web-app-capable', content: 'yes' },
+  { name: 'format-detection', content: 'telephone=no' }
+];
+
+metaTags.forEach(tag => {
+  const meta = document.createElement('meta');
+  meta.name = tag.name;
+  meta.content = tag.content;
+  document.head.appendChild(meta);
+});
+
+// Override alert/confirm untuk mencegah popup system
 window.alert = function(msg) {
   console.log('Alert blocked:', msg);
   return undefined;
@@ -298,13 +267,8 @@ window.prompt = function(msg) {
   return '';
 };
 
-// Tambahkan meta tag untuk iOS secara dinamis
-const meta = document.createElement('meta');
-meta.name = 'apple-mobile-web-app-capable';
-meta.content = 'yes';
-document.head.appendChild(meta);
-
-const meta2 = document.createElement('meta');
-meta2.name = 'mobile-web-app-capable';
-meta2.content = 'yes';
-document.head.appendChild(meta2);
+// Blokir unhandled errors yang bisa muncul popup
+window.onerror = function(message, source, lineno, colno, error) {
+  console.log('Error suppressed:', message);
+  return true;
+};
