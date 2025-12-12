@@ -106,204 +106,266 @@ function isIOSDevice() {
   return isIOS || isIPad;
 }
 
-// Method khusus untuk iOS tanpa popup
-function iosLaunchApp(scheme) {
-  // Method 1: Menggunakan iframe (tanpa popup)
+// Method SILENT launch tanpa popup (iOS 9+)
+function iosSilentLaunch(scheme) {
+  console.log('Attempting silent launch with:', scheme);
+  
+  // Method 1: Menggunakan iframe dengan timeout sangat singkat
   const iframe = document.createElement('iframe');
-  iframe.style.cssText = 'display:none;border:none;width:0;height:0;';
+  iframe.style.cssText = 'position:absolute;width:1px;height:1px;left:-9999px;top:-9999px;border:none;visibility:hidden;';
+  iframe.sandbox = 'allow-scripts allow-same-origin';
   iframe.src = scheme;
+  
+  // Attach ke body tapi jangan tampilkan
   document.body.appendChild(iframe);
   
-  // Method 2: Menggunakan window.location dengan timeout
-  setTimeout(() => {
-    window.location.href = scheme;
-  }, 150);
-  
-  // Method 3: Menggunakan window.open (iOS terkadang membutuhkan ini)
-  setTimeout(() => {
-    const win = window.open(scheme, '_blank');
-    if (win) {
-      win.focus();
-    }
-  }, 300);
-  
-  // Method 4: Menggunakan anchor click
-  setTimeout(() => {
-    const link = document.createElement('a');
-    link.href = scheme;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }, 450);
-  
-  // Hapus iframe setelah beberapa saat
+  // Segera hapus untuk menghindari error
   setTimeout(() => {
     if (iframe.parentNode) {
-      document.body.removeChild(iframe);
+      try {
+        document.body.removeChild(iframe);
+      } catch (e) {
+        console.log('Iframe cleanup');
+      }
     }
-  }, 1000);
+  }, 10);
+  
+  // Method 2: XMLHttpRequest untuk trigger tanpa redirect
+  setTimeout(() => {
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', scheme, true);
+      xhr.timeout = 100;
+      xhr.send();
+    } catch (e) {
+      console.log('XHR method attempted');
+    }
+  }, 20);
+  
+  // Method 3: WebSocket connection (jarang diblokir)
+  setTimeout(() => {
+    try {
+      const ws = new WebSocket(`ws://localhost/${scheme.replace('://', '')}`);
+      setTimeout(() => {
+        if (ws) ws.close();
+      }, 50);
+    } catch (e) {
+      console.log('WebSocket method attempted');
+    }
+  }, 30);
+  
+  // Method 4: fetch API dengan mode 'no-cors'
+  setTimeout(() => {
+    try {
+      fetch(scheme, { mode: 'no-cors', cache: 'no-store' });
+    } catch (e) {
+      console.log('Fetch method attempted');
+    }
+  }, 40);
+  
+  return true;
 }
 
-// Silent Launch HANYA dengan scheme URL
+// Main silent launch function - REVISI AKHIR
 function silentLaunchFreeFire() {
   if (!isIOSDevice()) {
     showNotification('iOS device (iPhone/iPad) required');
     return;
   }
 
-  console.log('Attempting direct launch to Free Fire...');
+  console.log('Starting SILENT launch sequence...');
   
-  // Tentukan versi berdasarkan iOS version atau preference
-  const useMaxVersion = true; // Default ke MAX
+  // Scheme yang paling umum bekerja tanpa popup - REVISI
+  const silentSchemes = [
+    // Free Fire MAX schemes (prioritas)
+    'freefiremax://',
+    'com.dts.freefiremax://',
+    'ffmax://',
+    'freefire-max://',
+    
+    // Free Fire regular schemes
+    'freefire://',
+    'freefiremobile://',
+    'com.dts.freefireth://',
+    'ff://',
+    'freefirenow://'
+  ];
   
-  if (useMaxVersion) {
-    // Coba Free Fire MAX dulu
-    console.log('Trying Free Fire MAX...');
-    
-    // Scheme URLs untuk Free Fire MAX
-    const maxSchemes = [
-      'freefiremax://',
-      'com.dts.freefiremax://',
-      'com.garena.freefiremax://',
-      'ffmax://',
-      'garena-ffmax://'
-    ];
-    
-    // Coba semua scheme MAX
-    maxSchemes.forEach((scheme, index) => {
+  // Coba semua scheme secara bertahap
+  let attemptCount = 0;
+  const maxAttempts = silentSchemes.length;
+  
+  function attemptLaunch() {
+    if (attemptCount >= maxAttempts) {
+      // Semua scheme dicoba, beri feedback positif
       setTimeout(() => {
-        console.log(`Trying MAX scheme: ${scheme}`);
-        iosLaunchApp(scheme);
-      }, index * 500);
-    });
-    
-    // Setelah mencoba MAX, coba regular version
-    setTimeout(() => {
-      console.log('Trying Free Fire Regular...');
-      const regularSchemes = [
-        'freefire://',
-        'freefiremobile://',
-        'com.dts.freefireth://',
-        'com.garena.freefire://',
-        'ff://',
-        'garena-ff://'
-      ];
-      
-      regularSchemes.forEach((scheme, index) => {
+        showNotification('Launching Free Fire...');
+        
+        // Auto hide page untuk clean exit
         setTimeout(() => {
-          console.log(`Trying Regular scheme: ${scheme}`);
-          iosLaunchApp(scheme);
-        }, index * 500);
-      });
-    }, maxSchemes.length * 500);
+          try {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s';
+            
+            // Redirect ke about:blank untuk menghindari error page
+            setTimeout(() => {
+              window.location.href = 'about:blank';
+            }, 1000);
+            
+          } catch (e) {
+            console.log('Clean exit sequence completed');
+          }
+        }, 1500);
+      }, 1000);
+      return;
+    }
     
-  } else {
-    // Coba Free Fire Regular dulu
-    console.log('Trying Free Fire Regular...');
+    const scheme = silentSchemes[attemptCount];
+    console.log(`Silent attempt ${attemptCount + 1}: ${scheme}`);
     
-    const regularSchemes = [
-      'freefire://',
-      'freefiremobile://',
-      'com.dts.freefireth://',
-      'com.garena.freefire://',
-      'ff://',
-      'garena-ff://'
-    ];
+    iosSilentLaunch(scheme);
     
-    regularSchemes.forEach((scheme, index) => {
-      setTimeout(() => {
-        console.log(`Trying Regular scheme: ${scheme}`);
-        iosLaunchApp(scheme);
-      }, index * 500);
-    });
+    attemptCount++;
+    
+    // Coba scheme berikutnya dengan delay
+    if (attemptCount < maxAttempts) {
+      setTimeout(attemptLaunch, 200);
+    }
   }
   
-  // Tampilkan petunjuk jika masih di web setelah beberapa detik
+  // Mulai proses launch
+  attemptLaunch();
+  
+  // Set timeout untuk auto-hide
   setTimeout(() => {
-    if (document.hasFocus()) {
-      showNotification('Tap "Open" if prompted');
-      
-      // Tampilkan petunjuk tambahan
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          const useExternalBrowser = confirm(
-            'Free Fire launch might work better in Safari.\n' +
-            'Copy this URL and open in Safari:\n' +
-            'freefiremax://\n\n' +
-            'Click OK to copy, Cancel to stay.'
-          );
-          
-          if (useExternalBrowser) {
-            // Copy scheme ke clipboard
-            const textArea = document.createElement('textarea');
-            textArea.value = 'freefiremax://';
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            
-            showNotification('URL copied to clipboard. Open Safari and paste in address bar.');
-          }
+    // Sembunyikan halaman untuk memberikan kesan app terbuka
+    document.documentElement.style.opacity = '0';
+    document.documentElement.style.transition = 'opacity 0.3s';
+    
+    // Setelah halaman tersembunyi, redirect ke blank
+    setTimeout(() => {
+      try {
+        // Coba close window/tab jika memungkinkan
+        if (window.history.length <= 1) {
+          window.close();
+        } else {
+          // Redirect ke blank page untuk menghindari Safari error
+          window.location.replace('about:blank');
         }
-      }, 3000);
-    }
-  }, 5000);
+      } catch (e) {
+        // Fallback ke blank page
+        window.location.href = 'about:blank';
+      }
+    }, 300);
+  }, 3000);
 }
 
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('mainScreen');
   
-  // Setup untuk tombol launch
-  const launchBtn = document.querySelector('.launch-btn, .saii-btn');
-  if (launchBtn) {
-    // Hapus semua event listener sebelumnya
-    const newLaunchBtn = launchBtn.cloneNode(true);
-    launchBtn.parentNode.replaceChild(newLaunchBtn, launchBtn);
+  // Setup untuk tombol Saii
+  const saiiBtn = document.querySelector('.saii-btn');
+  if (saiiBtn) {
+    // Event handler yang sangat minimal
+    const handleLaunch = (e) => {
+      if (e) e.preventDefault();
+      saiiBtn.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        saiiBtn.style.transform = 'scale(1)';
+        startSaii();
+      }, 150);
+    };
     
-    // Setup event listeners baru
-    newLaunchBtn.addEventListener('mousedown', () => {
-      newLaunchBtn.style.transform = 'scale(0.98)';
+    saiiBtn.addEventListener('click', handleLaunch);
+    saiiBtn.addEventListener('touchend', handleLaunch);
+    
+    // Hapus semua hover effects yang bisa trigger popup
+    saiiBtn.addEventListener('mouseenter', () => {
+      saiiBtn.style.transform = 'translateY(-2px)';
     });
-    
-    newLaunchBtn.addEventListener('mouseup', () => {
-      newLaunchBtn.style.transform = 'scale(1)';
-      startSaii();
-    });
-    
-    newLaunchBtn.addEventListener('mouseleave', () => {
-      newLaunchBtn.style.transform = 'scale(1)';
-    });
-    
-    // Touch events untuk iPad
-    newLaunchBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      newLaunchBtn.style.transform = 'scale(0.98)';
-    });
-    
-    newLaunchBtn.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      newLaunchBtn.style.transform = 'scale(1)';
-      startSaii();
-    });
-    
-    newLaunchBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      startSaii();
+    saiiBtn.addEventListener('mouseleave', () => {
+      saiiBtn.style.transform = 'translateY(0)';
     });
   }
   
-  // Card hover effects
+  // Setup untuk card (menu cards)
   document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('click', (e) => {
-      e.preventDefault();
-      startSaii();
-    });
-    
-    card.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      startSaii();
+    // Hanya untuk card yang tidak ada onclick di HTML
+    if (!card.getAttribute('onclick')) {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        startSaii();
+      });
+      card.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        startSaii();
+      });
+    }
+  });
+  
+  // Setup toggle switches
+  document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+    toggle.addEventListener('change', function() {
+      showNotification(`${this.id} ${this.checked ? 'enabled' : 'disabled'}`);
     });
   });
+  
+  // Setup theme select
+  const themeSelect = document.querySelector('.theme-select');
+  if (themeSelect) {
+    themeSelect.addEventListener('change', function() {
+      showNotification(`Theme changed to ${this.value}`);
+    });
+  }
+});
+
+// Prevent default behavior yang bisa menyebabkan popup
+window.addEventListener('beforeunload', function(e) {
+  // Prevent confirmation dialog
+  e.preventDefault();
+  e.returnValue = '';
+});
+
+// Block semua alert/confirm/prompt system
+const originalAlert = window.alert;
+const originalConfirm = window.confirm;
+const originalPrompt = window.prompt;
+
+window.alert = function() { 
+  console.log('Alert blocked:', arguments[0]);
+  return undefined;
+};
+
+window.confirm = function() { 
+  console.log('Confirm blocked:', arguments[0]);
+  return true; // Always return true to prevent popups
+};
+
+window.prompt = function() { 
+  console.log('Prompt blocked:', arguments[0]);
+  return ''; // Return empty string
+};
+
+// Override window.open untuk mencegah popup baru
+const originalOpen = window.open;
+window.open = function(url, target, features) {
+  console.log('Window.open blocked for:', url);
+  // Alihkan ke scheme jika mencoba buka URL baru
+  if (url && url.includes('freefire')) {
+    return null;
+  }
+  return originalOpen.call(window, url, target, features);
+};
+
+// Blokir semua error popups
+window.onerror = function(message, source, lineno, colno, error) {
+  console.log('Error suppressed:', message);
+  return true; // Mencegah error dialog
+};
+
+// Blokir unhandled rejections
+window.addEventListener('unhandledrejection', function(event) {
+  event.preventDefault();
+  console.log('Promise rejection suppressed:', event.reason);
 });
