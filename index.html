@@ -52,7 +52,7 @@
             </div>
             <div class="card-content">
               <h3>Free Fire Features</h3>
-              <p>Aimbot, Wallhack & More</p>
+              <p>Aimbot & Headshot</p>
             </div>
             <div class="card-arrow">
               <i class="fas fa-chevron-right"></i>
@@ -96,7 +96,7 @@
         <!-- Saii Section -->
         <div class="saii-section">
           <div class="saii-card">
-            <button class="saii-btn" onclick="startSaii()">
+            <button class="saii-btn" onclick="launchGame()">
               <div class="btn-content">
                 <span class="btn-text">Launch Free Fire</span>
                 <div class="btn-arrow">
@@ -105,7 +105,7 @@
               </div>
               <div class="btn-pulse"></div>
             </button>
-            <p class="info-text">Activate all features before launching!</p>
+            <p class="info-text">Activate features before launching!</p>
           </div>
         </div>
       </div>
@@ -229,14 +229,14 @@
               <div class="icon-ring"></div>
               <div class="icon-pulse"></div>
             </div>
-            <h2 class="process-title">Injecting Features</h2>
+            <h2 class="process-title">Launching Free Fire</h2>
           </div>
           
           <!-- Terminal Output -->
           <div class="terminal-output">
             <div class="terminal-line" id="line1">
               <span class="prompt">$></span>
-              <span class="command">sudo ./inject.sh --game freefire</span>
+              <span class="command">sudo ./launcher.sh --game freefire</span>
             </div>
             
             <div class="terminal-line typing" id="line2">
@@ -263,7 +263,7 @@
           <!-- Progress Bar -->
           <div class="terminal-progress">
             <div class="progress-label">
-              <span>Injecting Features...</span>
+              <span>Initializing...</span>
               <span class="progress-percent">0%</span>
             </div>
             <div class="progress-container">
@@ -271,6 +271,12 @@
               <div class="progress-glow"></div>
             </div>
           </div>
+          
+          <!-- Back Button -->
+          <button class="back-to-menu" onclick="backToMenu()">
+            <i class="fas fa-arrow-left"></i>
+            Back to Menu
+          </button>
         </div>
       </div>
     </div>
@@ -315,166 +321,12 @@
           </div>
           <div class="setting-item">
             <div class="setting-info">
-              <h4>No Recoil</h4>
-              <p>Remove weapon recoil</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="noRecoil" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Aim Speed</h4>
-              <p>Lock target speed</p>
+              <h4>Lock Target Speed</h4>
+              <p>Auto lock target speed</p>
             </div>
             <div class="slider-container">
-              <input type="range" min="1" max="10" value="7" class="feature-slider" id="aimSpeed">
-              <span class="slider-value" id="aimSpeedValue">7</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- VISUAL Features -->
-        <div class="section-card">
-          <h3 class="section-title">
-            <i class="fas fa-eye"></i>
-            VISUAL
-          </h3>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Wallhack</h4>
-              <p>See through walls</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="wallhack" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Enemy ESP</h4>
-              <p>Show enemy info</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="enemyESP" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Item ESP</h4>
-              <p>Show all items</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="itemESP">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Night Vision</h4>
-              <p>Brighten dark areas</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="nightVision">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-        
-        <!-- PLAYER Features -->
-        <div class="section-card">
-          <h3 class="section-title">
-            <i class="fas fa-running"></i>
-            PLAYER
-          </h3>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Speed Hack</h4>
-              <p>Increase movement speed</p>
-            </div>
-            <div class="slider-container">
-              <input type="range" min="100" max="300" value="150" class="feature-slider" id="speedHack">
-              <span class="slider-value" id="speedValue">150%</span>
-            </div>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>High Jump</h4>
-              <p>Jump higher</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="highJump">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>No Fall Damage</h4>
-              <p>Remove fall damage</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="noFallDamage" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Auto Pickup</h4>
-              <p>Auto collect items</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="autoPickup" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-        
-        <!-- WEAPON Features -->
-        <div class="section-card">
-          <h3 class="section-title">
-            <i class="fas fa-gun"></i>
-            WEAPON
-          </h3>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Rapid Fire</h4>
-              <p>Increase fire rate</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="rapidFire" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>No Spread</h4>
-              <p>Perfect accuracy</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="noSpread">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Unlimited Ammo</h4>
-              <p>Infinite bullets</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="unlimitedAmmo">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Damage Multiplier</h4>
-              <p>Increase bullet damage</p>
-            </div>
-            <div class="slider-container">
-              <input type="range" min="100" max="500" value="200" class="feature-slider" id="damageMultiplier">
-              <span class="slider-value" id="damageValue">200%</span>
+              <input type="range" min="1" max="10" value="7" class="feature-slider" id="lockSpeed">
+              <span class="slider-value" id="lockSpeedValue">7</span>
             </div>
           </div>
         </div>
@@ -488,20 +340,10 @@
           <div class="setting-item">
             <div class="setting-info">
               <h4>Anti-Ban</h4>
-              <p>Bypass detection</p>
+              <p>Bypass detection system</p>
             </div>
             <label class="toggle-switch">
               <input type="checkbox" id="antiBan" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Stream Proof</h4>
-              <p>Hide features on stream</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="streamProof">
               <span class="toggle-slider"></span>
             </label>
           </div>
@@ -517,15 +359,11 @@
           </div>
         </div>
         
-        <!-- Quick Apply Button -->
-        <div class="quick-apply">
-          <button class="apply-btn" onclick="applyAllFeatures()">
-            <i class="fas fa-check-circle"></i>
-            APPLY ALL FEATURES
-          </button>
-          <button class="launch-btn" onclick="launchWithFeatures()">
+        <!-- Quick Launch Button -->
+        <div class="quick-launch">
+          <button class="launch-btn" onclick="launchGame()">
             <i class="fas fa-rocket"></i>
-            LAUNCH GAME NOW
+            LAUNCH FREE FIRE
           </button>
         </div>
       </div>
@@ -560,17 +398,17 @@
         
         <div class="info-card">
           <h4><i class="fas fa-gamepad"></i> Free Fire Features</h4>
-          <p>Aimbot • Wallhack • ESP • Speed Hack</p>
+          <p>Aimbot • Headshot Rate • Anti-Ban</p>
         </div>
         
         <div class="info-card">
           <h4><i class="fas fa-shield-alt"></i> Security Bypass</h4>
-          <p>Anti-ban protection included</p>
+          <p>Kernel-level access granted</p>
         </div>
         
         <div class="disclaimer">
           <i class="fas fa-exclamation-triangle"></i>
-          <p>For educational purposes only. Use at your own risk. May violate game TOS.</p>
+          <p>For educational purposes only. Use at your own risk.</p>
         </div>
       </div>
     </div>
