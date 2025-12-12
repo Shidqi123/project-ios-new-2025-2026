@@ -26,7 +26,7 @@ function typeWithBlur(elementId, text, speed, callback) {
   let i = 0;
   
   // Reset state
-  textElement.textContent = '';
+  if (textElement) textElement.textContent = '';
   element.classList.remove('active');
   element.style.filter = 'blur(5px)';
   element.style.opacity = '0.8';
@@ -41,7 +41,7 @@ function typeWithBlur(elementId, text, speed, callback) {
     
     function type() {
       if (i < text.length) {
-        textElement.textContent += text.charAt(i);
+        if (textElement) textElement.textContent += text.charAt(i);
         i++;
         setTimeout(type, speed);
       } else if (callback) {
@@ -70,9 +70,9 @@ function startSaii() {
   const progressPercent = document.querySelector('.progress-percent');
   const progressLabel = document.querySelector('.progress-label span');
   
-  progressBar.style.width = '0%';
-  progressPercent.textContent = '0%';
-  progressLabel.textContent = 'Initializing...';
+  if (progressBar) progressBar.style.width = '0%';
+  if (progressPercent) progressPercent.textContent = '0%';
+  if (progressLabel) progressLabel.textContent = 'Initializing...';
   
   // Tentukan teks berdasarkan fitur yang aktif
   let featureText = '';
@@ -94,13 +94,15 @@ function startSaii() {
   sequences.forEach((seq, index) => {
     setTimeout(() => {
       typeWithBlur(seq.lineId, seq.text, seq.typingSpeed, () => {
-        progressBar.style.width = seq.progress + '%';
-        progressPercent.textContent = seq.progress + '%';
+        if (progressBar) progressBar.style.width = seq.progress + '%';
+        if (progressPercent) progressPercent.textContent = seq.progress + '%';
         
-        if (seq.progress === 25) progressLabel.textContent = 'Verifying...';
-        if (seq.progress === 50) progressLabel.textContent = 'Securing...';
-        if (seq.progress === 75) progressLabel.textContent = 'Activating...';
-        if (seq.progress === 100) progressLabel.textContent = 'Launching...';
+        if (progressLabel) {
+          if (seq.progress === 25) progressLabel.textContent = 'Verifying...';
+          if (seq.progress === 50) progressLabel.textContent = 'Securing...';
+          if (seq.progress === 75) progressLabel.textContent = 'Activating...';
+          if (seq.progress === 100) progressLabel.textContent = 'Launching...';
+        }
         
         if (seq.progress === 100) {
           setTimeout(() => {
@@ -224,8 +226,11 @@ function launchFreeFireWithFeatures(sessionData) {
   
   // Kembali ke main screen
   setTimeout(() => {
-    document.getElementById('progressBar').style.width = '100%';
-    document.querySelector('.progress-percent').textContent = '100%';
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.querySelector('.progress-percent');
+    
+    if (progressBar) progressBar.style.width = '100%';
+    if (progressPercent) progressPercent.textContent = '100%';
     
     setTimeout(() => {
       showScreen('mainScreen');
@@ -251,12 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const settings = JSON.parse(savedSettings);
       // Set toggle sesuai saved settings
-      if (document.getElementById('aim')) {
-        document.getElementById('aim').checked = settings.aimAssist || false;
-      }
-      if (document.getElementById('antiban')) {
-        document.getElementById('antiban').checked = settings.antiBan || false;
-      }
+      const aimToggle = document.getElementById('aim');
+      const antiBanToggle = document.getElementById('antiban');
+      
+      if (aimToggle) aimToggle.checked = settings.aimAssist || false;
+      if (antiBanToggle) antiBanToggle.checked = settings.antiBan || false;
     } catch(e) {
       console.log('Failed to load saved settings:', e);
     }
