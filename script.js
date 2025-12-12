@@ -106,158 +106,122 @@ function isIOSDevice() {
   return isIOS || isIPad;
 }
 
-// Method SILENT launch tanpa popup (iOS 9+)
-function iosSilentLaunch(scheme) {
-  console.log('Attempting silent launch with:', scheme);
+// Method langsung launch ke Free Fire tanpa popup
+function launchFreeFireDirectly() {
+  console.log('Attempting direct Free Fire launch...');
   
-  // Method 1: Menggunakan iframe dengan timeout sangat singkat
-  const iframe = document.createElement('iframe');
-  iframe.style.cssText = 'position:absolute;width:1px;height:1px;left:-9999px;top:-9999px;border:none;visibility:hidden;';
-  iframe.sandbox = 'allow-scripts allow-same-origin';
-  iframe.src = scheme;
+  // List semua scheme URL yang mungkin
+  const schemes = [
+    // Free Fire MAX
+    'freefiremax://',
+    'com.dts.freefiremax://',
+    'ffmax://',
+    'freefiremax://launch',
+    'freefiremax://open',
+    'freefiremax://start',
+    
+    // Free Fire Original
+    'freefire://',
+    'freefiremobile://',
+    'com.dts.freefireth://',
+    'com.garena.freefire://',
+    'ff://',
+    'freefire://launch',
+    'freefire://open',
+    'freefire://start',
+    'garena-freefire://',
+    
+    // Alternate schemes
+    'freefire-ios://',
+    'freefire-game://',
+    'freefireapp://',
+    'freefirenow://'
+  ];
   
-  // Attach ke body tapi jangan tampilkan
-  document.body.appendChild(iframe);
-  
-  // Segera hapus untuk menghindari error
-  setTimeout(() => {
-    if (iframe.parentNode) {
-      try {
-        document.body.removeChild(iframe);
-      } catch (e) {
-        console.log('Iframe cleanup');
-      }
-    }
-  }, 10);
-  
-  // Method 2: XMLHttpRequest untuk trigger tanpa redirect
-  setTimeout(() => {
-    try {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', scheme, true);
-      xhr.timeout = 100;
-      xhr.send();
-    } catch (e) {
-      console.log('XHR method attempted');
-    }
-  }, 20);
-  
-  // Method 3: WebSocket connection (jarang diblokir)
-  setTimeout(() => {
-    try {
-      const ws = new WebSocket(`ws://localhost/${scheme.replace('://', '')}`);
+  // Mencoba SEMUA schemes sekaligus untuk meningkatkan peluang
+  schemes.forEach((scheme, index) => {
+    setTimeout(() => {
+      console.log(`Trying scheme: ${scheme}`);
+      
+      // Method 1: iframe (tanpa popup)
+      const iframe = document.createElement('iframe');
+      iframe.style.cssText = 'display:none;border:none;width:0;height:0;';
+      iframe.src = scheme;
+      document.body.appendChild(iframe);
+      
+      // Method 2: window.location (setelah delay kecil)
       setTimeout(() => {
-        if (ws) ws.close();
+        try {
+          window.location = scheme;
+        } catch(e) {
+          console.log(`Location method failed for ${scheme}`);
+        }
       }, 50);
-    } catch (e) {
-      console.log('WebSocket method attempted');
-    }
-  }, 30);
+      
+      // Method 3: anchor click (alternatif)
+      setTimeout(() => {
+        try {
+          const link = document.createElement('a');
+          link.href = scheme;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch(e) {
+          console.log(`Anchor method failed for ${scheme}`);
+        }
+      }, 100);
+      
+      // Cleanup iframe setelah 200ms
+      setTimeout(() => {
+        if (iframe.parentNode) {
+          document.body.removeChild(iframe);
+        }
+      }, 200);
+      
+    }, index * 100); // Coba tiap scheme dengan interval 100ms
+  });
   
-  // Method 4: fetch API dengan mode 'no-cors'
+  // Setelah mencoba semua schemes, beri feedback
   setTimeout(() => {
-    try {
-      fetch(scheme, { mode: 'no-cors', cache: 'no-store' });
-    } catch (e) {
-      console.log('Fetch method attempted');
-    }
-  }, 40);
-  
-  return true;
+    showNotification('Free Fire should be launching...');
+    
+    // Jika masih di web setelah 3 detik, coba lagi dengan cara lain
+    setTimeout(() => {
+      if (document.hasFocus()) {
+        console.log('Still on web page, trying fallback method...');
+        
+        // Fallback: coba buka dengan user gesture
+        const confirmLaunch = confirm('Free Fire launch may require manual confirmation.\n\nClick OK to try alternative launch method.');
+        
+        if (confirmLaunch) {
+          // Direct user interaction launch
+          window.location.href = 'freefiremax://';
+          setTimeout(() => {
+            window.location.href = 'freefire://';
+          }, 500);
+        }
+      }
+    }, 3000);
+  }, schemes.length * 100);
 }
 
-// Main silent launch function - REVISI AKHIR
+// Main launch function - TANPA about:blank
 function silentLaunchFreeFire() {
   if (!isIOSDevice()) {
     showNotification('iOS device (iPhone/iPad) required');
     return;
   }
 
-  console.log('Starting SILENT launch sequence...');
+  console.log('Launching Free Fire directly...');
   
-  // Scheme yang paling umum bekerja tanpa popup - REVISI
-  const silentSchemes = [
-    // Free Fire MAX schemes (prioritas)
-    'freefiremax://',
-    'com.dts.freefiremax://',
-    'ffmax://',
-    'freefire-max://',
-    
-    // Free Fire regular schemes
-    'freefire://',
-    'freefiremobile://',
-    'com.dts.freefireth://',
-    'ff://',
-    'freefirenow://'
-  ];
+  // Hanya mencoba launch, TIDAK ada redirect ke about:blank
+  launchFreeFireDirectly();
   
-  // Coba semua scheme secara bertahap
-  let attemptCount = 0;
-  const maxAttempts = silentSchemes.length;
-  
-  function attemptLaunch() {
-    if (attemptCount >= maxAttempts) {
-      // Semua scheme dicoba, beri feedback positif
-      setTimeout(() => {
-        showNotification('Launching Free Fire...');
-        
-        // Auto hide page untuk clean exit
-        setTimeout(() => {
-          try {
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.5s';
-            
-            // Redirect ke about:blank untuk menghindari error page
-            setTimeout(() => {
-              window.location.href = 'about:blank';
-            }, 1000);
-            
-          } catch (e) {
-            console.log('Clean exit sequence completed');
-          }
-        }, 1500);
-      }, 1000);
-      return;
-    }
-    
-    const scheme = silentSchemes[attemptCount];
-    console.log(`Silent attempt ${attemptCount + 1}: ${scheme}`);
-    
-    iosSilentLaunch(scheme);
-    
-    attemptCount++;
-    
-    // Coba scheme berikutnya dengan delay
-    if (attemptCount < maxAttempts) {
-      setTimeout(attemptLaunch, 200);
-    }
-  }
-  
-  // Mulai proses launch
-  attemptLaunch();
-  
-  // Set timeout untuk auto-hide
+  // Beri feedback setelah beberapa saat
   setTimeout(() => {
-    // Sembunyikan halaman untuk memberikan kesan app terbuka
-    document.documentElement.style.opacity = '0';
-    document.documentElement.style.transition = 'opacity 0.3s';
-    
-    // Setelah halaman tersembunyi, redirect ke blank
-    setTimeout(() => {
-      try {
-        // Coba close window/tab jika memungkinkan
-        if (window.history.length <= 1) {
-          window.close();
-        } else {
-          // Redirect ke blank page untuk menghindari Safari error
-          window.location.replace('about:blank');
-        }
-      } catch (e) {
-        // Fallback ke blank page
-        window.location.href = 'about:blank';
-      }
-    }, 300);
-  }, 3000);
+    showNotification('Launch initiated...');
+  }, 1500);
 }
 
 // Inisialisasi
@@ -267,9 +231,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Setup untuk tombol Saii
   const saiiBtn = document.querySelector('.saii-btn');
   if (saiiBtn) {
-    // Event handler yang sangat minimal
     const handleLaunch = (e) => {
-      if (e) e.preventDefault();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       saiiBtn.style.transform = 'scale(0.98)';
       setTimeout(() => {
         saiiBtn.style.transform = 'scale(1)';
@@ -277,10 +243,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 150);
     };
     
-    saiiBtn.addEventListener('click', handleLaunch);
-    saiiBtn.addEventListener('touchend', handleLaunch);
+    saiiBtn.addEventListener('click', handleLaunch, true);
+    saiiBtn.addEventListener('touchend', handleLaunch, true);
     
-    // Hapus semua hover effects yang bisa trigger popup
+    // Hover effects
     saiiBtn.addEventListener('mouseenter', () => {
       saiiBtn.style.transform = 'translateY(-2px)';
     });
@@ -289,15 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Setup untuk card (menu cards)
+  // Setup untuk menu cards
   document.querySelectorAll('.card').forEach(card => {
     // Hanya untuk card yang tidak ada onclick di HTML
     if (!card.getAttribute('onclick')) {
       card.addEventListener('click', (e) => {
-        e.preventDefault();
-        startSaii();
-      });
-      card.addEventListener('touchend', (e) => {
         e.preventDefault();
         startSaii();
       });
@@ -320,52 +282,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Prevent default behavior yang bisa menyebabkan popup
-window.addEventListener('beforeunload', function(e) {
-  // Prevent confirmation dialog
-  e.preventDefault();
-  e.returnValue = '';
-});
-
-// Block semua alert/confirm/prompt system
-const originalAlert = window.alert;
-const originalConfirm = window.confirm;
-const originalPrompt = window.prompt;
-
-window.alert = function() { 
-  console.log('Alert blocked:', arguments[0]);
+// Override alert/confirm untuk mencegah popup
+window.alert = function(msg) {
+  console.log('Alert blocked:', msg);
   return undefined;
 };
 
-window.confirm = function() { 
-  console.log('Confirm blocked:', arguments[0]);
-  return true; // Always return true to prevent popups
+window.confirm = function(msg) {
+  console.log('Confirm blocked:', msg);
+  return true;
 };
 
-window.prompt = function() { 
-  console.log('Prompt blocked:', arguments[0]);
-  return ''; // Return empty string
+window.prompt = function(msg) {
+  console.log('Prompt blocked:', msg);
+  return '';
 };
 
-// Override window.open untuk mencegah popup baru
-const originalOpen = window.open;
-window.open = function(url, target, features) {
-  console.log('Window.open blocked for:', url);
-  // Alihkan ke scheme jika mencoba buka URL baru
-  if (url && url.includes('freefire')) {
-    return null;
-  }
-  return originalOpen.call(window, url, target, features);
-};
+// Tambahkan meta tag untuk iOS secara dinamis
+const meta = document.createElement('meta');
+meta.name = 'apple-mobile-web-app-capable';
+meta.content = 'yes';
+document.head.appendChild(meta);
 
-// Blokir semua error popups
-window.onerror = function(message, source, lineno, colno, error) {
-  console.log('Error suppressed:', message);
-  return true; // Mencegah error dialog
-};
-
-// Blokir unhandled rejections
-window.addEventListener('unhandledrejection', function(event) {
-  event.preventDefault();
-  console.log('Promise rejection suppressed:', event.reason);
-});
+const meta2 = document.createElement('meta');
+meta2.name = 'mobile-web-app-capable';
+meta2.content = 'yes';
+document.head.appendChild(meta2);
