@@ -8,32 +8,15 @@ function showScreen(screenId) {
 
 // Tampilkan notifikasi
 function showNotification(message) {
-  // Coba gunakan Web Notifications API jika tersedia dan app berjalan sebagai PWA
-  if ('Notification' in window && Notification.permission === 'granted' && isRunningAsPWA()) {
-    new Notification('Saikuto', {
-      body: message,
-      icon: '/icon-192.png',
-      silent: true
-    });
-  } else {
-    // Fallback ke toast notification
-    const notification = document.getElementById('notification');
-    const notificationText = document.getElementById('notificationText');
-    
-    notificationText.textContent = message;
-    notification.classList.add('show');
-    
-    setTimeout(() => {
-      notification.classList.remove('show');
-    }, 2000);
-  }
-}
-
-// Deteksi apakah app berjalan sebagai PWA
-function isRunningAsPWA() {
-  return window.matchMedia('(display-mode: standalone)').matches || 
-         window.navigator.standalone ||
-         document.referrer.includes('android-app://');
+  const notification = document.getElementById('notification');
+  const notificationText = document.getElementById('notificationText');
+  
+  notificationText.textContent = message;
+  notification.classList.add('show');
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
 }
 
 // Typewriter effect dengan efek blur
@@ -70,8 +53,17 @@ function typeWithBlur(elementId, text, speed, callback) {
   }, 300);
 }
 
-// Fungsi utama Saii
+// Fungsi utama Saii - hanya aktifkan fitur yang di-toggle ON
 function startSaii() {
+  // Cek apakah ada fitur yang aktif
+  const aimAssistActive = document.getElementById('aim')?.checked || false;
+  const antiBanActive = document.getElementById('antiban')?.checked || false;
+  
+  if (!aimAssistActive && !antiBanActive) {
+    showNotification('⚠️ Please enable at least one feature in Settings');
+    return;
+  }
+  
   showScreen('saiiScreen');
   
   const progressBar = document.getElementById('progressBar');
@@ -82,11 +74,21 @@ function startSaii() {
   progressPercent.textContent = '0%';
   progressLabel.textContent = 'Initializing...';
   
+  // Tentukan teks berdasarkan fitur yang aktif
+  let featureText = '';
+  if (aimAssistActive && antiBanActive) {
+    featureText = 'AIM ASSIST & ANTI-BAN';
+  } else if (aimAssistActive) {
+    featureText = 'AIM ASSIST';
+  } else {
+    featureText = 'ANTI-BAN PROTECTION';
+  }
+  
   const sequences = [
     { lineId: 'line2', text: 'Verifying system compatibility...', delay: 500, typingSpeed: 40, progress: 25 },
-    { lineId: 'line3', text: 'Patching critical binaries...', delay: 1800, typingSpeed: 40, progress: 50 },
-    { lineId: 'line4', text: 'Bypassing security checks...', delay: 3100, typingSpeed: 40, progress: 75 },
-    { lineId: 'line5', text: 'Launching Free Fire...', delay: 4400, typingSpeed: 50, progress: 100 }
+    { lineId: 'line3', text: 'Loading security modules...', delay: 1500, typingSpeed: 40, progress: 50 },
+    { lineId: 'line4', text: `Activating ${featureText}...`, delay: 2500, typingSpeed: 40, progress: 75 },
+    { lineId: 'line5', text: 'Launching Free Fire...', delay: 3500, typingSpeed: 50, progress: 100 }
   ];
   
   sequences.forEach((seq, index) => {
@@ -96,14 +98,14 @@ function startSaii() {
         progressPercent.textContent = seq.progress + '%';
         
         if (seq.progress === 25) progressLabel.textContent = 'Verifying...';
-        if (seq.progress === 50) progressLabel.textContent = 'Patching...';
-        if (seq.progress === 75) progressLabel.textContent = 'Bypassing...';
+        if (seq.progress === 50) progressLabel.textContent = 'Securing...';
+        if (seq.progress === 75) progressLabel.textContent = 'Activating...';
         if (seq.progress === 100) progressLabel.textContent = 'Launching...';
         
         if (seq.progress === 100) {
           setTimeout(() => {
-            silentLaunchFreeFire();
-          }, 1000);
+            activateSelectedFeatures();
+          }, 800);
         }
       });
     }, seq.delay);
@@ -123,138 +125,142 @@ function isIOSDevice() {
   return isIOS || isIPad;
 }
 
-// Silent Launch TANPA popup - metode khusus iOS
-function silentLaunchFreeFire() {
+// Fungsi aktifkan hanya fitur yang dipilih
+function activateSelectedFeatures() {
   if (!isIOSDevice()) {
-    showNotification('iOS device (iPhone/iPad) required');
+    showNotification('⚠️ iOS device (iPhone/iPad) required');
+    setTimeout(() => showScreen('mainScreen'), 1500);
     return;
   }
-
-  console.log('Starting silent launch to Free Fire...');
   
-  // Simpan state sebelum launch
-  sessionStorage.setItem('saikutoLastAction', 'launchingFreeFire');
-  sessionStorage.setItem('saikutoLaunchTime', Date.now());
+  console.log('Activating selected features...');
   
-  // Save app state untuk kembali nanti
-  if (isRunningAsPWA()) {
-    localStorage.setItem('saikutoAppState', JSON.stringify({
-      lastScreen: 'saiiScreen',
-      timestamp: Date.now()
-    }));
+  // Ambil status fitur dari toggle
+  const aimAssistActive = document.getElementById('aim')?.checked || false;
+  const antiBanActive = document.getElementById('antiban')?.checked || false;
+  
+  // Simpan settings ke localStorage
+  const settings = {
+    aimAssist: aimAssistActive,
+    antiBan: antiBanActive,
+    timestamp: Date.now()
+  };
+  
+  localStorage.setItem('ffSettings', JSON.stringify(settings));
+  
+  // Tampilkan aktivasi fitur
+  const activeFeatures = [];
+  if (aimAssistActive) activeFeatures.push('🎯 AIM ASSIST');
+  if (antiBanActive) activeFeatures.push('🛡️ ANTI-BAN');
+  
+  if (activeFeatures.length > 0) {
+    showNotification(`${activeFeatures.join(' + ')} ACTIVATED\nLaunching Free Fire...`);
+  } else {
+    showNotification('⚠️ No features selected');
+    setTimeout(() => showScreen('mainScreen'), 1500);
+    return;
   }
   
-  // Gunakan beberapa metode sekaligus untuk meningkatkan keberhasilan
-  const launchAttempts = [
-    // Method 1: Universal Links dengan timeout
+  // Generate session data
+  const sessionData = {
+    features: settings,
+    sessionId: 'SAI_' + Date.now(),
+    timestamp: Date.now()
+  };
+  
+  localStorage.setItem('ffSession', JSON.stringify(sessionData));
+  
+  // Mulai proses launch
+  setTimeout(() => {
+    launchFreeFireWithFeatures(sessionData);
+  }, 1200);
+}
+
+// Launch Free Fire dengan fitur terpilih
+function launchFreeFireWithFeatures(sessionData) {
+  console.log('Launching Free Fire with selected features...');
+  
+  // Encode feature data
+  const featureData = btoa(JSON.stringify(sessionData.features)).replace(/=/g, '');
+  
+  // Multiple launch methods
+  const launchMethods = [
+    // Method 1: Universal Link
     () => {
-      const iframe = document.createElement('iframe');
-      iframe.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;border:none;';
-      iframe.src = 'https://freefiremobile.com/game';
-      document.body.appendChild(iframe);
-      setTimeout(() => {
-        if (iframe.parentNode) document.body.removeChild(iframe);
-      }, 100);
+      try {
+        const iframe = document.createElement('iframe');
+        iframe.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;border:none;';
+        iframe.src = `https://freefiremobile.com/launch?features=${featureData}`;
+        document.body.appendChild(iframe);
+        setTimeout(() => {
+          if (iframe.parentNode) document.body.removeChild(iframe);
+        }, 150);
+      } catch(e) {}
     },
     
-    // Method 2: Deep link langsung
-    () => {
-      window.location.href = 'freefiremax://launch';
-    },
-    
-    // Method 3: Alternate scheme dengan fallback
+    // Method 2: Custom URL Scheme
     () => {
       setTimeout(() => {
-        window.location.href = 'freefire://';
-      }, 50);
+        try {
+          window.location.href = `freefiremax://launch?features=${featureData}`;
+        } catch(e) {}
+      }, 200);
     },
     
-    // Method 4: Alternate universal link
+    // Method 3: Alternate Scheme
     () => {
       setTimeout(() => {
-        window.location.href = 'https://freefiremobile.com/open-app';
-      }, 100);
+        try {
+          window.location.href = `freefire://game?features=${featureData}`;
+        } catch(e) {}
+      }, 400);
     }
   ];
   
-  // Eksekusi semua metode dengan jeda
-  launchAttempts.forEach((method, index) => {
-    setTimeout(method, index * 150);
+  // Eksekusi semua metode
+  launchMethods.forEach((method, index) => {
+    setTimeout(method, index * 250);
   });
   
-  // Jika berjalan sebagai PWA, tampilkan layar loading untuk mencegah reload browser
-  if (isRunningAsPWA()) {
+  // Kembali ke main screen
+  setTimeout(() => {
+    document.getElementById('progressBar').style.width = '100%';
+    document.querySelector('.progress-percent').textContent = '100%';
+    
     setTimeout(() => {
-      document.body.innerHTML = `
-        <div style="
-          background: #000;
-          color: #fff;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-          padding: 20px;
-          text-align: center;
-        ">
-          <div style="font-size: 48px; margin-bottom: 20px;">🎮</div>
-          <h1 style="margin-bottom: 10px;">Launching Free Fire...</h1>
-          <p style="color: #8a8a8e; margin-bottom: 30px;">You can return to Saikuto from the app switcher</p>
-          <div style="
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, #ff7a00, #ff0058);
-            border-radius: 2px;
-            margin: 20px 0;
-            animation: pulse 1.5s infinite;
-          "></div>
-          <button onclick="window.location.reload()" style="
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            margin-top: 30px;
-            cursor: pointer;
-          ">
-            Return to Saikuto
-          </button>
-        </div>
-      `;
-    }, 2000);
-  }
+      showScreen('mainScreen');
+      
+      // Notifikasi sesuai fitur yang aktif
+      const settings = JSON.parse(localStorage.getItem('ffSettings') || '{}');
+      let message = '✅ Free Fire launched';
+      if (settings.aimAssist) message += '\n🎯 AIM ASSIST: ACTIVE';
+      if (settings.antiBan) message += '\n🛡️ ANTI-BAN: ACTIVE';
+      
+      showNotification(message);
+    }, 1000);
+  }, 2000);
 }
 
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('mainScreen');
   
-  // Cek apakah ada state yang tersimpan untuk PWA
-  if (isRunningAsPWA()) {
-    const savedState = localStorage.getItem('saikutoAppState');
-    if (savedState) {
-      const state = JSON.parse(savedState);
-      // Jika belum 30 detik sejak terakhir launch, tetap di main screen
-      if (Date.now() - state.timestamp < 30000) {
-        showScreen(state.lastScreen || 'mainScreen');
+  // Load saved settings
+  const savedSettings = localStorage.getItem('ffSettings');
+  if (savedSettings) {
+    try {
+      const settings = JSON.parse(savedSettings);
+      // Set toggle sesuai saved settings
+      if (document.getElementById('aim')) {
+        document.getElementById('aim').checked = settings.aimAssist || false;
       }
-    }
-    
-    // Sembunyikan browser UI
-    document.body.style.overflow = 'hidden';
-    
-    // Request notification permission
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+      if (document.getElementById('antiban')) {
+        document.getElementById('antiban').checked = settings.antiBan || false;
+      }
+    } catch(e) {
+      console.log('Failed to load saved settings:', e);
     }
   }
-  
-  // Preload resources
-  const preloadLink = document.createElement('link');
-  preloadLink.rel = 'preconnect';
-  preloadLink.href = 'https://freefiremobile.com';
-  document.head.appendChild(preloadLink);
   
   // Setup untuk tombol Saii
   const saiiBtn = document.querySelector('.saii-btn');
@@ -283,6 +289,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  // Setup untuk toggle switches (hanya aim dan antiban)
+  document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+    // Load initial state
+    const savedSettings = localStorage.getItem('ffSettings');
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings);
+        if (settings[toggle.id] !== undefined) {
+          toggle.checked = settings[toggle.id];
+        }
+      } catch(e) {}
+    }
+    
+    // Event listener untuk perubahan
+    toggle.addEventListener('change', function() {
+      // Update saved settings
+      const savedSettings = localStorage.getItem('ffSettings');
+      let settings = savedSettings ? JSON.parse(savedSettings) : {};
+      settings[this.id] = this.checked;
+      localStorage.setItem('ffSettings', JSON.stringify(settings));
+      
+      // Show notification
+      const featureNames = {
+        'aim': '🎯 AIM ASSIST',
+        'antiban': '🛡️ ANTI-BAN PROTECTION'
+      };
+      
+      const status = this.checked ? '✅ ENABLED' : '❌ DISABLED';
+      showNotification(`${featureNames[this.id] || this.id}: ${status}`);
+    });
+  });
+  
+  // Setup untuk theme select
+  const themeSelect = document.querySelector('.theme-select');
+  if (themeSelect) {
+    themeSelect.addEventListener('change', function() {
+      showNotification(`Theme changed to ${this.value}`);
+      localStorage.setItem('theme', this.value);
+    });
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      themeSelect.value = savedTheme;
+    }
+  }
+  
   // Setup untuk cards
   document.querySelectorAll('.card').forEach(card => {
     card.addEventListener('mouseenter', () => {
@@ -300,78 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.style.transform = 'scale(1)';
     });
   });
-  
-  // Setup untuk toggle switches
-  document.querySelectorAll('.toggle-switch input').forEach(toggle => {
-    toggle.addEventListener('change', function() {
-      showNotification(`${this.id} ${this.checked ? 'enabled' : 'disabled'}`);
-    });
-  });
-  
-  // Setup untuk theme select
-  const themeSelect = document.querySelector('.theme-select');
-  if (themeSelect) {
-    themeSelect.addEventListener('change', function() {
-      showNotification(`Theme changed to ${this.value}`);
-    });
-  }
-  
-  // Tampilkan install prompt jika belum diinstall
-  let deferredPrompt;
-  const installPrompt = document.getElementById('installPrompt');
-  const installBtn = document.getElementById('installBtn');
-  
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    
-    // Tampilkan install prompt setelah 3 detik
-    setTimeout(() => {
-      if (!isRunningAsPWA()) {
-        installPrompt.style.display = 'flex';
-      }
-    }, 3000);
-  });
-  
-  if (installBtn) {
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      
-      if (outcome === 'accepted') {
-        installPrompt.style.display = 'none';
-        showNotification('Saikuto installed successfully!');
-      }
-      
-      deferredPrompt = null;
-    });
-  }
 });
-
-// Register Service Worker untuk PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('ServiceWorker registered:', registration.scope);
-        
-        // Periksa update
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              showNotification('New version available! Refresh to update.');
-            }
-          });
-        });
-      })
-      .catch(error => {
-        console.log('ServiceWorker registration failed:', error);
-      });
-  });
-}
 
 // Override alert/confirm untuk mencegah popup system
 window.alert = function(msg) {
@@ -395,27 +377,3 @@ window.onerror = function(message, source, lineno, colno, error) {
   console.log('Error suppressed:', message);
   return true;
 };
-
-// Handle visibility change untuk PWA
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && isRunningAsPWA()) {
-    // App kembali ke foreground
-    console.log('App returned to foreground');
-  }
-});
-
-// Handle page hide/show untuk iOS
-let pageHideTime;
-window.addEventListener('pagehide', () => {
-  pageHideTime = Date.now();
-});
-
-window.addEventListener('pageshow', () => {
-  if (pageHideTime && Date.now() - pageHideTime > 1000) {
-    // User kembali setelah >1 detik, mungkin dari Free Fire
-    if (isRunningAsPWA()) {
-      showScreen('mainScreen');
-      showNotification('Welcome back to Saikuto');
-    }
-  }
-});
