@@ -93,28 +93,95 @@ function startSaii() {
   });
 }
 
-// Deteksi iOS
+// Deteksi iOS termasuk iPad
 function isIOSDevice() {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  return /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+  const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+  
+  // Deteksi khusus iPad (iOS 13+)
+  const isIPad = navigator.platform === 'MacIntel' && 
+                 navigator.maxTouchPoints > 1 && 
+                 !window.MSStream;
+  
+  return isIOS || isIPad;
 }
 
-// Silent Launch tanpa popup (menghapus semua scheme)
+// Silent Launch langsung ke Free Fire
 function silentLaunchFreeFire() {
   if (!isIOSDevice()) {
-    showNotification('iOS device required');
+    showNotification('iOS device (iPhone/iPad) required');
     return;
   }
 
-  console.log('Silent launch (no popup)...');
-
-  // Universal link aman (tidak memunculkan popup)
-  window.location.href = "https://apps.apple.com/app/id1300096749";
+  console.log('Launching Free Fire directly...');
+  
+  // Multiple launch methods untuk meningkatkan keberhasilan
+  const launchMethods = [
+    // 1. Scheme URL langsung (jika sudah terinstall)
+    () => {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = 'freefiremobile://';
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 100);
+    },
+    
+    // 2. Universal Link App Store (fallback)
+    () => {
+      window.location.href = 'https://apps.apple.com/app/id1300096749';
+    },
+    
+    // 3. Direct App Store link
+    () => {
+      window.location.href = 'itms-apps://itunes.apple.com/app/id1300096749';
+    },
+    
+    // 4. Alternative App Store link
+    () => {
+      window.location.href = 'itms-apps://apps.apple.com/us/app/free-fire/id1300096749';
+    }
+  ];
+  
+  // Coba semua methods secara berurutan
+  let currentMethod = 0;
+  
+  function tryNextMethod() {
+    if (currentMethod < launchMethods.length) {
+      try {
+        launchMethods[currentMethod]();
+      } catch (e) {
+        console.log(`Method ${currentMethod + 1} failed, trying next...`);
+      }
+      currentMethod++;
+      
+      // Delay antar method
+      if (currentMethod < launchMethods.length) {
+        setTimeout(tryNextMethod, 300);
+      }
+    }
+  }
+  
+  // Mulai dengan method pertama
+  tryNextMethod();
+  
+  // Fallback ke App Store jika semua gagal
+  setTimeout(() => {
+    if (document.hasFocus()) {
+      // Masih di web, redirect ke App Store
+      window.location.href = 'https://apps.apple.com/app/id1300096749';
+    }
+  }, 2000);
 }
 
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('mainScreen');
+  
+  // Preload resources untuk launch lebih smooth
+  const preloadLink = document.createElement('link');
+  preloadLink.rel = 'preconnect';
+  preloadLink.href = 'https://apps.apple.com';
+  document.head.appendChild(preloadLink);
   
   document.querySelectorAll('.card').forEach(card => {
     card.addEventListener('mouseenter', () => {
@@ -136,5 +203,21 @@ document.addEventListener('DOMContentLoaded', () => {
     saiiBtn.addEventListener('mouseleave', () => {
       saiiBtn.style.transform = 'scale(1)';
     });
+    
+    // Tambahkan touch events untuk iPad
+    saiiBtn.addEventListener('touchstart', () => {
+      saiiBtn.style.transform = 'scale(0.98)';
+    });
+    saiiBtn.addEventListener('touchend', () => {
+      saiiBtn.style.transform = 'scale(1)';
+      startSaii();
+    });
+  }
+  
+  // Tambahkan click handler untuk launch button
+  const launchBtn = document.getElementById('launchBtn');
+  if (launchBtn) {
+    launchBtn.addEventListener('click', startSaii);
+    launchBtn.addEventListener('touchend', startSaii);
   }
 });
