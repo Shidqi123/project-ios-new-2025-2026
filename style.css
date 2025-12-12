@@ -830,3 +830,41 @@ input:checked + .toggle-slider:before {
   color: #ff7a00;
   font-size: 18px;
 }
+
+/* Touch-friendly improvements for iPad */
+.saii-btn, .card {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* Prevent text selection on tap */
+.saii-btn, .card, .screen {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Better hover for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .card:hover {
+    transform: none !important;
+  }
+  
+  .saii-btn:hover {
+    transform: none !important;
+  }
+}
+
+/* iPad specific adjustments */
+@media (min-width: 768px) {
+  .saii-btn {
+    min-height: 50px;
+    font-size: 1.1em;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+}
