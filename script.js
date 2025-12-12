@@ -53,7 +53,7 @@ function typeWithBlur(elementId, text, speed, callback) {
   }, 300);
 }
 
-// Fungsi utama Saii - langsung ke Free Fire biasa
+// Fungsi utama Saii
 function startSaii() {
   showScreen('saiiScreen');
   
@@ -106,18 +106,36 @@ function isIOSDevice() {
   return isIOS || isIPad;
 }
 
-// Silent Launch langsung ke Free Fire biasa
+// Silent Launch yang otomatis coba kedua versi
 function silentLaunchFreeFire() {
   if (!isIOSDevice()) {
     showNotification('iOS device (iPhone/iPad) required');
     return;
   }
 
-  console.log('Launching Free Fire...');
+  console.log('Launching Free Fire (trying both versions)...');
   
-  // Multiple launch methods untuk Free Fire biasa
+  // Semua scheme URLs untuk Free Fire biasa dan MAX
   const launchMethods = [
-    // 1. Scheme URL langsung (jika sudah terinstall)
+    // 1. Coba Free Fire MAX dulu (prioritas tinggi)
+    () => {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = 'freefiremax://';
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 100);
+    },
+    
+    // 2. Coba Free Fire MAX alternate scheme
+    () => {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = 'com.dts.freefiremax://';
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 100);
+    },
+    
+    // 3. Coba Free Fire biasa
     () => {
       const iframe = document.createElement('iframe');
       iframe.style.display = 'none';
@@ -126,7 +144,7 @@ function silentLaunchFreeFire() {
       setTimeout(() => document.body.removeChild(iframe), 100);
     },
     
-    // 2. Alternate scheme
+    // 4. Coba Free Fire biasa alternate scheme
     () => {
       const iframe = document.createElement('iframe');
       iframe.style.display = 'none';
@@ -135,32 +153,43 @@ function silentLaunchFreeFire() {
       setTimeout(() => document.body.removeChild(iframe), 100);
     },
     
-    // 3. Universal Link App Store (fallback)
+    // 5. Universal Link App Store Free Fire MAX
     () => {
-      window.location.href = 'https://apps.apple.com/app/id1300096749';
+      window.location.href = 'https://apps.apple.com/app/id1583327865';
     },
     
-    // 4. Direct App Store link
+    // 6. Universal Link App Store Free Fire biasa
     () => {
-      window.location.href = 'itms-apps://itunes.apple.com/app/id1300096749';
+      window.location.href = 'https://apps.apple.com/app/id1300096749';
     }
   ];
   
   // Coba semua methods secara berurutan
   let currentMethod = 0;
+  let launched = false;
   
   function tryNextMethod() {
-    if (currentMethod < launchMethods.length) {
+    if (currentMethod < launchMethods.length && !launched) {
       try {
         launchMethods[currentMethod]();
+        
+        // Cek apakah launch berhasil (aplikasi terbuka)
+        setTimeout(() => {
+          if (!document.hasFocus() && !launched) {
+            // Aplikasi berhasil terbuka
+            launched = true;
+            console.log('Launch successful with method', currentMethod + 1);
+          }
+        }, 100);
+        
       } catch (e) {
         console.log(`Method ${currentMethod + 1} failed, trying next...`);
       }
       currentMethod++;
       
       // Delay antar method
-      if (currentMethod < launchMethods.length) {
-        setTimeout(tryNextMethod, 300);
+      if (currentMethod < launchMethods.length && !launched) {
+        setTimeout(tryNextMethod, 200);
       }
     }
   }
@@ -170,25 +199,66 @@ function silentLaunchFreeFire() {
   
   // Fallback ke App Store jika semua gagal
   setTimeout(() => {
-    if (document.hasFocus()) {
-      // Masih di web, redirect ke App Store
-      window.location.href = 'https://apps.apple.com/app/id1300096749';
+    if (document.hasFocus() && !launched) {
+      // Masih di web, coba App Store secara random
+      const randomStore = Math.random() > 0.5 ? 
+        'https://apps.apple.com/app/id1583327865' : // Free Fire MAX
+        'https://apps.apple.com/app/id1300096749';  // Free Fire biasa
+      window.location.href = randomStore;
     }
-  }, 2000);
+  }, 2500);
 }
 
-// Inisialisasi
+// Smart detection untuk cek versi mana yang terinstall
+function detectInstalledVersion() {
+  return new Promise((resolve) => {
+    const versions = [
+      { name: 'max', scheme: 'freefiremax://' },
+      { name: 'regular', scheme: 'freefiremobile://' }
+    ];
+    
+    let detected = 'regular'; // default
+    
+    versions.forEach(version => {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = version.scheme;
+      
+      iframe.onload = function() {
+        setTimeout(() => {
+          if (!document.hasFocus()) {
+            detected = version.name;
+          }
+        }, 100);
+      };
+      
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 50);
+    });
+    
+    setTimeout(() => resolve(detected), 300);
+  });
+}
+
+// Inisialisasi dengan smart detection
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('mainScreen');
   
-  // Preload resources untuk launch lebih smooth
-  const preloadLink = document.createElement('link');
-  preloadLink.rel = 'preconnect';
-  preloadLink.href = 'https://apps.apple.com';
-  document.head.appendChild(preloadLink);
+  // Preload resources
+  const preloadLinks = [
+    'https://apps.apple.com',
+    'https://itunes.apple.com'
+  ];
   
-  // Setup untuk tombol launch utama
-  const launchBtn = document.querySelector('.launch-btn');
+  preloadLinks.forEach(url => {
+    const preloadLink = document.createElement('link');
+    preloadLink.rel = 'preconnect';
+    preloadLink.href = url;
+    document.head.appendChild(preloadLink);
+  });
+  
+  // Setup untuk tombol launch
+  const launchBtn = document.querySelector('.launch-btn, .saii-btn');
   if (launchBtn) {
     launchBtn.addEventListener('mousedown', () => {
       launchBtn.style.transform = 'scale(0.98)';
@@ -216,10 +286,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Tambahan: Auto-launch jika ada parameter URL tertentu
+  // Card hover effects
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-2px)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+    });
+    
+    // Jika card diklik, langsung launch juga
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.card')) {
+        startSaii();
+      }
+    });
+    
+    card.addEventListener('touchend', (e) => {
+      if (e.target.closest('.card')) {
+        startSaii();
+      }
+    });
+  });
+  
+  // Auto-start jika ada parameter
   const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('auto') === 'true') {
-    // Auto start setelah delay kecil
-    setTimeout(startSaii, 500);
+  if (urlParams.get('launch') === 'true') {
+    setTimeout(startSaii, 1000);
   }
 });
