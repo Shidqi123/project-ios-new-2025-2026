@@ -60,27 +60,39 @@
             </div>
           </div>
           
-          <!-- FREE FIRE FEATURES -->
+          <!-- FREE FIRE FEATURES CARD -->
           <div class="card">
             <div class="card-icon" style="background: linear-gradient(135deg, #ff0058, #ff7a00);">
               <i class="fas fa-gamepad"></i>
             </div>
             <div class="card-content">
               <h3>Free Fire Features</h3>
-              <div class="feature-toggle">
-                <div class="feature-item">
-                  <span>Aim Assist</span>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="aim">
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
-                <div class="feature-item">
-                  <span>Anti-Ban Protection</span>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="antiban">
-                    <span class="toggle-slider"></span>
-                  </label>
+              <p>Configure Free Fire features</p>
+              
+              <!-- Tampilan seperti Settings Screen -->
+              <div class="features-container" style="margin-top: 15px;">
+                <div class="feature-section-card">
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <h4 style="font-size: 15px; margin-bottom: 2px;">Aim Assist</h4>
+                      <p style="font-size: 12px;">Automatic aiming assistance</p>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="aim">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                  
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <h4 style="font-size: 15px; margin-bottom: 2px;">Anti-Ban Protection</h4>
+                      <p style="font-size: 12px;">Prevent detection & bans</p>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="antiban">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -132,7 +144,7 @@
               </div>
               <div class="btn-pulse"></div>
             </button>
-            <p class="info-text">Press to launch Free Fire • Enable features in Settings</p>
+            <p class="info-text">Press to launch Free Fire • Enable features above</p>
           </div>
         </div>
       </div>
