@@ -428,4 +428,3 @@ window.onerror = function(message, source, lineno, colno, error) {
   console.log('Error suppressed:', message);
   return true;
 };
-[file content end]
