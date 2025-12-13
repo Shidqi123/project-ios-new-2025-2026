@@ -1,3 +1,9 @@
+// SaiKuto v10.1 - Fixed Key System
+console.log('🚀 SaiKuto v10.1 Initializing...');
+
+// Global variable for keys
+let VALID_KEYS = ['KUTO123', 'SAIFREE', 'TESTKEY'];
+
 // Navigasi antar screen
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(screen => {
@@ -19,61 +25,133 @@ function showNotification(message) {
   }, 2500);
 }
 
-// KEY YANG VALID (default jika keys.json tidak ada)
-let VALID_KEYS = ['KUTO123', 'SAIFREE2024', 'TESTKEY'];
-
-// Load keys dari file
+// Load keys dari file dengan debugging
 async function loadKeys() {
   try {
-    const response = await fetch('keys.json');
-    const data = await response.json();
-    if (data.valid_keys) {
-      VALID_KEYS = data.valid_keys.map(key => key.toString().toUpperCase());
+    console.log('🔑 Loading keys from keys.json...');
+    
+    // Force no-cache dengan timestamp
+    const response = await fetch('keys.json?v=' + Date.now());
+    
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
     }
-  } catch (e) {
-    // Tetap pakai default keys
-    console.log('Using default keys');
+    
+    const data = await response.json();
+    console.log('✅ Keys loaded successfully:', data);
+    
+    if (data.valid_keys && Array.isArray(data.valid_keys)) {
+      // Convert semua keys ke uppercase dan trim
+      VALID_KEYS = data.valid_keys.map(key => {
+        return key.toString().toUpperCase().trim();
+      });
+      
+      console.log('📋 Valid keys set to:', VALID_KEYS);
+      console.log('🔢 Total keys available:', VALID_KEYS.length);
+      
+      // Tampilkan di console untuk debugging
+      console.log('=== AVAILABLE KEYS ===');
+      VALID_KEYS.forEach((key, index) => {
+        console.log(`${index + 1}. ${key}`);
+      });
+      
+    } else {
+      console.warn('⚠️ Invalid keys.json format, using default keys');
+    }
+  } catch (error) {
+    console.error('❌ Failed to load keys.json:', error);
+    console.log('ℹ️ Using default keys:', VALID_KEYS);
+    showNotification('Using default keys - ' + VALID_KEYS.length + ' available');
   }
 }
 
-// Check Login
+// Check Login dengan debugging lengkap
 async function checkLogin() {
   const keyInput = document.getElementById('loginKey');
   const key = keyInput.value.trim().toUpperCase();
   const keyStatus = document.getElementById('keyStatus');
   
+  console.log('=== LOGIN ATTEMPT ===');
+  console.log('Input key:', key);
+  console.log('Valid keys:', VALID_KEYS);
+  
   if (!key) {
-    showNotification('Please enter access key');
+    showNotification('❌ Please enter access key');
     return;
   }
   
-  // Cek key
-  if (VALID_KEYS.includes(key)) {
+  // Debug: Check exact match
+  const isExactMatch = VALID_KEYS.includes(key);
+  console.log('Exact match?', isExactMatch);
+  
+  // Debug: Check partial matches
+  const partialMatches = VALID_KEYS.filter(k => k.includes(key) || key.includes(k));
+  console.log('Partial matches:', partialMatches);
+  
+  if (isExactMatch) {
     // ✅ Key valid
+    console.log('✅ Access granted for key:', key);
     keyStatus.innerHTML = '<i class="fas fa-check" style="color:#00ff88"></i>';
-    showNotification('✅ Access granted!');
+    showNotification('✅ Access granted! Welcome to SaiKuto');
     
     // Simpan session
     localStorage.setItem('saiSession', 'active_forever');
     localStorage.setItem('loginKey', key);
+    localStorage.setItem('keyUsed', key);
+    
+    // Clear input
+    keyInput.value = '';
     
     // Redirect ke main screen
-    setTimeout(() => showScreen('mainScreen'), 800);
+    setTimeout(() => {
+      showScreen('mainScreen');
+      showNotification('🎮 Lifetime access activated');
+    }, 800);
+    
   } else {
     // ❌ Key invalid
+    console.log('❌ Invalid key:', key);
     keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
-    showNotification('Invalid key. Try: KUTO123');
-    keyInput.value = '';
-    keyInput.focus();
+    
+    // Suggest similar keys
+    const suggestions = VALID_KEYS.filter(k => 
+      k.startsWith(key.substring(0, 3)) || 
+      key.startsWith(k.substring(0, 3))
+    ).slice(0, 3);
+    
+    let message = '❌ Invalid access key';
+    if (suggestions.length > 0) {
+      message += '\nTry: ' + suggestions.join(', ');
+    }
+    
+    showNotification(message);
+    
+    // Shake animation
+    keyInput.style.animation = 'shake 0.5s';
+    setTimeout(() => {
+      keyInput.style.animation = '';
+      keyInput.focus();
+      keyInput.select();
+    }, 500);
   }
 }
 
 // Check session
 function checkSession() {
-  if (localStorage.getItem('saiSession') === 'active_forever') {
+  const session = localStorage.getItem('saiSession');
+  const savedKey = localStorage.getItem('loginKey');
+  
+  console.log('🔍 Checking session...');
+  console.log('Session:', session);
+  console.log('Saved key:', savedKey);
+  
+  if (session === 'active_forever') {
+    console.log('✅ Session valid, showing main screen');
     showScreen('mainScreen');
     return true;
   }
+  
+  console.log('❌ No valid session, showing login');
   showScreen('loginScreen');
   return false;
 }
@@ -82,12 +160,15 @@ function checkSession() {
 function clearSession() {
   localStorage.clear();
   showScreen('loginScreen');
-  showNotification('Logged out');
+  showNotification('🗑️ Session cleared');
+  console.log('🗑️ All sessions cleared');
 }
 
 // Logout
 function logoutUser() {
-  if (confirm('Logout?')) clearSession();
+  if (confirm('Logout from SaiKuto?')) {
+    clearSession();
+  }
 }
 
 // Typewriter effect
@@ -124,7 +205,7 @@ function typeWithBlur(elementId, text, speed, callback) {
 // Start Saii
 function startSaii() {
   if (!checkSession()) {
-    showNotification('Please login');
+    showNotification('🔒 Please login first');
     return;
   }
   
@@ -139,10 +220,10 @@ function startSaii() {
   if (progressLabel) progressLabel.textContent = 'Initializing...';
   
   const sequences = [
-    { lineId: 'line2', text: 'Checking system...', delay: 500, typingSpeed: 40, progress: 20 },
-    { lineId: 'line3', text: 'Preparing Free Fire...', delay: 1500, typingSpeed: 40, progress: 50 },
-    { lineId: 'line4', text: 'Bypassing security...', delay: 2500, typingSpeed: 40, progress: 75 },
-    { lineId: 'line5', text: 'Launching Free Fire...', delay: 3500, typingSpeed: 50, progress: 100 }
+    { lineId: 'line2', text: 'Checking system integrity...', delay: 500, typingSpeed: 40, progress: 20 },
+    { lineId: 'line3', text: 'Preparing Free Fire environment...', delay: 1500, typingSpeed: 40, progress: 50 },
+    { lineId: 'line4', text: 'Bypassing security protocols...', delay: 2500, typingSpeed: 40, progress: 75 },
+    { lineId: 'line5', text: 'Launching Free Fire with optimizations...', delay: 3500, typingSpeed: 50, progress: 100 }
   ];
   
   sequences.forEach((seq, index) => {
@@ -152,9 +233,9 @@ function startSaii() {
         if (progressPercent) progressPercent.textContent = seq.progress + '%';
         
         if (progressLabel) {
-          if (seq.progress === 20) progressLabel.textContent = 'Checking...';
+          if (seq.progress === 20) progressLabel.textContent = 'System check...';
           if (seq.progress === 50) progressLabel.textContent = 'Preparing...';
-          if (seq.progress === 75) progressLabel.textContent = 'Bypassing...';
+          if (seq.progress === 75) progressLabel.textContent = 'Security bypass...';
           if (seq.progress === 100) progressLabel.textContent = 'Launching...';
         }
         
@@ -177,7 +258,7 @@ function isIOSDevice() {
 // Launch Free Fire
 function launchFreeFire() {
   if (!isIOSDevice()) {
-    showNotification('⚠️ iOS device required');
+    showNotification('⚠️ iOS device required for direct launch');
     setTimeout(() => showScreen('mainScreen'), 1500);
     return;
   }
@@ -195,12 +276,12 @@ function launchFreeFire() {
   localStorage.setItem('ffSettings', JSON.stringify(settings));
   
   if (aimAssist || antiBan) {
-    showNotification('Launching Free Fire with features');
+    showNotification('🚀 Launching Free Fire with enabled features');
   } else {
-    showNotification('Launching Free Fire...');
+    showNotification('🚀 Launching Free Fire...');
   }
   
-  // Launch methods
+  // Try multiple launch methods
   setTimeout(() => {
     try {
       const iframe = document.createElement('iframe');
@@ -210,15 +291,27 @@ function launchFreeFire() {
       setTimeout(() => {
         if (iframe.parentNode) document.body.removeChild(iframe);
       }, 150);
-    } catch(e) {}
+    } catch(e) {
+      console.log('Iframe method failed');
+    }
   }, 200);
   
   setTimeout(() => {
-    try { window.location.href = 'freefiremax://'; } catch(e) {}
+    try { 
+      window.location.href = 'freefiremax://'; 
+      console.log('Attempted freefiremax://');
+    } catch(e) {
+      console.log('freefiremax:// failed');
+    }
   }, 400);
   
   setTimeout(() => {
-    try { window.location.href = 'freefire://'; } catch(e) {}
+    try { 
+      window.location.href = 'freefire://'; 
+      console.log('Attempted freefire://');
+    } catch(e) {
+      console.log('freefire:// failed');
+    }
   }, 600);
   
   // Kembali ke main screen
@@ -227,7 +320,7 @@ function launchFreeFire() {
     if (progressPercent) progressPercent.textContent = '100%';
     setTimeout(() => {
       showScreen('mainScreen');
-      showNotification('✅ Free Fire launched');
+      showNotification('✅ Free Fire launched successfully!');
     }, 1000);
   }, 2000);
 }
@@ -250,6 +343,8 @@ function hideInstallPrompt() {
 
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('📱 DOM loaded, initializing SaiKuto...');
+  
   // Load keys dulu
   await loadKeys();
   
@@ -264,7 +359,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     loginInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') checkLogin();
     });
-    setTimeout(() => loginInput.focus(), 500);
+    
+    loginInput.addEventListener('input', () => {
+      const keyStatus = document.getElementById('keyStatus');
+      if (loginInput.value.trim().length > 0) {
+        keyStatus.innerHTML = '<i class="fas fa-lock-open" style="color:#ff7a00"></i>';
+      } else {
+        keyStatus.innerHTML = '<i class="fas fa-lock"></i>';
+      }
+    });
+    
+    setTimeout(() => {
+      loginInput.focus();
+      console.log('🎯 Login input focused');
+    }, 500);
   }
   
   if (loginBtn) {
@@ -283,7 +391,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') showNotification('✅ SaiKuto installed');
+      if (outcome === 'accepted') showNotification('✅ SaiKuto installed as PWA');
       deferredPrompt = null;
       hideInstallPrompt();
     });
@@ -303,7 +411,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const toggle = document.getElementById(id);
         if (toggle && settings[id] !== undefined) toggle.checked = settings[id];
       });
-    } catch(e) {}
+    } catch(e) {
+      console.log('Error loading settings:', e);
+    }
   }
   
   // Setup Saii button
@@ -322,8 +432,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       let settings = saved ? JSON.parse(saved) : {};
       settings[this.id] = this.checked;
       localStorage.setItem('ffSettings', JSON.stringify(settings));
+      console.log('Toggle changed:', this.id, this.checked);
     });
   });
+  
+  // Show welcome message
+  setTimeout(() => {
+    console.log('🎉 SaiKuto v10.1 ready!');
+    console.log('🔑 Available keys:', VALID_KEYS.length);
+  }, 1000);
 });
 
 // Override alerts
@@ -333,13 +450,22 @@ window.alert = function(msg) {
 };
 
 window.confirm = function(msg) {
+  showNotification(msg + ' (Press OK)');
   return true;
 };
 
 window.prompt = function(msg) {
+  showNotification(msg);
   return '';
 };
 
-window.onerror = function() {
-  return true;
-};
+// Add shake animation to CSS
+const style = document.createElement('style');
+style.textContent = `
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+`;
+document.head.appendChild(style);
