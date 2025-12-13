@@ -138,86 +138,145 @@
       </div>
       
       <div class="settings-content">
-        <!-- GAMING UTILITIES -->
+        <!-- SYSTEM EXPLOITS -->
         <div class="section-card">
           <h3 class="section-title">
-            <i class="fas fa-tools"></i>
-            GAMING UTILITIES
+            <i class="fas fa-code"></i>
+            SYSTEM EXPLOITS
           </h3>
           <div class="setting-item">
             <div class="setting-info">
-              <h4>Launch Counter</h4>
-              <p>Track Free Fire launches: <span id="launchCount" class="value-text">0</span></p>
+              <h4>Kernel Exploit</h4>
+              <p>Bypass kernel security</p>
             </div>
-            <button class="action-btn" onclick="resetLaunchCounter()">Reset</button>
+            <label class="toggle-switch">
+              <input type="checkbox" id="kernel">
+              <span class="toggle-slider"></span>
+            </label>
           </div>
-          
           <div class="setting-item">
             <div class="setting-info">
-              <h4>Session Timer</h4>
-              <p>Current session: <span id="sessionTimer" class="value-text">0:00</span></p>
+              <h4>Tweak Injection</h4>
+              <p>Inject custom modifications</p>
             </div>
-            <button class="action-btn" onclick="toggleSessionTimer()" id="timerBtn">Start</button>
-          </div>
-          
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Quick Settings</h4>
-              <p>Open iOS settings quickly</p>
-            </div>
-            <button class="action-btn" onclick="openSettings()">Open</button>
+            <label class="toggle-switch">
+              <input type="checkbox" id="tweak">
+              <span class="toggle-slider"></span>
+            </label>
           </div>
         </div>
         
-        <!-- DEVICE INFORMATION -->
+        <!-- GAMING OPTIMIZATION -->
         <div class="section-card">
           <h3 class="section-title">
-            <i class="fas fa-mobile-alt"></i>
-            DEVICE INFORMATION
+            <i class="fas fa-tachometer-alt"></i>
+            GAMING OPTIMIZATION
           </h3>
-          <div class="info-display">
-            <div class="info-row">
-              <span class="info-label">Platform:</span>
-              <span id="devicePlatform" class="value-text">Detecting...</span>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Performance Mode</h4>
+              <p>Maximize CPU/GPU performance</p>
             </div>
-            <div class="info-row">
-              <span class="info-label">Browser:</span>
-              <span id="browserInfo" class="value-text">Detecting...</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="performance">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Reduce Latency</h4>
+              <p>Optimize network for gaming</p>
             </div>
-            <div class="info-row">
-              <span class="info-label">Online:</span>
-              <span id="onlineStatus" class="value-text">Checking...</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="latency">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Disable Background Apps</h4>
+              <p>Free up system resources</p>
             </div>
-            <div class="info-row">
-              <span class="info-label">Screen:</span>
-              <span id="screenSize" class="value-text">Detecting...</span>
-            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="background">
+              <span class="toggle-slider"></span>
+            </label>
           </div>
         </div>
         
-        <!-- FREE FIRE TIPS -->
+        <!-- GRAPHICS SETTINGS -->
         <div class="section-card">
           <h3 class="section-title">
-            <i class="fas fa-lightbulb"></i>
-            FREE FIRE TIPS
+            <i class="fas fa-gamepad"></i>
+            GRAPHICS SETTINGS
           </h3>
-          <div class="tips-container">
-            <div class="tip-item">
-              <i class="fas fa-crosshairs"></i>
-              <p>Aim for headshots (2x damage)</p>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>High FPS Mode</h4>
+              <p>Enable 90/120 FPS support</p>
             </div>
-            <div class="tip-item">
-              <i class="fas fa-shield-alt"></i>
-              <p>Always use armor and helmet</p>
+            <label class="toggle-switch">
+              <input type="checkbox" id="highfps">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Reduce Bloom Effect</h4>
+              <p>Decrease visual distractions</p>
             </div>
-            <div class="tip-item">
-              <i class="fas fa-running"></i>
-              <p>Keep moving during fights</p>
+            <label class="toggle-switch">
+              <input type="checkbox" id="bloom">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Optimize Shadows</h4>
+              <p>Improve visibility in dark areas</p>
             </div>
-            <div class="tip-item">
-              <i class="fas fa-map"></i>
-              <p>Learn the map for better positioning</p>
+            <label class="toggle-switch">
+              <input type="checkbox" id="shadows">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- CONTROLS OPTIMIZATION -->
+        <div class="section-card">
+          <h3 class="section-title">
+            <i class="fas fa-hand-pointer"></i>
+            CONTROLS OPTIMIZATION
+          </h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Touch Response Boost</h4>
+              <p>Improve touchscreen sensitivity</p>
             </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="touch">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Gyroscope Stabilizer</h4>
+              <p>Smooth gyroscope movements</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="gyro">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Auto-Fire Optimization</h4>
+              <p>Optimize automatic firing</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="autofire">
+              <span class="toggle-slider"></span>
+            </label>
           </div>
         </div>
         
@@ -232,7 +291,7 @@
               <h4>Theme</h4>
               <p>Interface appearance</p>
             </div>
-            <select class="theme-select" id="themeSelect">
+            <select class="theme-select">
               <option value="dark">Dark</option>
               <option value="light">Light</option>
               <option value="auto">Auto</option>
@@ -240,11 +299,21 @@
           </div>
           <div class="setting-item">
             <div class="setting-info">
-              <h4>Notifications</h4>
-              <p>Enable/disable app notifications</p>
+              <h4>Reduce Notifications</h4>
+              <p>Minimize interruptions while gaming</p>
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="notifications" checked>
+              <input type="checkbox" id="notifications">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Auto-Brightness Adjust</h4>
+              <p>Optimize screen brightness</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="brightness">
               <span class="toggle-slider"></span>
             </label>
           </div>
@@ -296,33 +365,6 @@
               <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
               These features are optional. Saii will launch Free Fire regardless.
             </p>
-          </div>
-        </div>
-        
-        <!-- GAME STATISTICS -->
-        <div class="section-card">
-          <h3 class="section-title">
-            <i class="fas fa-chart-line"></i>
-            GAME STATISTICS
-          </h3>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Total Launches</h4>
-              <p>Times Free Fire launched: <span id="totalLaunches" class="value-text">0</span></p>
-            </div>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Last Launch</h4>
-              <p id="lastLaunchTime">Never launched yet</p>
-            </div>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>Favorite Mode</h4>
-              <p>Most played mode: <span id="favoriteMode" class="value-text">Not set</span></p>
-            </div>
-            <button class="action-btn" onclick="setFavoriteMode()">Set</button>
           </div>
         </div>
       </div>
