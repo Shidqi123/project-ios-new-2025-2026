@@ -1,14 +1,17 @@
 {
   "valid_keys": [
-    "SAIKUTOFREE",
-    "KEY_KEDUA",
-    "KEY_KETIGA",
-    "BISA_APA_SAJA",
-    "NAMA_ANDA_2024",
-    "SECRET_CODE",
-    "KUTO_VIP",
-    "MOD_FREE_FIRE"
+    "SAIFREE",
+    "SAIFREE2024",
+    "HEADTRICKVIP",
+    "MODGAMING",
+    "IPHONEMOD",
+    "YOURNAME123",
+    "SECRETKEY",
+    "MYCUSTOMKEY",
+    "ANYTHINGYOUWANT",
+    "KUTOISBEST"
   ],
   "key_type": "lifetime_permanent",
-  "description": "Custom keys - Edit this file to add/remove keys"
+  "description": "Custom keys - Edit this file to add/remove keys",
+  "note": "Once user login with any key, they get LIFETIME access forever"
 }
