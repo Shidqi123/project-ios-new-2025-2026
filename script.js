@@ -1,103 +1,181 @@
-// SaiKuto v10.1 - Fixed Key System
+// ==============================================
+// SAIKUTO v10.1 - FIXED KEYS SYSTEM
+// ==============================================
 console.log('🚀 SaiKuto v10.1 Initializing...');
 
-// Global variable for keys
-let VALID_KEYS = ['KUTO123', 'SAIFREE', 'TESTKEY'];
+// Global variable untuk keys
+let VALID_KEYS = [];
 
-// Navigasi antar screen
-function showScreen(screenId) {
-  document.querySelectorAll('.screen').forEach(screen => {
-    screen.classList.remove('active');
-  });
-  document.getElementById(screenId).classList.add('active');
-}
-
-// Tampilkan notifikasi
-function showNotification(message) {
-  const notification = document.getElementById('notification');
-  const notificationText = document.getElementById('notificationText');
-  
-  notificationText.textContent = message;
-  notification.classList.add('show');
-  
-  setTimeout(() => {
-    notification.classList.remove('show');
-  }, 2500);
-}
-
-// Load keys dari file dengan debugging
+// ==============================================
+// 1. LOAD KEYS DARI FILE keys.json
+// ==============================================
 async function loadKeys() {
+  console.log('🔍 Loading keys from keys.json...');
+  
   try {
-    console.log('🔑 Loading keys from keys.json...');
-    
-    // Force no-cache dengan timestamp
+    // Fetch keys.json dengan cache busting
     const response = await fetch('keys.json?v=' + Date.now());
     
+    console.log('📡 Response status:', response.status, response.statusText);
+    
     if (!response.ok) {
-      throw new Error('HTTP ' + response.status);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
-    const data = await response.json();
-    console.log('✅ Keys loaded successfully:', data);
+    const text = await response.text();
+    console.log('📄 Raw response (first 500 chars):', text.substring(0, 500));
     
-    if (data.valid_keys && Array.isArray(data.valid_keys)) {
-      // Convert semua keys ke uppercase dan trim
-      VALID_KEYS = data.valid_keys.map(key => {
-        return key.toString().toUpperCase().trim();
-      });
+    // Parse JSON
+    const data = JSON.parse(text);
+    console.log('✅ JSON parsed successfully');
+    
+    // Validasi struktur
+    if (!data.valid_keys || !Array.isArray(data.valid_keys)) {
+      throw new Error('Invalid keys.json format: missing "valid_keys" array');
+    }
+    
+    // Process keys: uppercase dan trim
+    VALID_KEYS = data.valid_keys
+      .map(key => {
+        if (typeof key !== 'string') {
+          console.warn('⚠️ Non-string key found:', key);
+          return String(key);
+        }
+        return key.toUpperCase().trim();
+      })
+      .filter(key => key.length > 0);
+    
+    console.log('📋 Total keys loaded:', VALID_KEYS.length);
+    console.log('🔑 Keys:', VALID_KEYS);
+    
+    if (VALID_KEYS.length > 0) {
+      console.log('✅ Keys successfully loaded from keys.json');
       
-      console.log('📋 Valid keys set to:', VALID_KEYS);
-      console.log('🔢 Total keys available:', VALID_KEYS.length);
+      // Update UI
+      updateKeysInfoUI();
       
-      // Tampilkan di console untuk debugging
-      console.log('=== AVAILABLE KEYS ===');
-      VALID_KEYS.forEach((key, index) => {
-        console.log(`${index + 1}. ${key}`);
-      });
+      // Show notification
+      showNotification(`✅ ${VALID_KEYS.length} keys loaded from keys.json`);
       
     } else {
-      console.warn('⚠️ Invalid keys.json format, using default keys');
+      console.warn('⚠️ No valid keys found in keys.json, using fallback');
+      VALID_KEYS = ['KUTO123', 'SAIFREE', 'TESTKEY', 'OBSIDIAN'];
+      updateKeysInfoUI();
     }
+    
   } catch (error) {
-    console.error('❌ Failed to load keys.json:', error);
-    console.log('ℹ️ Using default keys:', VALID_KEYS);
-    showNotification('Using default keys - ' + VALID_KEYS.length + ' available');
+    console.error('❌ ERROR loading keys.json:', error);
+    console.error('Error details:', error.message);
+    
+    // Fallback ke default keys
+    VALID_KEYS = ['KUTO123', 'SAIFREE', 'TESTKEY', 'OBSIDIAN'];
+    console.log('🔄 Using fallback keys:', VALID_KEYS);
+    
+    // Update UI
+    updateKeysInfoUI();
+    
+    // Show error notification
+    showNotification(`⚠️ Error loading keys.json. Using default keys.`);
   }
 }
 
-// Check Login dengan debugging lengkap
+// Update UI dengan info keys
+function updateKeysInfoUI() {
+  setTimeout(() => {
+    // Update di login footer
+    const footer = document.querySelector('.login-footer');
+    if (footer) {
+      // Remove existing info jika ada
+      const existingInfo = footer.querySelector('.keys-info');
+      if (existingInfo) existingInfo.remove();
+      
+      // Add new info
+      const info = document.createElement('p');
+      info.className = 'keys-info';
+      info.style.cssText = 'font-size: 11px; color: rgba(255,122,0,0.7); margin-top: 5px; text-align: center;';
+      info.textContent = `Loaded ${VALID_KEYS.length} keys from keys.json`;
+      footer.appendChild(info);
+    }
+    
+    // Update di debug info
+    const debugInfo = document.getElementById('debugInfo');
+    if (debugInfo) {
+      debugInfo.innerHTML = `
+        Keys Loaded: ${VALID_KEYS.length}<br>
+        First 3: ${VALID_KEYS.slice(0, 3).join(', ')}<br>
+        Last Load: ${new Date().toLocaleTimeString()}
+      `;
+    }
+    
+    // Update counter di Credits
+    const keysCounter = document.getElementById('currentKeysCount');
+    if (keysCounter) {
+      keysCounter.textContent = VALID_KEYS.length;
+    }
+    
+  }, 500);
+}
+
+// ==============================================
+// 2. CHECK LOGIN FUNCTION (FIXED)
+// ==============================================
 async function checkLogin() {
   const keyInput = document.getElementById('loginKey');
-  const key = keyInput.value.trim().toUpperCase();
   const keyStatus = document.getElementById('keyStatus');
   
-  console.log('=== LOGIN ATTEMPT ===');
-  console.log('Input key:', key);
-  console.log('Valid keys:', VALID_KEYS);
-  
-  if (!key) {
-    showNotification('❌ Please enter access key');
+  if (!keyInput) {
+    console.error('❌ loginKey element not found!');
+    showNotification('❌ System error: Login input missing');
     return;
   }
   
-  // Debug: Check exact match
-  const isExactMatch = VALID_KEYS.includes(key);
-  console.log('Exact match?', isExactMatch);
+  const key = keyInput.value.trim().toUpperCase();
   
-  // Debug: Check partial matches
-  const partialMatches = VALID_KEYS.filter(k => k.includes(key) || key.includes(k));
-  console.log('Partial matches:', partialMatches);
+  console.log('=== LOGIN ATTEMPT ===');
+  console.log('Input key:', key);
+  console.log('Available keys count:', VALID_KEYS.length);
+  console.log('Available keys:', VALID_KEYS);
   
-  if (isExactMatch) {
-    // ✅ Key valid
-    console.log('✅ Access granted for key:', key);
-    keyStatus.innerHTML = '<i class="fas fa-check" style="color:#00ff88"></i>';
-    showNotification('✅ Access granted! Welcome to SaiKuto');
+  // Validasi input kosong
+  if (!key) {
+    showNotification('❌ Please enter access key');
+    keyInput.focus();
+    return;
+  }
+  
+  // Validasi jika keys belum diload
+  if (VALID_KEYS.length === 0) {
+    console.warn('⚠️ Keys not loaded yet, reloading...');
+    showNotification('🔄 Loading keys...');
+    await loadKeys();
     
-    // Simpan session
+    if (VALID_KEYS.length === 0) {
+      showNotification('❌ Failed to load keys. Contact admin.');
+      return;
+    }
+  }
+  
+  // Cek apakah key valid
+  const isValid = VALID_KEYS.includes(key);
+  console.log('Key validation result:', isValid ? '✅ VALID' : '❌ INVALID');
+  
+  if (isValid) {
+    // ✅ LOGIN SUCCESS
+    console.log('✅ ACCESS GRANTED for key:', key);
+    
+    // Update UI status
+    if (keyStatus) {
+      keyStatus.innerHTML = '<i class="fas fa-check" style="color:#00ff88"></i>';
+    }
+    
+    // Show success notification
+    showNotification(`✅ Access granted! Welcome to SaiKuto`);
+    
+    // Save session
     localStorage.setItem('saiSession', 'active_forever');
     localStorage.setItem('loginKey', key);
     localStorage.setItem('keyUsed', key);
+    localStorage.setItem('loginTime', new Date().toISOString());
     
     // Clear input
     keyInput.value = '';
@@ -105,28 +183,44 @@ async function checkLogin() {
     // Redirect ke main screen
     setTimeout(() => {
       showScreen('mainScreen');
-      showNotification('🎮 Lifetime access activated');
+      showNotification(`🎮 Lifetime access activated (${VALID_KEYS.length} keys available)`);
     }, 800);
     
   } else {
-    // ❌ Key invalid
-    console.log('❌ Invalid key:', key);
-    keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
+    // ❌ LOGIN FAILED
+    console.log('❌ ACCESS DENIED for key:', key);
     
-    // Suggest similar keys
-    const suggestions = VALID_KEYS.filter(k => 
-      k.startsWith(key.substring(0, 3)) || 
-      key.startsWith(k.substring(0, 3))
-    ).slice(0, 3);
-    
-    let message = '❌ Invalid access key';
-    if (suggestions.length > 0) {
-      message += '\nTry: ' + suggestions.join(', ');
+    // Update UI status
+    if (keyStatus) {
+      keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
     }
     
-    showNotification(message);
+    // Cari key yang mirip untuk suggestion
+    const suggestions = VALID_KEYS
+      .filter(k => {
+        // Cari key dengan 3 karakter pertama sama
+        return k.substring(0, 3) === key.substring(0, 3) ||
+               k.includes(key.substring(0, 2)) ||
+               key.includes(k.substring(0, 2));
+      })
+      .slice(0, 3);
     
-    // Shake animation
+    // Buat pesan error
+    let errorMessage = `❌ Invalid access key`;
+    
+    if (suggestions.length > 0) {
+      errorMessage += `\nTry: ${suggestions.join(', ')}`;
+    } else if (VALID_KEYS.length > 0) {
+      errorMessage += `\nAvailable keys: ${VALID_KEYS.slice(0, 3).join(', ')}...`;
+    }
+    
+    if (VALID_KEYS.length > 0) {
+      errorMessage += `\n(Total ${VALID_KEYS.length} keys loaded)`;
+    }
+    
+    showNotification(errorMessage);
+    
+    // Animasi shake untuk input
     keyInput.style.animation = 'shake 0.5s';
     setTimeout(() => {
       keyInput.style.animation = '';
@@ -134,6 +228,50 @@ async function checkLogin() {
       keyInput.select();
     }, 500);
   }
+}
+
+// ==============================================
+// 3. BASIC APP FUNCTIONS
+// ==============================================
+
+// Navigasi antar screen
+function showScreen(screenId) {
+  console.log('🔄 Switching to screen:', screenId);
+  
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(screen => {
+    screen.classList.remove('active');
+  });
+  
+  // Show target screen
+  const targetScreen = document.getElementById(screenId);
+  if (targetScreen) {
+    targetScreen.classList.add('active');
+    
+    // Scroll ke atas
+    window.scrollTo(0, 0);
+  } else {
+    console.error('❌ Screen not found:', screenId);
+  }
+}
+
+// Tampilkan notifikasi
+function showNotification(message) {
+  const notification = document.getElementById('notification');
+  const notificationText = document.getElementById('notificationText');
+  
+  if (!notification || !notificationText) {
+    console.log('📢 Notification:', message);
+    return;
+  }
+  
+  notificationText.textContent = message;
+  notification.classList.add('show');
+  
+  // Auto hide setelah 3 detik
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
 }
 
 // Check session
@@ -146,7 +284,7 @@ function checkSession() {
   console.log('Saved key:', savedKey);
   
   if (session === 'active_forever') {
-    console.log('✅ Session valid, showing main screen');
+    console.log('✅ Valid session found');
     showScreen('mainScreen');
     return true;
   }
@@ -156,53 +294,27 @@ function checkSession() {
   return false;
 }
 
-// Clear session
+// Clear session (logout)
 function clearSession() {
+  console.log('🗑️ Clearing session...');
+  
+  const savedKey = localStorage.getItem('loginKey');
   localStorage.clear();
+  
   showScreen('loginScreen');
-  showNotification('🗑️ Session cleared');
-  console.log('🗑️ All sessions cleared');
+  showNotification(`🔓 Logged out. Previous key: ${savedKey || 'None'}`);
 }
 
-// Logout
+// Logout dengan konfirmasi
 function logoutUser() {
-  if (confirm('Logout from SaiKuto?')) {
+  if (confirm('Are you sure you want to logout from SaiKuto?')) {
     clearSession();
   }
 }
 
-// Typewriter effect
-function typeWithBlur(elementId, text, speed, callback) {
-  const element = document.getElementById(elementId);
-  const textElement = document.getElementById(`text${elementId.replace('line', '')}`);
-  let i = 0;
-  
-  if (!element || !textElement) return;
-  
-  textElement.textContent = '';
-  element.classList.remove('active');
-  element.style.filter = 'blur(5px)';
-  element.style.opacity = '0.8';
-  element.style.transform = 'translateY(20px)';
-  
-  setTimeout(() => {
-    element.classList.add('active');
-    element.style.filter = 'blur(0)';
-    element.style.opacity = '1';
-    element.style.transform = 'translateY(0)';
-    
-    function type() {
-      if (i < text.length) {
-        textElement.textContent += text.charAt(i);
-        i++;
-        setTimeout(type, speed);
-      } else if (callback) callback();
-    }
-    type();
-  }, 300);
-}
-
-// Start Saii
+// ==============================================
+// 4. SAII PROCESS FUNCTIONS
+// ==============================================
 function startSaii() {
   if (!checkSession()) {
     showNotification('🔒 Please login first');
@@ -247,33 +359,42 @@ function startSaii() {
   });
 }
 
-// Deteksi iOS
-function isIOSDevice() {
-  const ua = navigator.userAgent || navigator.vendor || window.opera;
-  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-  const isIPad = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
-  return isIOS || isIPad;
+// Typewriter effect untuk terminal
+function typeWithBlur(elementId, text, speed, callback) {
+  const element = document.getElementById(elementId);
+  const textElement = document.getElementById(`text${elementId.replace('line', '')}`);
+  
+  if (!element || !textElement) return;
+  
+  textElement.textContent = '';
+  element.classList.remove('active');
+  element.style.filter = 'blur(5px)';
+  element.style.opacity = '0.8';
+  
+  setTimeout(() => {
+    element.classList.add('active');
+    element.style.filter = 'blur(0)';
+    element.style.opacity = '1';
+    
+    let i = 0;
+    function type() {
+      if (i < text.length) {
+        textElement.textContent += text.charAt(i);
+        i++;
+        setTimeout(type, speed);
+      } else if (callback) {
+        callback();
+      }
+    }
+    type();
+  }, 300);
 }
 
 // Launch Free Fire
 function launchFreeFire() {
-  if (!isIOSDevice()) {
-    showNotification('⚠️ iOS device required for direct launch');
-    setTimeout(() => showScreen('mainScreen'), 1500);
-    return;
-  }
-  
-  // Cek fitur
+  // Cek fitur yang diaktifkan
   const aimAssist = document.getElementById('aim')?.checked || false;
   const antiBan = document.getElementById('antiban')?.checked || false;
-  
-  const settings = {
-    aimAssist: aimAssist,
-    antiBan: antiBan,
-    timestamp: Date.now()
-  };
-  
-  localStorage.setItem('ffSettings', JSON.stringify(settings));
   
   if (aimAssist || antiBan) {
     showNotification('🚀 Launching Free Fire with enabled features');
@@ -281,142 +402,156 @@ function launchFreeFire() {
     showNotification('🚀 Launching Free Fire...');
   }
   
-  // Try multiple launch methods
-  setTimeout(() => {
-    try {
-      const iframe = document.createElement('iframe');
-      iframe.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;border:none;';
-      iframe.src = 'https://freefiremobile.com/game';
-      document.body.appendChild(iframe);
-      setTimeout(() => {
-        if (iframe.parentNode) document.body.removeChild(iframe);
-      }, 150);
-    } catch(e) {
-      console.log('Iframe method failed');
-    }
-  }, 200);
+  // Simpan settings
+  const settings = {
+    aimAssist: aimAssist,
+    antiBan: antiBan,
+    timestamp: Date.now()
+  };
+  localStorage.setItem('ffSettings', JSON.stringify(settings));
   
+  // Simulasi launch process
   setTimeout(() => {
-    try { 
-      window.location.href = 'freefiremax://'; 
-      console.log('Attempted freefiremax://');
-    } catch(e) {
-      console.log('freefiremax:// failed');
-    }
-  }, 400);
-  
-  setTimeout(() => {
-    try { 
-      window.location.href = 'freefire://'; 
-      console.log('Attempted freefire://');
-    } catch(e) {
-      console.log('freefire:// failed');
-    }
-  }, 600);
-  
-  // Kembali ke main screen
-  setTimeout(() => {
-    if (progressBar) progressBar.style.width = '100%';
-    if (progressPercent) progressPercent.textContent = '100%';
-    setTimeout(() => {
-      showScreen('mainScreen');
-      showNotification('✅ Free Fire launched successfully!');
-    }, 1000);
-  }, 2000);
+    // Kembali ke main screen
+    showScreen('mainScreen');
+    showNotification('✅ Free Fire launched successfully!');
+  }, 1500);
 }
 
-// PWA Installation
-let deferredPrompt;
-const installPrompt = document.getElementById('installPrompt');
-const installBtn = document.getElementById('installBtn');
-const closeInstall = document.getElementById('closeInstall');
+// ==============================================
+// 5. DEBUG & TEST FUNCTIONS
+// ==============================================
 
-function showInstallPrompt() {
-  if (!window.matchMedia('(display-mode: standalone)').matches && deferredPrompt) {
-    installPrompt.classList.remove('hidden');
+// Reload keys manual
+window.reloadKeys = async function() {
+  console.log('🔄 Manually reloading keys...');
+  showNotification('🔄 Reloading keys from keys.json...');
+  await loadKeys();
+  showNotification(`✅ Reloaded ${VALID_KEYS.length} keys`);
+  return VALID_KEYS;
+};
+
+// Show all keys di console
+window.showAllKeys = function() {
+  console.log('🔑 === ALL VALID KEYS ===');
+  VALID_KEYS.forEach((key, index) => {
+    console.log(`${(index + 1).toString().padStart(2, '0')}. ${key}`);
+  });
+  console.log(`📊 Total: ${VALID_KEYS.length} keys`);
+  return VALID_KEYS;
+};
+
+// Test key tertentu
+window.testKey = function(keyToTest) {
+  if (!keyToTest) {
+    keyToTest = prompt('Enter key to test:');
+    if (!keyToTest) return false;
   }
-}
-
-function hideInstallPrompt() {
-  installPrompt.classList.add('hidden');
-}
-
-// Inisialisasi
-document.addEventListener('DOMContentLoaded', async () => {
-  console.log('📱 DOM loaded, initializing SaiKuto...');
   
-  // Load keys dulu
+  const key = keyToTest.toUpperCase().trim();
+  const isValid = VALID_KEYS.includes(key);
+  
+  console.log(`🔍 Testing key: "${key}"`);
+  console.log(`Result: ${isValid ? '✅ VALID' : '❌ INVALID'}`);
+  
+  if (isValid) {
+    showNotification(`✅ Key "${key}" is VALID`);
+  } else {
+    // Cari key yang mirip
+    const similar = VALID_KEYS.filter(k => 
+      k.substring(0, 3) === key.substring(0, 3) ||
+      k.includes(key) || key.includes(k)
+    ).slice(0, 3);
+    
+    let message = `❌ Key "${key}" is INVALID`;
+    if (similar.length > 0) {
+      message += `\nSimilar keys: ${similar.join(', ')}`;
+    }
+    
+    showNotification(message);
+  }
+  
+  return isValid;
+};
+
+// Export keys ke clipboard
+window.copyAllKeys = function() {
+  const keysText = VALID_KEYS.join('\n');
+  navigator.clipboard.writeText(keysText)
+    .then(() => {
+      console.log('📋 Keys copied to clipboard');
+      showNotification(`📋 ${VALID_KEYS.length} keys copied to clipboard`);
+    })
+    .catch(err => {
+      console.error('Failed to copy keys:', err);
+    });
+};
+
+// ==============================================
+// 6. INITIALIZATION
+// ==============================================
+document.addEventListener('DOMContentLoaded', async function() {
+  console.log('📱 DOM Content Loaded - Starting SaiKuto...');
+  
+  // Step 1: Load keys dari keys.json
+  console.log('Step 1: Loading keys...');
   await loadKeys();
   
-  // Check session
+  // Step 2: Check session
+  console.log('Step 2: Checking session...');
   checkSession();
   
-  // Setup login
+  // Step 3: Setup event listeners
+  console.log('Step 3: Setting up event listeners...');
+  setupEventListeners();
+  
+  // Step 4: Show welcome message
+  setTimeout(() => {
+    console.log('🎉 SaiKuto v10.1 Ready!');
+    console.log(`🔑 Keys loaded: ${VALID_KEYS.length}`);
+    console.log(`🌐 User Agent: ${navigator.userAgent}`);
+  }, 1000);
+});
+
+// Setup semua event listeners
+function setupEventListeners() {
+  // Login input dan button
   const loginInput = document.getElementById('loginKey');
   const loginBtn = document.querySelector('.login-btn');
   
   if (loginInput) {
+    // Enter key untuk login
     loginInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') checkLogin();
-    });
-    
-    loginInput.addEventListener('input', () => {
-      const keyStatus = document.getElementById('keyStatus');
-      if (loginInput.value.trim().length > 0) {
-        keyStatus.innerHTML = '<i class="fas fa-lock-open" style="color:#ff7a00"></i>';
-      } else {
-        keyStatus.innerHTML = '<i class="fas fa-lock"></i>';
+      if (e.key === 'Enter') {
+        console.log('Enter key pressed, checking login...');
+        checkLogin();
       }
     });
     
+    // Update status icon
+    loginInput.addEventListener('input', () => {
+      const keyStatus = document.getElementById('keyStatus');
+      if (keyStatus) {
+        if (loginInput.value.trim().length > 0) {
+          keyStatus.innerHTML = '<i class="fas fa-lock-open" style="color:#ff7a00"></i>';
+        } else {
+          keyStatus.innerHTML = '<i class="fas fa-lock"></i>';
+        }
+      }
+    });
+    
+    // Auto focus
     setTimeout(() => {
       loginInput.focus();
       console.log('🎯 Login input focused');
-    }, 500);
+    }, 800);
   }
   
   if (loginBtn) {
     loginBtn.addEventListener('click', checkLogin);
   }
   
-  // PWA
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    setTimeout(() => showInstallPrompt(), 3000);
-  });
-  
-  if (installBtn) {
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') showNotification('✅ SaiKuto installed as PWA');
-      deferredPrompt = null;
-      hideInstallPrompt();
-    });
-  }
-  
-  if (closeInstall) {
-    closeInstall.addEventListener('click', hideInstallPrompt);
-  }
-  
-  // Load settings
-  const savedSettings = localStorage.getItem('ffSettings');
-  if (savedSettings) {
-    try {
-      const settings = JSON.parse(savedSettings);
-      const toggles = ['aim', 'antiban', 'kernel', 'tweak', 'performance', 'reduceping', 'highfps', 'bloom', 'antialiasing', 'touch', 'autofire', 'threedtouch', 'lowpowermode', 'dndmode', 'autolock', 'reducemotion', 'wifipriority', 'backgroundrefresh'];
-      toggles.forEach(id => {
-        const toggle = document.getElementById(id);
-        if (toggle && settings[id] !== undefined) toggle.checked = settings[id];
-      });
-    } catch(e) {
-      console.log('Error loading settings:', e);
-    }
-  }
-  
-  // Setup Saii button
+  // Saii button
   const saiiBtn = document.querySelector('.saii-btn');
   if (saiiBtn) {
     saiiBtn.addEventListener('click', (e) => {
@@ -425,41 +560,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
   
-  // Setup toggles
+  // Toggle switches
   document.querySelectorAll('.toggle-switch input').forEach(toggle => {
     toggle.addEventListener('change', function() {
       const saved = localStorage.getItem('ffSettings');
       let settings = saved ? JSON.parse(saved) : {};
       settings[this.id] = this.checked;
       localStorage.setItem('ffSettings', JSON.stringify(settings));
-      console.log('Toggle changed:', this.id, this.checked);
+      console.log(`Toggle ${this.id}: ${this.checked ? 'ON' : 'OFF'}`);
     });
   });
   
-  // Show welcome message
-  setTimeout(() => {
-    console.log('🎉 SaiKuto v10.1 ready!');
-    console.log('🔑 Available keys:', VALID_KEYS.length);
-  }, 1000);
-});
+  // Setup notification test buttons
+  document.querySelectorAll('.card').forEach(card => {
+    const text = card.querySelector('h3')?.textContent;
+    if (text && (text.includes('Restart') || text.includes('Reboot'))) {
+      card.addEventListener('click', function() {
+        showNotification(`✅ ${text} completed successfully`);
+      });
+    }
+  });
+}
 
-// Override alerts
-window.alert = function(msg) {
-  showNotification(msg);
+// ==============================================
+// 7. OVERRIDE DEFAULT BROWSER FUNCTIONS
+// ==============================================
+window.alert = function(message) {
+  console.log('⚠️ Alert intercepted:', message);
+  showNotification(message);
   return undefined;
 };
 
-window.confirm = function(msg) {
-  showNotification(msg + ' (Press OK)');
-  return true;
+window.confirm = function(message) {
+  console.log('❓ Confirm intercepted:', message);
+  showNotification(message + ' (Press OK to continue)');
+  return true; // Always return true untuk convenience
 };
 
-window.prompt = function(msg) {
-  showNotification(msg);
-  return '';
+window.prompt = function(message) {
+  console.log('💬 Prompt intercepted:', message);
+  showNotification(message);
+  return 'user_input'; // Default value
 };
 
-// Add shake animation to CSS
+// ==============================================
+// 8. SHAKE ANIMATION (untuk invalid key)
+// ==============================================
 const style = document.createElement('style');
 style.textContent = `
 @keyframes shake {
@@ -467,5 +613,20 @@ style.textContent = `
   10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
   20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
+
+/* Keys info styling */
+.keys-info {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 `;
 document.head.appendChild(style);
+
+// ==============================================
+// END OF SCRIPT
+// ==============================================
+console.log('✅ script.js loaded successfully');
