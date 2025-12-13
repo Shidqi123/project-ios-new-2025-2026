@@ -9,10 +9,20 @@
     "FFMAX2024",
     "VIPACCESS",
     "GAMEMOD2024",
-    "KUTOADMIN"
+    "KUTOADMIN",
+    "LIFETIME2024",
+    "PERMANENTKEY",
+    "SAIKUTOVIP",
+    "KUTOVIP2024",
+    "KUTOFREE",
+    "SAIGAMING",
+    "FFMOD2024",
+    "IOSMOD",
+    "HEADTRICK",
+    "KUTOTOOL"
   ],
-  "master_key": "KUTOMASTER2024",
-  "admin_keys": ["ADMIN123", "SUPERUSER2024"],
-  "version": "2.0",
-  "key_expiry_days": 30
+  "key_type": "lifetime",
+  "version": "3.0",
+  "created_date": "2024-01-01",
+  "admin_contact": "Contact admin for new key"
 }
