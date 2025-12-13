@@ -19,6 +19,84 @@ function showNotification(message) {
   }, 2500);
 }
 
+// Check Login dengan Access Key
+function checkLogin() {
+  const loginKey = document.getElementById('loginKey').value;
+  const keyStatus = document.getElementById('keyStatus');
+  
+  if (!loginKey) {
+    showNotification('Please enter access key');
+    keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
+    return;
+  }
+  
+  // Validasi key (Anda bisa ganti dengan key yang diinginkan)
+  const validKeys = [
+    'SAIKUTO2024',
+    'KUTOOFF',
+    'FREE2024',
+    'IOSGAMING',
+    'S12345KEY',
+    'KUTOACCESS',
+    'FFMAX2024',
+    'VIPACCESS',
+    'GAMEMOD2024',
+    'KUTOADMIN'
+  ];
+  
+  const keyStatusText = document.getElementById('keyStatus');
+  keyStatusText.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+  // Simulasi loading
+  setTimeout(() => {
+    if (validKeys.includes(loginKey.trim().toUpperCase())) {
+      // Key valid
+      keyStatus.innerHTML = '<i class="fas fa-check" style="color:#00ff88"></i>';
+      showNotification('Access granted! Welcome to SaiKuto');
+      
+      // Simpan session
+      localStorage.setItem('saiSession', 'active');
+      localStorage.setItem('lastLogin', Date.now());
+      
+      // Redirect ke main screen setelah 1 detik
+      setTimeout(() => {
+        showScreen('mainScreen');
+      }, 1000);
+      
+    } else {
+      // Key invalid
+      keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
+      showNotification('Invalid access key. Please try again.');
+      
+      // Reset input
+      document.getElementById('loginKey').value = '';
+      document.getElementById('loginKey').focus();
+    }
+  }, 1000);
+}
+
+// Check session saat load
+function checkSession() {
+  const session = localStorage.getItem('saiSession');
+  const lastLogin = localStorage.getItem('lastLogin');
+  
+  if (session === 'active' && lastLogin) {
+    const now = Date.now();
+    const diff = now - parseInt(lastLogin);
+    const hoursDiff = diff / (1000 * 60 * 60);
+    
+    // Session valid selama 24 jam
+    if (hoursDiff < 24) {
+      showScreen('mainScreen');
+      return true;
+    }
+  }
+  
+  // Tampilkan login screen
+  showScreen('loginScreen');
+  return false;
+}
+
 // Typewriter effect dengan efek blur
 function typeWithBlur(elementId, text, speed, callback) {
   const element = document.getElementById(elementId);
@@ -57,6 +135,13 @@ function typeWithBlur(elementId, text, speed, callback) {
 
 // Fungsi utama Saii - LAUNCH FREE FIRE
 function startSaii() {
+  // Check session dulu
+  if (!checkSession()) {
+    showNotification('Session expired. Please login again.');
+    showScreen('loginScreen');
+    return;
+  }
+  
   showScreen('saiiScreen');
   
   const progressBar = document.getElementById('progressBar');
@@ -249,7 +334,18 @@ function hideInstallPrompt() {
 
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
-  showScreen('mainScreen');
+  // Check session pertama kali
+  checkSession();
+  
+  // Setup enter key untuk login
+  const loginInput = document.getElementById('loginKey');
+  if (loginInput) {
+    loginInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        checkLogin();
+      }
+    });
+  }
   
   // PWA Installation Handler
   window.addEventListener('beforeinstallprompt', (e) => {
