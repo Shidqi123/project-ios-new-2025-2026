@@ -3,19 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#ff7a00">
-  
-  <!-- PWA Meta Tags -->
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Saikuto">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="msapplication-TileColor" content="#ff7a00">
-  <meta name="msapplication-tap-highlight" content="no">
-  <meta name="application-name" content="Saikuto">
-  
+  <meta name="theme-color" content="#000000">
   <title>Saikuto</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -51,7 +39,7 @@
             </div>
             <div class="card-content">
               <h3>Settings</h3>
-              <p>Configure features</p>
+              <p>Configure system parameters</p>
             </div>
             <div class="card-arrow">
               <i class="fas fa-chevron-right"></i>
@@ -97,14 +85,14 @@
           <div class="saii-card">
             <button class="saii-btn" onclick="startSaii()">
               <div class="btn-content">
-                <span class="btn-text">ACTIVATE FEATURES</span>
+                <span class="btn-text">Saii</span>
                 <div class="btn-arrow">
-                  <i class="fas fa-rocket"></i>
+                  <i class="fas fa-arrow-right"></i>
                 </div>
               </div>
               <div class="btn-pulse"></div>
             </button>
-            <p class="info-text">Toggle features in Settings • Press to activate selected features</p>
+            <p class="info-text">Press to launch Free Fire • Enable features in Settings</p>
           </div>
         </div>
       </div>
@@ -122,47 +110,7 @@
       </div>
       
       <div class="settings-content">
-        <!-- FREE FIRE FEATURES -->
-        <div class="section-card">
-          <h3 class="section-title">
-            <i class="fas fa-gamepad"></i>
-            FREE FIRE FEATURES
-          </h3>
-          
-          <!-- AIM ASSIST -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>🎯 Aim Assist</h4>
-              <p>Automatic aiming assistance</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="aim">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          
-          <!-- ANTI-BAN PROTECTION -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <h4>🛡️ Anti-Ban Protection</h4>
-              <p>Prevent detection & bans</p>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="antiban">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-          
-          <!-- Info Text -->
-          <div class="warning-message">
-            <p>
-              <i class="fas fa-info-circle"></i>
-              Toggle ON the features you want, then press ACTIVATE
-            </p>
-          </div>
-        </div>
-        
-        <!-- EXPLOITS SETTINGS -->
+        <!-- SYSTEM EXPLOITS -->
         <div class="section-card">
           <h3 class="section-title">
             <i class="fas fa-code"></i>
@@ -174,7 +122,7 @@
               <p>Bypass kernel security</p>
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="kernel" checked>
+              <input type="checkbox" id="kernel">
               <span class="toggle-slider"></span>
             </label>
           </div>
@@ -184,9 +132,44 @@
               <p>Inject custom modifications</p>
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="tweak" checked>
+              <input type="checkbox" id="tweak">
               <span class="toggle-slider"></span>
             </label>
+          </div>
+        </div>
+        
+        <!-- FREE FIRE SETTINGS -->
+        <div class="section-card">
+          <h3 class="section-title">
+            <i class="fas fa-gamepad"></i>
+            FREE FIRE SETTINGS
+          </h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Aim Assist</h4>
+              <p>Automatic aiming assistance</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="aim">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Anti-Ban Protection</h4>
+              <p>Prevent detection & bans</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="antiban">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div style="margin-top: 15px; padding: 12px; background: rgba(255,122,0,0.1); border-radius: 10px; border: 1px solid rgba(255,122,0,0.2);">
+            <p style="font-size: 12px; color: #ff7a00; text-align: center; margin: 0;">
+              <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
+              These features are optional. Saii will launch Free Fire regardless.
+            </p>
           </div>
         </div>
         
@@ -223,12 +206,12 @@
         <div class="saii-header">
           <div class="saii-logo">
             <div class="logo-icon">
-              <i class="fas fa-rocket"></i>
+              <i class="fas fa-bolt"></i>
             </div>
             <div class="logo-text">
               <h1 class="saii-title">SaiKuto</h1>
-              <p class="saii-subtitle">FEATURE ACTIVATOR</p>
-              <p class="saii-author">Launching with selected features</p>
+              <p class="saii-subtitle">OS 15.0-18.5</p>
+              <p class="saii-author">by Kutoo</p>
             </div>
           </div>
         </div>
@@ -238,19 +221,19 @@
           <div class="process-header">
             <div class="animated-icon">
               <div class="icon-core">
-                <i class="fas fa-bolt"></i>
+                <i class="fas fa-terminal"></i>
               </div>
               <div class="icon-ring"></div>
               <div class="icon-pulse"></div>
             </div>
-            <h2 class="process-title">Activating Features</h2>
+            <h2 class="process-title">Saii Process</h2>
           </div>
           
           <!-- Terminal Output -->
           <div class="terminal-output">
             <div class="terminal-line" id="line1">
               <span class="prompt">$></span>
-              <span class="command">sudo ./saikuto.sh --launch</span>
+              <span class="command">sudo ./saii.sh --target freefire</span>
             </div>
             
             <div class="terminal-line typing" id="line2">
@@ -277,7 +260,7 @@
           <!-- Progress Bar -->
           <div class="terminal-progress">
             <div class="progress-label">
-              <span>Processing...</span>
+              <span>Initializing...</span>
               <span class="progress-percent">0%</span>
             </div>
             <div class="progress-container">
@@ -313,22 +296,22 @@
         
         <div class="info-card">
           <h4><i class="fas fa-mobile-alt"></i> iOS Support</h4>
-          <p>15.0 - 18.5 (iPhone & iPad)</p>
+          <p>15.0 - 18.5</p>
         </div>
         
         <div class="info-card">
-          <h4><i class="fas fa-crosshairs"></i> Available Features</h4>
+          <h4><i class="fas fa-gamepad"></i> Free Fire Launch</h4>
+          <p>Direct game launch system</p>
+        </div>
+        
+        <div class="info-card">
+          <h4><i class="fas fa-shield-alt"></i> Optional Features</h4>
           <p>Aim Assist • Anti-Ban Protection</p>
-        </div>
-        
-        <div class="info-card">
-          <h4><i class="fas fa-shield-alt"></i> Security</h4>
-          <p>Kernel Bypass • Tweak Injection</p>
         </div>
         
         <div class="disclaimer">
           <i class="fas fa-exclamation-triangle"></i>
-          <p><strong>NOTE:</strong> Enable features in Settings before activation. Features only work when toggled ON.</p>
+          <p>This tool is for educational purposes only. Use at your own risk.</p>
         </div>
       </div>
     </div>
@@ -340,15 +323,6 @@
       <i class="fas fa-info-circle"></i>
     </div>
     <span id="notificationText"></span>
-  </div>
-
-  <!-- Install App Prompt -->
-  <div id="installPrompt" class="notification">
-    <div class="notification-icon">
-      <i class="fas fa-download"></i>
-    </div>
-    <span>Install Saikuto as App</span>
-    <button id="installBtn">Install</button>
   </div>
 
   <script src="script.js"></script>
