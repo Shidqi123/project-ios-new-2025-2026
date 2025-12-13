@@ -136,8 +136,8 @@ function launchFreeFire() {
   // Tampilkan notifikasi jika ada fitur aktif
   if (aimAssistActive || antiBanActive) {
     const activeFeatures = [];
-    if (aimAssistActive) activeFeatures.push('🎯 AIM ASSIST');
-    if (antiBanActive) activeFeatures.push('🛡️ ANTI-BAN');
+    if (aimAssistActive) activeFeatures.push('AIM ASSIST');
+    if (antiBanActive) activeFeatures.push('ANTI-BAN');
     
     showNotification(`Launching Free Fire\n${activeFeatures.join(' + ')}`);
   } else {
@@ -314,13 +314,15 @@ document.addEventListener('DOMContentLoaded', () => {
       settings[this.id] = this.checked;
       localStorage.setItem('ffSettings', JSON.stringify(settings));
       
-      // Show notification
+      // Show notification (TANPA EMOJI)
       const featureNames = {
-        'aim': '🎯 AIM ASSIST',
-        'antiban': '🛡️ ANTI-BAN PROTECTION'
+        'aim': 'AIM ASSIST',
+        'antiban': 'ANTI-BAN PROTECTION',
+        'kernel': 'KERNEL EXPLOIT',
+        'tweak': 'TWEAK INJECTION'
       };
       
-      const status = this.checked ? '✅ ENABLED' : '❌ DISABLED';
+      const status = this.checked ? 'ENABLED' : 'DISABLED';
       showNotification(`${featureNames[this.id] || this.id}: ${status}`);
     });
   });
