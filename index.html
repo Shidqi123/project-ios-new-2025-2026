@@ -3,7 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#ff7a00">
+  
+  <!-- PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SaiKuto">
+  
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
   <title>Saikuto</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -323,6 +337,15 @@
       <i class="fas fa-info-circle"></i>
     </div>
     <span id="notificationText"></span>
+  </div>
+
+  <!-- Install Prompt -->
+  <div id="installPrompt" class="install-prompt hidden">
+    <div class="install-text">
+      <i class="fas fa-mobile-alt"></i> Install SaiKuto as PWA
+    </div>
+    <button id="installBtn" class="install-btn">Install</button>
+    <button id="closeInstall" class="close-install">×</button>
   </div>
 
   <script src="script.js"></script>
