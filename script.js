@@ -54,9 +54,6 @@ async function loadKeys() {
       // Update UI
       updateKeysInfoUI();
       
-      // Show notification
-      showNotification(`✅ ${VALID_KEYS.length} keys loaded from keys.json`);
-      
     } else {
       console.warn('⚠️ No valid keys found in keys.json, using fallback');
       VALID_KEYS = ['KUTO123', 'SAIFREE', 'TESTKEY', 'OBSIDIAN'];
