@@ -61,40 +61,16 @@
           </div>
           
           <!-- FREE FIRE FEATURES CARD -->
-          <div class="card">
+          <div class="card" onclick="showScreen('freefireScreen')">
             <div class="card-icon" style="background: linear-gradient(135deg, #ff0058, #ff7a00);">
               <i class="fas fa-gamepad"></i>
             </div>
             <div class="card-content">
               <h3>Free Fire Features</h3>
               <p>Configure Free Fire features</p>
-              
-              <!-- Tampilan seperti Settings Screen -->
-              <div class="features-container" style="margin-top: 15px;">
-                <div class="feature-section-card">
-                  <div class="setting-item">
-                    <div class="setting-info">
-                      <h4 style="font-size: 15px; margin-bottom: 2px;">Aim Assist</h4>
-                      <p style="font-size: 12px;">Automatic aiming assistance</p>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="aim">
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                  
-                  <div class="setting-item">
-                    <div class="setting-info">
-                      <h4 style="font-size: 15px; margin-bottom: 2px;">Anti-Ban Protection</h4>
-                      <p style="font-size: 12px;">Prevent detection & bans</p>
-                    </div>
-                    <label class="toggle-switch">
-                      <input type="checkbox" id="antiban">
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
+            </div>
+            <div class="card-arrow">
+              <i class="fas fa-chevron-right"></i>
             </div>
           </div>
           
@@ -144,7 +120,7 @@
               </div>
               <div class="btn-pulse"></div>
             </button>
-            <p class="info-text">Press to launch Free Fire • Enable features above</p>
+            <p class="info-text">Press to launch Free Fire • Enable features in Settings</p>
           </div>
         </div>
       </div>
@@ -212,7 +188,56 @@
     </div>
   </div>
 
-  <!-- Screen 3: Saii Process -->
+  <!-- Screen 3: Free Fire Features -->
+  <div id="freefireScreen" class="screen">
+    <div class="container">
+      <div class="header-nav">
+        <button class="back-btn" onclick="showScreen('mainScreen')">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2 class="page-title">Free Fire Features</h2>
+      </div>
+      
+      <div class="settings-content">
+        <!-- FREE FIRE SETTINGS SECTION -->
+        <div class="section-card">
+          <h3 class="section-title">
+            <i class="fas fa-gamepad"></i>
+            FREE FIRE FEATURES
+          </h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Aim Assist</h4>
+              <p>Automatic aiming assistance</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="aim">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div class="setting-info">
+              <h4>Anti-Ban Protection</h4>
+              <p>Prevent detection & bans</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="antiban">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div style="margin-top: 15px; padding: 12px; background: rgba(255,122,0,0.1); border-radius: 10px; border: 1px solid rgba(255,122,0,0.2);">
+            <p style="font-size: 12px; color: #ff7a00; text-align: center; margin: 0;">
+              <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
+              These features are optional. Saii will launch Free Fire regardless.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Saii Process -->
   <div id="saiiScreen" class="screen">
     <div class="container">
       <!-- Terminal Effect Background -->
@@ -290,7 +315,7 @@
     </div>
   </div>
 
-  <!-- Screen 4: Credits -->
+  <!-- Screen 5: Credits -->
   <div id="creditsScreen" class="screen">
     <div class="container">
       <div class="header-nav">
