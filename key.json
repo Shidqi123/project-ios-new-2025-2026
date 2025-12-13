@@ -1,0 +1,18 @@
+{
+  "valid_keys": [
+    "SAIKUTO2024",
+    "KUTOOFF",
+    "FREE2024",
+    "IOSGAMING",
+    "S12345KEY",
+    "KUTOACCESS",
+    "FFMAX2024",
+    "VIPACCESS",
+    "GAMEMOD2024",
+    "KUTOADMIN"
+  ],
+  "master_key": "KUTOMASTER2024",
+  "admin_keys": ["ADMIN123", "SUPERUSER2024"],
+  "version": "2.0",
+  "key_expiry_days": 30
+}
