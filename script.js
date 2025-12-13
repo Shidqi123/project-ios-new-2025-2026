@@ -124,21 +124,48 @@ function launchFreeFire() {
   const aimAssistActive = document.getElementById('aim')?.checked || false;
   const antiBanActive = document.getElementById('antiban')?.checked || false;
   
-  // Simpan settings
+  // Cek fitur gaming optimization
+  const performanceActive = document.getElementById('performance')?.checked || false;
+  const latencyActive = document.getElementById('latency')?.checked || false;
+  const backgroundActive = document.getElementById('background')?.checked || false;
+  const highfpsActive = document.getElementById('highfps')?.checked || false;
+  const bloomActive = document.getElementById('bloom')?.checked || false;
+  const shadowsActive = document.getElementById('shadows')?.checked || false;
+  const touchActive = document.getElementById('touch')?.checked || false;
+  const gyroActive = document.getElementById('gyro')?.checked || false;
+  const autofireActive = document.getElementById('autofire')?.checked || false;
+  const notificationsActive = document.getElementById('notifications')?.checked || false;
+  const brightnessActive = document.getElementById('brightness')?.checked || false;
+  
+  // Simpan semua settings
   const settings = {
     aimAssist: aimAssistActive,
     antiBan: antiBanActive,
+    performance: performanceActive,
+    latency: latencyActive,
+    background: backgroundActive,
+    highfps: highfpsActive,
+    bloom: bloomActive,
+    shadows: shadowsActive,
+    touch: touchActive,
+    gyro: gyroActive,
+    autofire: autofireActive,
+    notifications: notificationsActive,
+    brightness: brightnessActive,
     timestamp: Date.now()
   };
   
   localStorage.setItem('ffSettings', JSON.stringify(settings));
   
   // Tampilkan notifikasi jika ada fitur aktif
-  if (aimAssistActive || antiBanActive) {
-    const activeFeatures = [];
-    if (aimAssistActive) activeFeatures.push('AIM ASSIST');
-    if (antiBanActive) activeFeatures.push('ANTI-BAN');
-    
+  const activeFeatures = [];
+  if (aimAssistActive) activeFeatures.push('AIM ASSIST');
+  if (antiBanActive) activeFeatures.push('ANTI-BAN');
+  if (performanceActive) activeFeatures.push('PERFORMANCE MODE');
+  if (latencyActive) activeFeatures.push('REDUCE LATENCY');
+  if (highfpsActive) activeFeatures.push('HIGH FPS');
+  
+  if (activeFeatures.length > 0) {
     showNotification(`Launching Free Fire\n${activeFeatures.join(' + ')}`);
   } else {
     showNotification('Launching Free Fire...');
@@ -262,12 +289,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (savedSettings) {
     try {
       const settings = JSON.parse(savedSettings);
-      // Set toggle sesuai saved settings
-      const aimToggle = document.getElementById('aim');
-      const antiBanToggle = document.getElementById('antiban');
       
-      if (aimToggle) aimToggle.checked = settings.aimAssist || false;
-      if (antiBanToggle) antiBanToggle.checked = settings.antiBan || false;
+      // Set semua toggle sesuai saved settings
+      const toggleIds = ['aim', 'antiban', 'kernel', 'tweak', 'performance', 'latency', 
+                         'background', 'highfps', 'bloom', 'shadows', 'touch', 'gyro', 
+                         'autofire', 'notifications', 'brightness'];
+      
+      toggleIds.forEach(id => {
+        const toggle = document.getElementById(id);
+        if (toggle && settings[id] !== undefined) {
+          toggle.checked = settings[id];
+        }
+      });
+      
     } catch(e) {
       console.log('Failed to load saved settings:', e);
     }
@@ -305,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Setup untuk toggle switches
+  // Setup untuk semua toggle switches
   document.querySelectorAll('.toggle-switch input').forEach(toggle => {
     toggle.addEventListener('change', function() {
       // Update saved settings
@@ -319,7 +353,18 @@ document.addEventListener('DOMContentLoaded', () => {
         'aim': 'AIM ASSIST',
         'antiban': 'ANTI-BAN PROTECTION',
         'kernel': 'KERNEL EXPLOIT',
-        'tweak': 'TWEAK INJECTION'
+        'tweak': 'TWEAK INJECTION',
+        'performance': 'PERFORMANCE MODE',
+        'latency': 'REDUCE LATENCY',
+        'background': 'DISABLE BACKGROUND APPS',
+        'highfps': 'HIGH FPS MODE',
+        'bloom': 'REDUCE BLOOM EFFECT',
+        'shadows': 'OPTIMIZE SHADOWS',
+        'touch': 'TOUCH RESPONSE BOOST',
+        'gyro': 'GYROSCOPE STABILIZER',
+        'autofire': 'AUTO-FIRE OPTIMIZATION',
+        'notifications': 'REDUCE NOTIFICATIONS',
+        'brightness': 'AUTO-BRIGHTNESS ADJUST'
       };
       
       const status = this.checked ? 'ENABLED' : 'DISABLED';
