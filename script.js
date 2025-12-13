@@ -1,5 +1,3 @@
-[file name]: script.js
-[file content begin]
 // Navigasi antar screen
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(screen => {
