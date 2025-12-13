@@ -1,28 +1,14 @@
 {
   "valid_keys": [
-    "SAIKUTO2024",
-    "KUTOOFF",
-    "FREE2024",
-    "IOSGAMING",
-    "S12345KEY",
-    "KUTOACCESS",
-    "FFMAX2024",
-    "VIPACCESS",
-    "GAMEMOD2024",
-    "KUTOADMIN",
-    "LIFETIME2024",
-    "PERMANENTKEY",
-    "SAIKUTOVIP",
-    "KUTOVIP2024",
-    "KUTOFREE",
-    "SAIGAMING",
-    "FFMOD2024",
-    "IOSMOD",
-    "HEADTRICK",
-    "KUTOTOOL"
+    "SAIKUTOFREE",
+    "KEY_KEDUA",
+    "KEY_KETIGA",
+    "BISA_APA_SAJA",
+    "NAMA_ANDA_2024",
+    "SECRET_CODE",
+    "KUTO_VIP",
+    "MOD_FREE_FIRE"
   ],
-  "key_type": "lifetime",
-  "version": "3.0",
-  "created_date": "2024-01-01",
-  "admin_contact": "Contact admin for new key"
+  "key_type": "lifetime_permanent",
+  "description": "Custom keys - Edit this file to add/remove keys"
 }
