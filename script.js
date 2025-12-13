@@ -1,3 +1,5 @@
+[file name]: script.js
+[file content begin]
 // Navigasi antar screen
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(screen => {
@@ -120,38 +122,42 @@ function launchFreeFire() {
   
   console.log('Launching Free Fire...');
   
-  // Cek apakah ada fitur yang aktif
+  // Cek semua fitur iOS yang baru
   const aimAssistActive = document.getElementById('aim')?.checked || false;
   const antiBanActive = document.getElementById('antiban')?.checked || false;
-  
-  // Cek fitur gaming optimization
   const performanceActive = document.getElementById('performance')?.checked || false;
-  const latencyActive = document.getElementById('latency')?.checked || false;
-  const backgroundActive = document.getElementById('background')?.checked || false;
+  const reducePingActive = document.getElementById('reduceping')?.checked || false;
   const highfpsActive = document.getElementById('highfps')?.checked || false;
   const bloomActive = document.getElementById('bloom')?.checked || false;
-  const shadowsActive = document.getElementById('shadows')?.checked || false;
+  const antialiasingActive = document.getElementById('antialiasing')?.checked || false;
   const touchActive = document.getElementById('touch')?.checked || false;
-  const gyroActive = document.getElementById('gyro')?.checked || false;
   const autofireActive = document.getElementById('autofire')?.checked || false;
-  const notificationsActive = document.getElementById('notifications')?.checked || false;
-  const brightnessActive = document.getElementById('brightness')?.checked || false;
+  const threedtouchActive = document.getElementById('threedtouch')?.checked || false;
+  const lowpowermodeActive = document.getElementById('lowpowermode')?.checked || false;
+  const dndmodeActive = document.getElementById('dndmode')?.checked || false;
+  const autolockActive = document.getElementById('autolock')?.checked || false;
+  const reducemotionActive = document.getElementById('reducemotion')?.checked || false;
+  const wifipriorityActive = document.getElementById('wifipriority')?.checked || false;
+  const backgroundrefreshActive = document.getElementById('backgroundrefresh')?.checked || false;
   
   // Simpan semua settings
   const settings = {
     aimAssist: aimAssistActive,
     antiBan: antiBanActive,
     performance: performanceActive,
-    latency: latencyActive,
-    background: backgroundActive,
+    reduceping: reducePingActive,
     highfps: highfpsActive,
     bloom: bloomActive,
-    shadows: shadowsActive,
+    antialiasing: antialiasingActive,
     touch: touchActive,
-    gyro: gyroActive,
     autofire: autofireActive,
-    notifications: notificationsActive,
-    brightness: brightnessActive,
+    threedtouch: threedtouchActive,
+    lowpowermode: lowpowermodeActive,
+    dndmode: dndmodeActive,
+    autolock: autolockActive,
+    reducemotion: reducemotionActive,
+    wifipriority: wifipriorityActive,
+    backgroundrefresh: backgroundrefreshActive,
     timestamp: Date.now()
   };
   
@@ -162,8 +168,10 @@ function launchFreeFire() {
   if (aimAssistActive) activeFeatures.push('AIM ASSIST');
   if (antiBanActive) activeFeatures.push('ANTI-BAN');
   if (performanceActive) activeFeatures.push('PERFORMANCE MODE');
-  if (latencyActive) activeFeatures.push('REDUCE LATENCY');
+  if (reducePingActive) activeFeatures.push('REDUCE PING');
   if (highfpsActive) activeFeatures.push('HIGH FPS');
+  if (lowpowermodeActive) activeFeatures.push('LOW POWER OFF');
+  if (dndmodeActive) activeFeatures.push('DO NOT DISTURB');
   
   if (activeFeatures.length > 0) {
     showNotification(`Launching Free Fire\n${activeFeatures.join(' + ')}`);
@@ -291,9 +299,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const settings = JSON.parse(savedSettings);
       
       // Set semua toggle sesuai saved settings
-      const toggleIds = ['aim', 'antiban', 'kernel', 'tweak', 'performance', 'latency', 
-                         'background', 'highfps', 'bloom', 'shadows', 'touch', 'gyro', 
-                         'autofire', 'notifications', 'brightness'];
+      const toggleIds = ['aim', 'antiban', 'kernel', 'tweak', 'performance', 'reduceping', 
+                         'highfps', 'bloom', 'antialiasing', 'touch', 'autofire', 
+                         'threedtouch', 'lowpowermode', 'dndmode', 'autolock', 
+                         'reducemotion', 'wifipriority', 'backgroundrefresh'];
       
       toggleIds.forEach(id => {
         const toggle = document.getElementById(id);
@@ -355,37 +364,25 @@ document.addEventListener('DOMContentLoaded', () => {
         'kernel': 'KERNEL EXPLOIT',
         'tweak': 'TWEAK INJECTION',
         'performance': 'PERFORMANCE MODE',
-        'latency': 'REDUCE LATENCY',
-        'background': 'DISABLE BACKGROUND APPS',
+        'reduceping': 'REDUCE PING',
         'highfps': 'HIGH FPS MODE',
         'bloom': 'REDUCE BLOOM EFFECT',
-        'shadows': 'OPTIMIZE SHADOWS',
+        'antialiasing': 'ANTI-ALIASING',
         'touch': 'TOUCH RESPONSE BOOST',
-        'gyro': 'GYROSCOPE STABILIZER',
         'autofire': 'AUTO-FIRE OPTIMIZATION',
-        'notifications': 'REDUCE NOTIFICATIONS',
-        'brightness': 'AUTO-BRIGHTNESS ADJUST'
+        'threedtouch': '3D TOUCH SENSITIVITY',
+        'lowpowermode': 'LOW POWER MODE OFF',
+        'dndmode': 'DO NOT DISTURB',
+        'autolock': 'AUTO-LOCK DISABLE',
+        'reducemotion': 'REDUCE MOTION',
+        'wifipriority': 'WI-FI PRIORITY',
+        'backgroundrefresh': 'BACKGROUND APP REFRESH OFF'
       };
       
       const status = this.checked ? 'ENABLED' : 'DISABLED';
       showNotification(`${featureNames[this.id] || this.id}: ${status}`);
     });
   });
-  
-  // Setup untuk theme select
-  const themeSelect = document.querySelector('.theme-select');
-  if (themeSelect) {
-    themeSelect.addEventListener('change', function() {
-      showNotification(`Theme changed to ${this.value}`);
-      localStorage.setItem('theme', this.value);
-    });
-    
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      themeSelect.value = savedTheme;
-    }
-  }
   
   // Setup untuk cards
   document.querySelectorAll('.card').forEach(card => {
@@ -433,3 +430,4 @@ window.onerror = function(message, source, lineno, colno, error) {
   console.log('Error suppressed:', message);
   return true;
 };
+[file content end]
