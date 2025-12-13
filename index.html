@@ -60,6 +60,9 @@
           
           <div class="login-info">
             <p><i class="fas fa-info-circle"></i> Contact admin for access key</p>
+            <p style="font-size: 11px; margin-top: 5px; color: rgba(255,122,0,0.7);">
+              Try: SAIKUTO2024 or KUTOOFF
+            </p>
           </div>
           
           <button class="login-btn" onclick="checkLogin()">
@@ -73,7 +76,7 @@
           </button>
           
           <div class="login-footer">
-            <p class="version">Version 2.0 • iOS Support 14.0-26.1</p>
+            <p class="version">Version 3.0 • Lifetime Access • iOS 14.0-26.1</p>
           </div>
         </div>
       </div>
@@ -98,7 +101,7 @@
           <h1 class="title glitch" data-text="SaiKuto">SaiKuto</h1>
           <div class="version-info">
             <p class="subtitle">IOS 14.0 - 26.1</p>
-            <p class="author">by Kutoo</p>
+            <p class="author">by Kutoo • Lifetime Access</p>
           </div>
         </div>
         
@@ -163,6 +166,17 @@
               <i class="fas fa-chevron-right"></i>
             </div>
           </div>
+          
+          <!-- Logout Button -->
+          <div class="card" onclick="logoutUser()">
+            <div class="card-icon" style="background: linear-gradient(135deg, #ff0058, #ff0000);">
+              <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <div class="card-content">
+              <h3>Logout</h3>
+              <p>Clear session and return to login</p>
+            </div>
+          </div>
         </div>
         
         <!-- Saii Section -->
@@ -178,6 +192,9 @@
               <div class="btn-pulse"></div>
             </button>
             <p class="info-text">Press to launch Free Fire • Enable features in Settings</p>
+            <p style="font-size: 11px; color: rgba(255,122,0,0.7); text-align: center; margin-top: 5px;">
+              Lifetime Access Active
+            </p>
           </div>
         </div>
       </div>
@@ -477,7 +494,7 @@
             <div class="logo-text">
               <h1 class="saii-title">SaiKuto</h1>
               <p class="saii-subtitle">IOS 14.0 - 26.1</p>
-              <p class="saii-author">by Kutoo</p>
+              <p class="saii-author">by Kutoo • Lifetime Access</p>
             </div>
           </div>
         </div>
@@ -550,11 +567,10 @@
       </div>
       
       <div class="credits-content">
-        <!-- Developer Info Dihapus -->
-        
+        <!-- Developer Info -->
         <div class="info-card">
           <h4><i class="fas fa-mobile-alt"></i> iOS Support</h4>
-          <p>14.0 - 26.1</p>
+          <p>14.0 - 26.1 (Lifetime Access)</p>
         </div>
         
         <div class="info-card">
@@ -569,12 +585,27 @@
         
         <div class="info-card">
           <h4><i class="fas fa-key"></i> Access Key System</h4>
-          <p>Secure login protection</p>
+          <p>Lifetime access keys</p>
+        </div>
+        
+        <div class="info-card">
+          <h4><i class="fas fa-cogs"></i> Debug Info</h4>
+          <p id="debugInfo">Loading debug info...</p>
         </div>
         
         <div class="disclaimer">
           <i class="fas fa-exclamation-triangle"></i>
           <p>This tool is for educational purposes only. Use at your own risk.</p>
+        </div>
+        
+        <!-- Debug Buttons -->
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+          <button onclick="clearSession()" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #ff0058, #ff0000); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+            Clear Session
+          </button>
+          <button onclick="location.reload()" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #ff7a00, #ff5500); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+            Reload App
+          </button>
         </div>
       </div>
     </div>
@@ -598,5 +629,26 @@
   </div>
 
   <script src="script.js"></script>
+  <script>
+    // Update debug info
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        const debugInfo = document.getElementById('debugInfo');
+        if (debugInfo) {
+          const session = localStorage.getItem('saiSession');
+          const key = localStorage.getItem('loginKey');
+          const keyUsed = localStorage.getItem('keyUsed');
+          const keysCount = VALID_LIFETIME_KEYS ? VALID_LIFETIME_KEYS.length : 'Loading...';
+          
+          debugInfo.innerHTML = `
+            Session: ${session || 'None'}<br>
+            Key: ${key ? '✓ Loaded' : 'None'}<br>
+            Key Used: ${keyUsed || 'None'}<br>
+            Valid Keys: ${keysCount}
+          `;
+        }
+      }, 1000);
+    });
+  </script>
 </body>
 </html>
