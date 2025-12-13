@@ -1,7 +1,7 @@
 {
   "name": "SaiKuto",
   "short_name": "Saikuto",
-  "description": "HEADTRICK IOS KUTO",
+  "description": "SaiKuto v10.1 - iOS Gaming Tool",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
