@@ -88,14 +88,6 @@ function updateKeysInfoUI() {
       // Remove existing info jika ada
       const existingInfo = footer.querySelector('.keys-info');
       if (existingInfo) existingInfo.remove();
-      
-      // Add new info
-      const info = document.createElement('p');
-      info.className = 'keys-info';
-      info.style.cssText = 'font-size: 11px; color: rgba(255,122,0,0.7); margin-top: 5px; text-align: center;';
-      info.textContent = `Loaded ${VALID_KEYS.length} keys from keys.json`;
-      footer.appendChild(info);
-    }
     
     // Update di debug info
     const debugInfo = document.getElementById('debugInfo');
