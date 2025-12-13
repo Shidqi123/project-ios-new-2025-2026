@@ -19,80 +19,157 @@ function showNotification(message) {
   }, 2500);
 }
 
-// Check Login dengan Access Key
-function checkLogin() {
-  const loginKey = document.getElementById('loginKey').value;
+// Valid Keys untuk LIFETIME ACCESS (Default jika keys.json tidak bisa di-load)
+let VALID_LIFETIME_KEYS = [
+  'SAIKUTO2024',
+  'KUTOOFF',
+  'FREE2024',
+  'IOSGAMING',
+  'S12345KEY',
+  'KUTOACCESS',
+  'FFMAX2024',
+  'VIPACCESS',
+  'GAMEMOD2024',
+  'KUTOADMIN',
+  'LIFETIME2024',
+  'PERMANENTKEY',
+  'SAIKUTOVIP',
+  'KUTOVIP2024'
+];
+
+// Load keys dari file keys.json
+async function loadKeysFromFile() {
+  try {
+    const response = await fetch('keys.json');
+    if (!response.ok) throw new Error('Failed to load keys.json');
+    
+    const data = await response.json();
+    if (data.valid_keys && Array.isArray(data.valid_keys)) {
+      VALID_LIFETIME_KEYS = data.valid_keys.map(key => key.toUpperCase());
+      console.log('Keys loaded from keys.json:', VALID_LIFETIME_KEYS.length, 'keys available');
+      return true;
+    }
+  } catch (error) {
+    console.log('Using default keys (keys.json not found or invalid)');
+  }
+  return false;
+}
+
+// Check Login dengan Access Key (LIFETIME VERSION)
+async function checkLogin() {
+  console.log('Checking login...');
+  
+  const loginKeyInput = document.getElementById('loginKey');
+  const loginKey = loginKeyInput ? loginKeyInput.value : '';
   const keyStatus = document.getElementById('keyStatus');
   
-  if (!loginKey) {
+  if (!loginKey || loginKey.trim() === '') {
     showNotification('Please enter access key');
-    keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
+    if (keyStatus) {
+      keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
+    }
     return;
   }
   
-  async function validateKey(key) {
-  try {
-    const response = await fetch('keys.json');
-    const data = await response.json();
-    return data.valid_keys.includes(key.trim().toUpperCase());
-  } catch {
-    // Fallback ke default keys
-    const defaultKeys = ['SAIKUTO2024', 'KUTOOFF', 'FREE2024'];
-    return defaultKeys.includes(key.trim().toUpperCase());
+  // Update status
+  if (keyStatus) {
+    keyStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   }
-}
   
-  const keyStatusText = document.getElementById('keyStatus');
-  keyStatusText.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  // Validasi key
+  const keyUpper = loginKey.trim().toUpperCase();
   
   // Simulasi loading
-  setTimeout(() => {
-    if (validKeys.includes(loginKey.trim().toUpperCase())) {
-      // Key valid
-      keyStatus.innerHTML = '<i class="fas fa-check" style="color:#00ff88"></i>';
-      showNotification('Access granted! Welcome to SaiKuto');
+  setTimeout(async () => {
+    if (VALID_LIFETIME_KEYS.includes(keyUpper)) {
+      console.log('✅ Key VALID:', keyUpper);
       
-      // Simpan session
-      localStorage.setItem('saiSession', 'active');
-      localStorage.setItem('lastLogin', Date.now());
+      // Key valid - LIFETIME ACCESS
+      if (keyStatus) {
+        keyStatus.innerHTML = '<i class="fas fa-check" style="color:#00ff88"></i>';
+      }
       
-      // Redirect ke main screen setelah 1 detik
+      showNotification('✅ Lifetime access granted! Welcome to SaiKuto');
+      
+      // Simpan session dengan flag LIFETIME
+      localStorage.setItem('saiSession', 'active_lifetime');
+      localStorage.setItem('loginKey', keyUpper);
+      localStorage.setItem('accessType', 'lifetime');
+      localStorage.setItem('loginTime', Date.now().toString());
+      localStorage.setItem('keyUsed', keyUpper);
+      
+      // Redirect ke main screen
       setTimeout(() => {
         showScreen('mainScreen');
-      }, 1000);
+        console.log('✅ Redirected to main screen');
+      }, 800);
       
     } else {
+      console.log('❌ Key INVALID:', keyUpper);
+      
       // Key invalid
-      keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
+      if (keyStatus) {
+        keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
+      }
       showNotification('Invalid access key. Please try again.');
       
       // Reset input
-      document.getElementById('loginKey').value = '';
-      document.getElementById('loginKey').focus();
+      if (loginKeyInput) {
+        loginKeyInput.value = '';
+        loginKeyInput.focus();
+      }
     }
-  }, 1000);
+  }, 800);
 }
 
-// Check session saat load
+// Check session saat load (LIFETIME VERSION)
 function checkSession() {
-  const session = localStorage.getItem('saiSession');
-  const lastLogin = localStorage.getItem('lastLogin');
+  console.log('🔍 Checking session...');
   
-  if (session === 'active' && lastLogin) {
-    const now = Date.now();
-    const diff = now - parseInt(lastLogin);
-    const hoursDiff = diff / (1000 * 60 * 60);
+  const session = localStorage.getItem('saiSession');
+  const savedKey = localStorage.getItem('loginKey');
+  const accessType = localStorage.getItem('accessType');
+  
+  console.log('Session:', session);
+  console.log('Saved key:', savedKey);
+  console.log('Access type:', accessType);
+  
+  // Validasi LIFETIME
+  if (session === 'active_lifetime' && accessType === 'lifetime' && savedKey) {
+    console.log('✅ Session exists, checking key...');
     
-    // Session valid selama 24 jam
-    if (hoursDiff < 24) {
+    // Cek jika key masih valid
+    if (VALID_LIFETIME_KEYS.includes(savedKey.toUpperCase())) {
+      console.log('✅ Key is valid, showing main screen');
       showScreen('mainScreen');
       return true;
+    } else {
+      console.log('❌ Key is no longer valid, clearing session');
+      clearSession();
     }
   }
   
-  // Tampilkan login screen
+  console.log('❌ No valid session, showing login screen');
   showScreen('loginScreen');
   return false;
+}
+
+// Clear session (untuk logout)
+function clearSession() {
+  localStorage.removeItem('saiSession');
+  localStorage.removeItem('loginKey');
+  localStorage.removeItem('accessType');
+  localStorage.removeItem('loginTime');
+  localStorage.removeItem('keyUsed');
+  showScreen('loginScreen');
+  showNotification('Logged out successfully');
+}
+
+// Logout function (bisa ditambahkan di UI nanti)
+function logoutUser() {
+  if (confirm('Are you sure you want to logout?')) {
+    clearSession();
+  }
 }
 
 // Typewriter effect dengan efek blur
@@ -133,10 +210,9 @@ function typeWithBlur(elementId, text, speed, callback) {
 
 // Fungsi utama Saii - LAUNCH FREE FIRE
 function startSaii() {
-  // Check session dulu
+  // Check session dulu (LIFETIME)
   if (!checkSession()) {
-    showNotification('Session expired. Please login again.');
-    showScreen('loginScreen');
+    showNotification('Please login to access SaiKuto');
     return;
   }
   
@@ -331,17 +407,47 @@ function hideInstallPrompt() {
 }
 
 // Inisialisasi
-document.addEventListener('DOMContentLoaded', () => {
-  // Check session pertama kali
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 DOM loaded, initializing SaiKuto...');
+  
+  // Load keys dari file terlebih dahulu
+  await loadKeysFromFile();
+  
+  // Check session pertama kali (LIFETIME VERSION)
   checkSession();
   
   // Setup enter key untuk login
   const loginInput = document.getElementById('loginKey');
+  const loginBtn = document.querySelector('.login-btn');
+  
   if (loginInput) {
+    console.log('✅ Login input found');
+    
     loginInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
+        console.log('Enter key pressed');
         checkLogin();
       }
+    });
+    
+    // Auto-focus pada input login
+    setTimeout(() => {
+      loginInput.focus();
+    }, 500);
+  }
+  
+  if (loginBtn) {
+    console.log('✅ Login button found');
+    
+    loginBtn.addEventListener('click', () => {
+      console.log('Login button clicked');
+      checkLogin();
+    });
+    
+    loginBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      console.log('Login button touched');
+      checkLogin();
     });
   }
   
@@ -380,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Check if running as PWA
   if (window.matchMedia('(display-mode: standalone)').matches) {
-    console.log('Running as PWA');
+    console.log('📱 Running as PWA');
     document.body.classList.add('pwa-mode');
   }
   
@@ -416,11 +522,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Setup untuk tombol Saii
   const saiiBtn = document.querySelector('.saii-btn');
   if (saiiBtn) {
+    console.log('✅ Saii button found');
+    
     const handleSaiiClick = (e) => {
       if (e) {
         e.preventDefault();
         e.stopPropagation();
       }
+      console.log('🎮 Saii button clicked');
       saiiBtn.style.transform = 'scale(0.98)';
       setTimeout(() => {
         saiiBtn.style.transform = 'scale(1)';
@@ -494,10 +603,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  // Enable scrolling pada body
-  document.body.style.overflow = 'auto';
-  document.body.style.height = 'auto';
-  document.body.style.position = 'relative';
+  console.log('✅ Initialization complete');
+  console.log('🔑 Available keys:', VALID_LIFETIME_KEYS);
 });
 
 // Override alert/confirm untuk mencegah popup system
