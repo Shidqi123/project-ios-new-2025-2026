@@ -19,23 +19,8 @@ function showNotification(message) {
   }, 2500);
 }
 
-// Valid Keys untuk LIFETIME ACCESS (Default jika keys.json tidak bisa di-load)
-let VALID_LIFETIME_KEYS = [
-  'SAIKUTO2024',
-  'KUTOOFF',
-  'FREE2024',
-  'IOSGAMING',
-  'S12345KEY',
-  'KUTOACCESS',
-  'FFMAX2024',
-  'VIPACCESS',
-  'GAMEMOD2024',
-  'KUTOADMIN',
-  'LIFETIME2024',
-  'PERMANENTKEY',
-  'SAIKUTOVIP',
-  'KUTOVIP2024'
-];
+// VARIABLE untuk keys
+let VALID_LIFETIME_KEYS = [];
 
 // Load keys dari file keys.json
 async function loadKeysFromFile() {
@@ -45,29 +30,34 @@ async function loadKeysFromFile() {
     
     const data = await response.json();
     if (data.valid_keys && Array.isArray(data.valid_keys)) {
-      VALID_LIFETIME_KEYS = data.valid_keys.map(key => key.toUpperCase());
-      console.log('Keys loaded from keys.json:', VALID_LIFETIME_KEYS.length, 'keys available');
+      // Convert semua key ke UPPERCASE untuk konsistensi
+      VALID_LIFETIME_KEYS = data.valid_keys.map(key => key.toString().toUpperCase());
+      console.log('✅ Keys loaded from keys.json:', VALID_LIFETIME_KEYS);
       return true;
     }
   } catch (error) {
-    console.log('Using default keys (keys.json not found or invalid)');
+    console.log('❌ Cannot load keys.json, using default keys');
+    // Default keys jika file tidak ada
+    VALID_LIFETIME_KEYS = [
+      'KUTO123',
+      'SAIFREE2024', 
+      'HEADTRICKVIP',
+      'MODGAMING',
+      'IPHONEMOD'
+    ];
   }
   return false;
 }
 
-// Check Login dengan Access Key (LIFETIME VERSION)
+// Check Login dengan Access Key
 async function checkLogin() {
-  console.log('Checking login...');
-  
   const loginKeyInput = document.getElementById('loginKey');
   const loginKey = loginKeyInput ? loginKeyInput.value : '';
   const keyStatus = document.getElementById('keyStatus');
   
   if (!loginKey || loginKey.trim() === '') {
     showNotification('Please enter access key');
-    if (keyStatus) {
-      keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
-    }
+    if (keyStatus) keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
     return;
   }
   
@@ -79,35 +69,33 @@ async function checkLogin() {
   // Validasi key
   const keyUpper = loginKey.trim().toUpperCase();
   
-  // Simulasi loading
-  setTimeout(async () => {
+  // Check jika key valid
+  setTimeout(() => {
     if (VALID_LIFETIME_KEYS.includes(keyUpper)) {
-      console.log('✅ Key VALID:', keyUpper);
-      
-      // Key valid - LIFETIME ACCESS
+      // ✅ Key valid - BERHASIL LOGIN
       if (keyStatus) {
         keyStatus.innerHTML = '<i class="fas fa-check" style="color:#00ff88"></i>';
       }
       
-      showNotification('✅ Lifetime access granted! Welcome to SaiKuto');
+      showNotification('✅ Access granted! Welcome to SaiKuto');
       
-      // Simpan session dengan flag LIFETIME
-      localStorage.setItem('saiSession', 'active_lifetime');
+      // 💾 SIMPAN KE BROWSER SELAMANYA
+      localStorage.setItem('saiSession', 'active_forever');
       localStorage.setItem('loginKey', keyUpper);
-      localStorage.setItem('accessType', 'lifetime');
+      localStorage.setItem('accessType', 'permanent');
       localStorage.setItem('loginTime', Date.now().toString());
       localStorage.setItem('keyUsed', keyUpper);
+      localStorage.setItem('lifetimeAccess', 'true');
+      
+      console.log('💾 Session saved to browser (permanent)');
       
       // Redirect ke main screen
       setTimeout(() => {
         showScreen('mainScreen');
-        console.log('✅ Redirected to main screen');
       }, 800);
       
     } else {
-      console.log('❌ Key INVALID:', keyUpper);
-      
-      // Key invalid
+      // ❌ Key invalid
       if (keyStatus) {
         keyStatus.innerHTML = '<i class="fas fa-times" style="color:#ff0058"></i>';
       }
@@ -122,52 +110,47 @@ async function checkLogin() {
   }, 800);
 }
 
-// Check session saat load (LIFETIME VERSION)
+// Check session saat load (PERMANENT LIFETIME)
 function checkSession() {
-  console.log('🔍 Checking session...');
+  console.log('🔍 Checking permanent session...');
   
+  // Cek jika sudah login sebelumnya
   const session = localStorage.getItem('saiSession');
   const savedKey = localStorage.getItem('loginKey');
-  const accessType = localStorage.getItem('accessType');
+  const lifetimeAccess = localStorage.getItem('lifetimeAccess');
   
-  console.log('Session:', session);
+  console.log('Session status:', session);
   console.log('Saved key:', savedKey);
-  console.log('Access type:', accessType);
+  console.log('Lifetime access:', lifetimeAccess);
   
-  // Validasi LIFETIME
-  if (session === 'active_lifetime' && accessType === 'lifetime' && savedKey) {
-    console.log('✅ Session exists, checking key...');
-    
-    // Cek jika key masih valid
-    if (VALID_LIFETIME_KEYS.includes(savedKey.toUpperCase())) {
-      console.log('✅ Key is valid, showing main screen');
-      showScreen('mainScreen');
-      return true;
-    } else {
-      console.log('❌ Key is no longer valid, clearing session');
-      clearSession();
-    }
+  // 🎯 KRITERIA: Jika ada session dan lifetimeAccess = true, LANGSUNG MASUK
+  if (session === 'active_forever' && lifetimeAccess === 'true' && savedKey) {
+    console.log('✅ User has LIFETIME access, showing main screen');
+    showScreen('mainScreen');
+    return true;
   }
   
+  // Jika tidak ada session, tampilkan login
   console.log('❌ No valid session, showing login screen');
   showScreen('loginScreen');
   return false;
 }
 
-// Clear session (untuk logout)
+// Clear session (untuk logout manual)
 function clearSession() {
   localStorage.removeItem('saiSession');
   localStorage.removeItem('loginKey');
   localStorage.removeItem('accessType');
   localStorage.removeItem('loginTime');
   localStorage.removeItem('keyUsed');
+  localStorage.removeItem('lifetimeAccess');
   showScreen('loginScreen');
   showNotification('Logged out successfully');
 }
 
-// Logout function (bisa ditambahkan di UI nanti)
+// Logout function
 function logoutUser() {
-  if (confirm('Are you sure you want to logout?')) {
+  if (confirm('Are you sure you want to logout?\nYou will need to enter key again.')) {
     clearSession();
   }
 }
@@ -210,7 +193,7 @@ function typeWithBlur(elementId, text, speed, callback) {
 
 // Fungsi utama Saii - LAUNCH FREE FIRE
 function startSaii() {
-  // Check session dulu (LIFETIME)
+  // Check session dulu
   if (!checkSession()) {
     showNotification('Please login to access SaiKuto');
     return;
@@ -408,12 +391,13 @@ function hideInstallPrompt() {
 
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('🚀 DOM loaded, initializing SaiKuto...');
+  console.log('🚀 Starting SaiKuto...');
   
-  // Load keys dari file terlebih dahulu
+  // Load keys dari file
   await loadKeysFromFile();
+  console.log('🔑 Available keys:', VALID_LIFETIME_KEYS);
   
-  // Check session pertama kali (LIFETIME VERSION)
+  // Check session
   checkSession();
   
   // Setup enter key untuk login
@@ -421,32 +405,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   const loginBtn = document.querySelector('.login-btn');
   
   if (loginInput) {
-    console.log('✅ Login input found');
-    
     loginInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        console.log('Enter key pressed');
         checkLogin();
       }
     });
     
-    // Auto-focus pada input login
-    setTimeout(() => {
-      loginInput.focus();
-    }, 500);
+    // Auto-focus
+    setTimeout(() => loginInput.focus(), 500);
   }
   
   if (loginBtn) {
-    console.log('✅ Login button found');
-    
-    loginBtn.addEventListener('click', () => {
-      console.log('Login button clicked');
-      checkLogin();
-    });
-    
+    loginBtn.addEventListener('click', () => checkLogin());
     loginBtn.addEventListener('touchend', (e) => {
       e.preventDefault();
-      console.log('Login button touched');
       checkLogin();
     });
   }
@@ -456,10 +428,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     e.preventDefault();
     deferredPrompt = e;
     
-    // Show install prompt after 3 seconds
-    setTimeout(() => {
-      showInstallPrompt();
-    }, 3000);
+    setTimeout(() => showInstallPrompt(), 3000);
   });
   
   // Install button click
@@ -522,14 +491,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Setup untuk tombol Saii
   const saiiBtn = document.querySelector('.saii-btn');
   if (saiiBtn) {
-    console.log('✅ Saii button found');
-    
     const handleSaiiClick = (e) => {
       if (e) {
         e.preventDefault();
         e.stopPropagation();
       }
-      console.log('🎮 Saii button clicked');
       saiiBtn.style.transform = 'scale(0.98)';
       setTimeout(() => {
         saiiBtn.style.transform = 'scale(1)';
@@ -539,14 +505,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     saiiBtn.addEventListener('click', handleSaiiClick);
     saiiBtn.addEventListener('touchend', handleSaiiClick);
-    
-    // Hover effects
-    saiiBtn.addEventListener('mouseenter', () => {
-      saiiBtn.style.transform = 'translateY(-2px)';
-    });
-    saiiBtn.addEventListener('mouseleave', () => {
-      saiiBtn.style.transform = 'translateY(0)';
-    });
   }
   
   // Setup untuk semua toggle switches
@@ -558,7 +516,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       settings[this.id] = this.checked;
       localStorage.setItem('ffSettings', JSON.stringify(settings));
       
-      // Show notification (TANPA EMOJI)
+      // Show notification
       const featureNames = {
         'aim': 'AIM ASSIST',
         'antiban': 'ANTI-BAN PROTECTION',
@@ -585,26 +543,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
   
-  // Setup untuk cards
-  document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      card.style.transform = 'translateY(-2px)';
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'translateY(0)';
-    });
-    
-    // Touch events untuk iPad
-    card.addEventListener('touchstart', () => {
-      card.style.transform = 'scale(0.98)';
-    });
-    card.addEventListener('touchend', () => {
-      card.style.transform = 'scale(1)';
-    });
-  });
-  
-  console.log('✅ Initialization complete');
-  console.log('🔑 Available keys:', VALID_LIFETIME_KEYS);
+  console.log('✅ SaiKuto ready!');
 });
 
 // Override alert/confirm untuk mencegah popup system
