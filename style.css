@@ -10,9 +10,17 @@ body {
   background: #000;
   color: #fff;
   min-height: 100vh;
-  overflow-y: auto; /* PERBAIKAN: Enable scroll */
+  overflow-y: auto;
   font-size: 16px;
   line-height: 1.5;
+}
+
+/* PWA Safe Area */
+.screen {
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
 }
 
 /* Background Effects */
@@ -76,19 +84,21 @@ body {
 /* Screen Management */
 .screen {
   display: none;
-  min-height: 100vh; /* PERBAIKAN: Ganti height ke min-height */
+  min-height: 100vh;
   position: relative;
 }
 
 .screen.active {
   display: block;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .container {
   max-width: 375px;
   margin: 0 auto;
   padding: 20px;
-  min-height: 100vh; /* PERBAIKAN: Ganti height ke min-height */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -100,7 +110,7 @@ body {
   display: flex;
   flex-direction: column;
   padding-top: 40px;
-  overflow-y: visible; /* PERBAIKAN: Allow content to expand */
+  overflow-y: visible;
 }
 
 /* Glitch Effect Header */
@@ -241,13 +251,13 @@ body {
   padding: 22px;
   width: 100%;
   color: white;
-  font-size: 28px; /* PERBAIKAN: Perbesar font */
-  font-weight: 900; /* PERBAIKAN: Tebalkan */
+  font-size: 28px;
+  font-weight: 900;
   cursor: pointer;
   margin-bottom: 15px;
   overflow: hidden;
   transition: all 0.3s ease;
-  letter-spacing: 1px; /* PERBAIKAN: Tambah spacing */
+  letter-spacing: 1px;
 }
 
 .saii-btn:hover {
@@ -269,7 +279,7 @@ body {
 }
 
 .btn-arrow {
-  font-size: 24px; /* PERBAIKAN: Perbesar icon */
+  font-size: 24px;
   opacity: 0.9;
   animation: bounce 2s infinite;
 }
@@ -591,6 +601,17 @@ body {
   100% { transform: translateX(100%); }
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 /* Settings Screen */
 .header-nav {
   display: flex;
@@ -617,6 +638,7 @@ body {
 .settings-content {
   flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .section-card {
@@ -705,6 +727,15 @@ input:checked + .toggle-slider:before {
   transform: translateX(20px);
 }
 
+/* Custom toggle colors */
+#aim:checked + .toggle-slider {
+  background: linear-gradient(135deg, #00ff88, #00ccff);
+}
+
+#antiban:checked + .toggle-slider {
+  background: linear-gradient(135deg, #ff7a00, #ff0058);
+}
+
 .theme-select {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -719,7 +750,8 @@ input:checked + .toggle-slider:before {
 /* Credits Screen */
 .credits-content {
   flex: 1;
-  overflow-y: auto; /* PERBAIKAN: Enable scroll */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .developer-card {
@@ -839,19 +871,83 @@ input:checked + .toggle-slider:before {
   font-size: 18px;
 }
 
-/* Touch-friendly improvements for iPad */
+/* Install Prompt */
+.install-prompt {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #ff7a00, #ff0058);
+  color: white;
+  padding: 15px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 9999;
+  box-shadow: 0 10px 30px rgba(255, 122, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+.install-prompt.hidden {
+  display: none;
+}
+
+.install-text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.install-btn {
+  background: white;
+  color: #ff7a00;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.close-install {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* Touch-friendly improvements */
 .saii-btn, .card {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   cursor: pointer;
 }
 
-/* Prevent text selection on tap */
+/* Prevent text selection */
 .saii-btn, .card, .screen {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+/* PWA Mode */
+@media (display-mode: standalone) {
+  body {
+    background: #000;
+  }
+  
+  .saii-btn {
+    min-height: 60px;
+  }
+  
+  .container {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 /* Better hover for touch devices */
@@ -875,28 +971,6 @@ input:checked + .toggle-slider:before {
   .card {
     padding: 20px;
   }
-}
-
-/* ========== PERBAIKAN SCROLL ========== */
-
-/* Enable scrolling on screens */
-.screen.active {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Settings content scroll */
-.settings-content {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Toggle switch colors untuk fitur */
-#aim:checked + .toggle-slider {
-  background: linear-gradient(135deg, #00ff88, #00ccff);
-}
-
-#antiban:checked + .toggle-slider {
-  background: linear-gradient(135deg, #ff7a00, #ff0058);
 }
 
 /* Tombol Saii yang lebih menonjol */
