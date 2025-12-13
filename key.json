@@ -1,17 +1,3 @@
 {
-  "valid_keys": [
-    "SAIFREE",
-    "SAIFREE2024",
-    "HEADTRICKVIP",
-    "MODGAMING",
-    "IPHONEMOD",
-    "YOURNAME123",
-    "SECRETKEY",
-    "MYCUSTOMKEY",
-    "ANYTHINGYOUWANT",
-    "KUTOISBEST"
-  ],
-  "key_type": "lifetime_permanent",
-  "description": "Custom keys - Edit this file to add/remove keys",
-  "note": "Once user login with any key, they get LIFETIME access forever"
+  "valid_keys": ["SAIFREE", "SAIFREE2024", "TESTKEY"]
 }
