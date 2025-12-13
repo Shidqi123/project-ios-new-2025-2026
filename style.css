@@ -229,6 +229,56 @@ body {
   font-size: 14px;
 }
 
+/* Feature Toggle in Card */
+.feature-toggle {
+  margin-top: 10px;
+}
+
+.feature-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.feature-item span {
+  font-size: 14px;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* Toggle switch yang lebih kecil untuk di dalam card */
+.card .toggle-switch {
+  width: 40px;
+  height: 24px;
+}
+
+.card .toggle-slider:before {
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+}
+
+.card input:checked + .toggle-slider:before {
+  transform: translateX(16px);
+}
+
+/* Warna toggle khusus untuk card */
+.card #aim:checked + .toggle-slider {
+  background: linear-gradient(135deg, #00ff88, #00ccff);
+}
+
+.card #antiban:checked + .toggle-slider {
+  background: linear-gradient(135deg, #ff7a00, #ff0058);
+}
+
 /* Saii Button */
 .saii-section {
   margin-top: auto;
@@ -725,15 +775,6 @@ input:checked + .toggle-slider {
 
 input:checked + .toggle-slider:before {
   transform: translateX(20px);
-}
-
-/* Custom toggle colors */
-#aim:checked + .toggle-slider {
-  background: linear-gradient(135deg, #00ff88, #00ccff);
-}
-
-#antiban:checked + .toggle-slider {
-  background: linear-gradient(135deg, #ff7a00, #ff0058);
 }
 
 .theme-select {
