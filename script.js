@@ -85,6 +85,7 @@ function updateKeysInfoUI() {
       // Remove existing info jika ada
       const existingInfo = footer.querySelector('.keys-info');
       if (existingInfo) existingInfo.remove();
+    } // ← INI KURUNG YANG HILANG!
     
     // Update di debug info
     const debugInfo = document.getElementById('debugInfo');
@@ -104,7 +105,6 @@ function updateKeysInfoUI() {
     
   }, 500);
 }
-
 // ==============================================
 // 2. CHECK LOGIN FUNCTION (FIXED)
 // ==============================================
