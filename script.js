@@ -198,9 +198,64 @@ function launchFreeFire() {
   }, 2000);
 }
 
+// PWA Installation
+let deferredPrompt;
+const installPrompt = document.getElementById('installPrompt');
+const installBtn = document.getElementById('installBtn');
+const closeInstall = document.getElementById('closeInstall');
+
+function showInstallPrompt() {
+  if (!window.matchMedia('(display-mode: standalone)').matches && deferredPrompt) {
+    installPrompt.classList.remove('hidden');
+  }
+}
+
+function hideInstallPrompt() {
+  installPrompt.classList.add('hidden');
+}
+
 // Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('mainScreen');
+  
+  // PWA Installation Handler
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Show install prompt after 3 seconds
+    setTimeout(() => {
+      showInstallPrompt();
+    }, 3000);
+  });
+  
+  // Install button click
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        showNotification('✅ SaiKuto installed successfully');
+      }
+      
+      deferredPrompt = null;
+      hideInstallPrompt();
+    });
+  }
+  
+  // Close install prompt
+  if (closeInstall) {
+    closeInstall.addEventListener('click', hideInstallPrompt);
+  }
+  
+  // Check if running as PWA
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('Running as PWA');
+    document.body.classList.add('pwa-mode');
+  }
   
   // Load saved settings
   const savedSettings = localStorage.getItem('ffSettings');
