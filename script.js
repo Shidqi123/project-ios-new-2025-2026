@@ -11,10 +11,6 @@ function showNotification(message) {
   const notification = document.getElementById('notification');
   const notificationText = document.getElementById('notificationText');
   
-  // Cek apakah notifications enabled
-  const notificationsEnabled = document.getElementById('notifications')?.checked;
-  if (notificationsEnabled === false) return;
-  
   notificationText.textContent = message;
   notification.classList.add('show');
   
@@ -58,184 +54,6 @@ function typeWithBlur(elementId, text, speed, callback) {
     type();
   }, 300);
 }
-
-// ========== FITUR UTILITY YANG BERFUNGSI ==========
-
-// 1. LAUNCH COUNTER
-function updateLaunchCounter() {
-  let count = localStorage.getItem('ffLaunchCount') || 0;
-  document.getElementById('launchCount').textContent = count;
-  document.getElementById('totalLaunches').textContent = count;
-}
-
-function incrementLaunchCounter() {
-  let count = parseInt(localStorage.getItem('ffLaunchCount') || 0);
-  count++;
-  localStorage.setItem('ffLaunchCount', count);
-  updateLaunchCounter();
-  
-  // Update last launch time
-  const now = new Date();
-  const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-  const dateString = now.toLocaleDateString();
-  document.getElementById('lastLaunchTime').textContent = `${dateString} ${timeString}`;
-  localStorage.setItem('lastLaunchTime', `${dateString} ${timeString}`);
-}
-
-function resetLaunchCounter() {
-  if (confirm('Reset launch counter to zero?')) {
-    localStorage.setItem('ffLaunchCount', 0);
-    updateLaunchCounter();
-    showNotification('Launch counter reset to zero');
-  }
-}
-
-// 2. SESSION TIMER
-let sessionInterval = null;
-let sessionStartTime = null;
-
-function toggleSessionTimer() {
-  const timerBtn = document.getElementById('timerBtn');
-  
-  if (sessionInterval) {
-    // Stop timer
-    clearInterval(sessionInterval);
-    sessionInterval = null;
-    timerBtn.textContent = 'Start';
-    showNotification('Session timer stopped');
-  } else {
-    // Start timer
-    sessionStartTime = Date.now();
-    sessionInterval = setInterval(updateSessionTimer, 1000);
-    timerBtn.textContent = 'Stop';
-    showNotification('Session timer started');
-  }
-}
-
-function updateSessionTimer() {
-  if (!sessionStartTime) return;
-  
-  const elapsed = Date.now() - sessionStartTime;
-  const minutes = Math.floor(elapsed / 60000);
-  const seconds = Math.floor((elapsed % 60000) / 1000);
-  document.getElementById('sessionTimer').textContent = 
-    `${minutes}:${seconds.toString().padStart(2, '0')}`;
-}
-
-// 3. OPEN SETTINGS
-function openSettings() {
-  showNotification('Opening iOS Settings...');
-  
-  // Try different iOS settings URLs
-  const settingsUrls = [
-    'App-Prefs:root',
-    'App-Prefs:root=General',
-    'prefs:root=General'
-  ];
-  
-  let opened = false;
-  
-  // Try to open settings
-  settingsUrls.forEach(url => {
-    if (!opened) {
-      try {
-        const iframe = document.createElement('iframe');
-        iframe.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;border:none;';
-        iframe.src = url;
-        document.body.appendChild(iframe);
-        setTimeout(() => {
-          if (iframe.parentNode) document.body.removeChild(iframe);
-        }, 100);
-        opened = true;
-      } catch(e) {
-        // Continue to next URL
-      }
-    }
-  });
-  
-  if (!opened) {
-    showNotification('Cannot open settings from browser. Please open manually.');
-  }
-}
-
-// 4. DEVICE INFORMATION
-function displayDeviceInfo() {
-  // Platform detection
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  let platform = 'Unknown';
-  
-  if (/iPad|iPhone|iPod/.test(userAgent)) {
-    platform = 'iOS';
-  } else if (/Android/.test(userAgent)) {
-    platform = 'Android';
-  } else if (/Mac/.test(userAgent)) {
-    platform = 'Mac';
-  } else if (/Windows/.test(userAgent)) {
-    platform = 'Windows';
-  }
-  
-  document.getElementById('devicePlatform').textContent = platform;
-  
-  // Browser detection
-  let browser = 'Unknown';
-  if (userAgent.includes('Chrome')) {
-    browser = 'Chrome';
-  } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
-    browser = 'Safari';
-  } else if (userAgent.includes('Firefox')) {
-    browser = 'Firefox';
-  }
-  
-  document.getElementById('browserInfo').textContent = browser;
-  
-  // Online status
-  document.getElementById('onlineStatus').textContent = navigator.onLine ? 'Online' : 'Offline';
-  
-  // Screen size
-  document.getElementById('screenSize').textContent = 
-    `${window.innerWidth}×${window.innerHeight}`;
-  
-  // Update online status on change
-  window.addEventListener('online', () => {
-    document.getElementById('onlineStatus').textContent = 'Online';
-  });
-  
-  window.addEventListener('offline', () => {
-    document.getElementById('onlineStatus').textContent = 'Offline';
-  });
-}
-
-// 5. FAVORITE MODE
-function setFavoriteMode() {
-  const modes = ['Battle Royale', 'Clash Squad', 'Lone Wolf', 'Ranked', 'Custom'];
-  const currentMode = localStorage.getItem('favoriteMode') || 'Battle Royale';
-  
-  const newMode = prompt(`Enter your favorite Free Fire mode:\n${modes.join(', ')}`, currentMode);
-  
-  if (newMode && newMode.trim() !== '') {
-    localStorage.setItem('favoriteMode', newMode);
-    document.getElementById('favoriteMode').textContent = newMode;
-    showNotification(`Favorite mode set to: ${newMode}`);
-  }
-}
-
-// 6. LOAD LAST LAUNCH TIME
-function loadLastLaunchTime() {
-  const lastTime = localStorage.getItem('lastLaunchTime');
-  if (lastTime) {
-    document.getElementById('lastLaunchTime').textContent = lastTime;
-  }
-}
-
-// 7. LOAD FAVORITE MODE
-function loadFavoriteMode() {
-  const mode = localStorage.getItem('favoriteMode');
-  if (mode) {
-    document.getElementById('favoriteMode').textContent = mode;
-  }
-}
-
-// ========== FUNGSI UTAMA SAIi ==========
 
 // Fungsi utama Saii - LAUNCH FREE FIRE
 function startSaii() {
@@ -302,30 +120,52 @@ function launchFreeFire() {
   
   console.log('Launching Free Fire...');
   
-  // Update launch counter (FITUR NYATA)
-  incrementLaunchCounter();
-  
-  // Cek apakah ada fitur yang aktif (UI only)
+  // Cek apakah ada fitur yang aktif
   const aimAssistActive = document.getElementById('aim')?.checked || false;
   const antiBanActive = document.getElementById('antiban')?.checked || false;
   
-  // Simpan settings (FITUR NYATA)
+  // Cek fitur gaming optimization
+  const performanceActive = document.getElementById('performance')?.checked || false;
+  const latencyActive = document.getElementById('latency')?.checked || false;
+  const backgroundActive = document.getElementById('background')?.checked || false;
+  const highfpsActive = document.getElementById('highfps')?.checked || false;
+  const bloomActive = document.getElementById('bloom')?.checked || false;
+  const shadowsActive = document.getElementById('shadows')?.checked || false;
+  const touchActive = document.getElementById('touch')?.checked || false;
+  const gyroActive = document.getElementById('gyro')?.checked || false;
+  const autofireActive = document.getElementById('autofire')?.checked || false;
+  const notificationsActive = document.getElementById('notifications')?.checked || false;
+  const brightnessActive = document.getElementById('brightness')?.checked || false;
+  
+  // Simpan semua settings
   const settings = {
     aimAssist: aimAssistActive,
     antiBan: antiBanActive,
-    notifications: document.getElementById('notifications')?.checked || true,
-    theme: document.getElementById('themeSelect')?.value || 'dark',
+    performance: performanceActive,
+    latency: latencyActive,
+    background: backgroundActive,
+    highfps: highfpsActive,
+    bloom: bloomActive,
+    shadows: shadowsActive,
+    touch: touchActive,
+    gyro: gyroActive,
+    autofire: autofireActive,
+    notifications: notificationsActive,
+    brightness: brightnessActive,
     timestamp: Date.now()
   };
   
   localStorage.setItem('ffSettings', JSON.stringify(settings));
   
   // Tampilkan notifikasi jika ada fitur aktif
-  if (aimAssistActive || antiBanActive) {
-    const activeFeatures = [];
-    if (aimAssistActive) activeFeatures.push('AIM ASSIST');
-    if (antiBanActive) activeFeatures.push('ANTI-BAN');
-    
+  const activeFeatures = [];
+  if (aimAssistActive) activeFeatures.push('AIM ASSIST');
+  if (antiBanActive) activeFeatures.push('ANTI-BAN');
+  if (performanceActive) activeFeatures.push('PERFORMANCE MODE');
+  if (latencyActive) activeFeatures.push('REDUCE LATENCY');
+  if (highfpsActive) activeFeatures.push('HIGH FPS');
+  
+  if (activeFeatures.length > 0) {
     showNotification(`Launching Free Fire\n${activeFeatures.join(' + ')}`);
   } else {
     showNotification('Launching Free Fire...');
@@ -401,16 +241,9 @@ function hideInstallPrompt() {
   installPrompt.classList.add('hidden');
 }
 
-// ========== INISIALISASI ==========
-
+// Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('mainScreen');
-  
-  // Initialize semua fitur utility
-  updateLaunchCounter();
-  displayDeviceInfo();
-  loadLastLaunchTime();
-  loadFavoriteMode();
   
   // PWA Installation Handler
   window.addEventListener('beforeinstallprompt', (e) => {
@@ -457,20 +290,26 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const settings = JSON.parse(savedSettings);
       
-      // Set toggle sesuai saved settings
-      const aimToggle = document.getElementById('aim');
-      const antiBanToggle = document.getElementById('antiban');
-      const notificationsToggle = document.getElementById('notifications');
-      const themeSelect = document.getElementById('themeSelect');
+      // Set semua toggle sesuai saved settings
+      const toggleIds = ['aim', 'antiban', 'kernel', 'tweak', 'performance', 'latency', 
+                         'background', 'highfps', 'bloom', 'shadows', 'touch', 'gyro', 
+                         'autofire', 'notifications', 'brightness'];
       
-      if (aimToggle && settings.aimAssist !== undefined) aimToggle.checked = settings.aimAssist;
-      if (antiBanToggle && settings.antiBan !== undefined) antiBanToggle.checked = settings.antiBan;
-      if (notificationsToggle && settings.notifications !== undefined) notificationsToggle.checked = settings.notifications;
-      if (themeSelect && settings.theme) themeSelect.value = settings.theme;
+      toggleIds.forEach(id => {
+        const toggle = document.getElementById(id);
+        if (toggle && settings[id] !== undefined) {
+          toggle.checked = settings[id];
+        }
+      });
       
     } catch(e) {
       console.log('Failed to load saved settings:', e);
     }
+  } else {
+    // Default semua toggle OFF
+    document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+      toggle.checked = false;
+    });
   }
   
   // Setup untuk tombol Saii
@@ -500,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Setup untuk toggle switches
+  // Setup untuk semua toggle switches
   document.querySelectorAll('.toggle-switch input').forEach(toggle => {
     toggle.addEventListener('change', function() {
       // Update saved settings
@@ -509,32 +348,43 @@ document.addEventListener('DOMContentLoaded', () => {
       settings[this.id] = this.checked;
       localStorage.setItem('ffSettings', JSON.stringify(settings));
       
-      // Show notification
+      // Show notification (TANPA EMOJI)
       const featureNames = {
         'aim': 'AIM ASSIST',
         'antiban': 'ANTI-BAN PROTECTION',
-        'notifications': 'NOTIFICATIONS'
+        'kernel': 'KERNEL EXPLOIT',
+        'tweak': 'TWEAK INJECTION',
+        'performance': 'PERFORMANCE MODE',
+        'latency': 'REDUCE LATENCY',
+        'background': 'DISABLE BACKGROUND APPS',
+        'highfps': 'HIGH FPS MODE',
+        'bloom': 'REDUCE BLOOM EFFECT',
+        'shadows': 'OPTIMIZE SHADOWS',
+        'touch': 'TOUCH RESPONSE BOOST',
+        'gyro': 'GYROSCOPE STABILIZER',
+        'autofire': 'AUTO-FIRE OPTIMIZATION',
+        'notifications': 'REDUCE NOTIFICATIONS',
+        'brightness': 'AUTO-BRIGHTNESS ADJUST'
       };
       
       const status = this.checked ? 'ENABLED' : 'DISABLED';
-      if (featureNames[this.id]) {
-        showNotification(`${featureNames[this.id]}: ${status}`);
-      }
+      showNotification(`${featureNames[this.id] || this.id}: ${status}`);
     });
   });
   
   // Setup untuk theme select
-  const themeSelect = document.getElementById('themeSelect');
+  const themeSelect = document.querySelector('.theme-select');
   if (themeSelect) {
     themeSelect.addEventListener('change', function() {
       showNotification(`Theme changed to ${this.value}`);
-      
-      // Save to settings
-      const savedSettings = localStorage.getItem('ffSettings');
-      let settings = savedSettings ? JSON.parse(savedSettings) : {};
-      settings.theme = this.value;
-      localStorage.setItem('ffSettings', JSON.stringify(settings));
+      localStorage.setItem('theme', this.value);
     });
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      themeSelect.value = savedTheme;
+    }
   }
   
   // Setup untuk cards
