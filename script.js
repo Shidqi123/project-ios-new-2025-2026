@@ -30,19 +30,17 @@ function checkLogin() {
     return;
   }
   
-  // Validasi key (Anda bisa ganti dengan key yang diinginkan)
-  const validKeys = [
-    'SAIKUTO2024',
-    'KUTOOFF',
-    'FREE2024',
-    'IOSGAMING',
-    'S12345KEY',
-    'KUTOACCESS',
-    'FFMAX2024',
-    'VIPACCESS',
-    'GAMEMOD2024',
-    'KUTOADMIN'
-  ];
+  async function validateKey(key) {
+  try {
+    const response = await fetch('keys.json');
+    const data = await response.json();
+    return data.valid_keys.includes(key.trim().toUpperCase());
+  } catch {
+    // Fallback ke default keys
+    const defaultKeys = ['SAIKUTO2024', 'KUTOOFF', 'FREE2024'];
+    return defaultKeys.includes(key.trim().toUpperCase());
+  }
+}
   
   const keyStatusText = document.getElementById('keyStatus');
   keyStatusText.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
