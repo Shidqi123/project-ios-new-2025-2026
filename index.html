@@ -565,78 +565,90 @@
       
       <div class="credits-content">
         <!-- Developer Info -->
-        <div class="info-card">
-          <h4><i class="fas fa-mobile-alt"></i> iOS Support</h4>
-          <p>14.0 - 26.1 (Lifetime Access)</p>
-        </div>
+        <!-- Screen 5: Credits -->
+<div id="creditsScreen" class="screen">
+  <div class="container">
+    <div class="header-nav">
+      <button class="back-btn" onclick="showScreen('mainScreen')">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h2 class="page-title">Credits</h2>
+    </div>
+    
+    <div class="credits-content">
+      <!-- Developer Info -->
+      <div class="info-card">
+        <h4><i class="fas fa-mobile-alt"></i> iOS Support</h4>
+        <p>14.0 - 26.1 (Lifetime Access)</p>
+      </div>
+      
+      <div class="info-card">
+        <h4><i class="fas fa-gamepad"></i> Free Fire Launch</h4>
+        <p>Direct game launch system</p>
+      </div>
+      
+      <div class="info-card">
+        <h4><i class="fas fa-shield-alt"></i> Optional Features</h4>
+        <p>Aim Assist • Anti-Ban Protection</p>
+      </div>
+      
+      <div class="info-card">
+        <h4><i class="fas fa-key"></i> Access Key System</h4>
+        <p>Lifetime access keys</p>
+      </div>
+      
+      <div class="info-card">
+        <h4><i class="fas fa-cogs"></i> Debug Info</h4>
+        <p id="debugInfo">Loading debug info...</p>
+      </div>
+      
+      <!-- DEBUG TOOLS SECTION - TAMBAH INI -->
+      <div style="margin-top: 20px; padding: 15px; background: rgba(255,122,0,0.1); border-radius: 10px; border: 1px solid rgba(255,122,0,0.3);">
+        <h4 style="margin-bottom: 10px; color: #ff7a00; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-bug"></i> Debug Tools
+        </h4>
         
-        <div class="info-card">
-          <h4><i class="fas fa-gamepad"></i> Free Fire Launch</h4>
-          <p>Direct game launch system</p>
-        </div>
-        
-        <div class="info-card">
-          <h4><i class="fas fa-shield-alt"></i> Optional Features</h4>
-          <p>Aim Assist • Anti-Ban Protection</p>
-        </div>
-        
-        <div class="info-card">
-          <h4><i class="fas fa-key"></i> Access Key System</h4>
-          <p>Lifetime access keys</p>
-        </div>
-        
-        <div class="info-card">
-          <h4><i class="fas fa-cogs"></i> Debug Info</h4>
-          <p id="debugInfo">Loading debug info...</p>
-        </div>
-        
-        <!-- DEBUG TOOLS SECTION -->
-        <div style="margin-top: 20px; padding: 15px; background: rgba(255,122,0,0.1); border-radius: 10px; border: 1px solid rgba(255,122,0,0.3);">
-          <h4 style="margin-bottom: 10px; color: #ff7a00; display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-bug"></i> Debug Tools
-          </h4>
-          
-          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
-            <button onclick="reloadKeys()" style="flex: 1; min-width: 120px; padding: 10px; background: rgba(255,122,0,0.3); border: 1px solid #ff7a00; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
-              <i class="fas fa-redo"></i> Reload Keys
-            </button>
-            
-            <button onclick="showAllKeys()" style="flex: 1; min-width: 120px; padding: 10px; background: rgba(0,255,170,0.3); border: 1px solid #00ffaa; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
-              <i class="fas fa-list"></i> Show Keys
-            </button>
-            
-            <button onclick="testKey()" style="flex: 1; min-width: 120px; padding: 10px; background: rgba(0,200,255,0.3); border: 1px solid #00ccff; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
-              <i class="fas fa-key"></i> Test Key
-            </button>
-            
-            <button onclick="copyAllKeys()" style="flex: 1; min-width: 120px; padding: 10px; background: rgba(255,0,88,0.3); border: 1px solid #ff0058; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
-              <i class="fas fa-copy"></i> Copy Keys
-            </button>
-          </div>
-          
-          <p style="font-size: 12px; color: rgba(255,255,255,0.7); text-align: center; margin-top: 10px;">
-            Keys loaded: <span id="currentKeysCount" style="color: #00ffaa; font-weight: bold;">0</span> | 
-            Last check: <span id="lastCheckTime" style="color: #00ccff;">--:--:--</span>
-          </p>
-        </div>
-        
-        <div class="disclaimer">
-          <i class="fas fa-exclamation-triangle"></i>
-          <p>This tool is for educational purposes only. Use at your own risk.</p>
-        </div>
-        
-        <!-- Debug Buttons -->
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-          <button onclick="clearSession()" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #ff0058, #ff0000); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
-            <i class="fas fa-sign-out-alt"></i> Clear Session
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+          <button onclick="reloadKeys()" style="flex: 1; min-width: 120px; padding: 10px; background: rgba(255,122,0,0.3); border: 1px solid #ff7a00; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+            <i class="fas fa-redo"></i> Reload Keys
           </button>
-          <button onclick="location.reload()" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #ff7a00, #ff5500); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
-            <i class="fas fa-sync-alt"></i> Reload App
+          
+          <button onclick="showAllKeys()" style="flex: 1; min-width: 120px; padding: 10px; background: rgba(0,255,170,0.3); border: 1px solid #00ffaa; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+            <i class="fas fa-list"></i> Show Keys
+          </button>
+          
+          <button onclick="testKey()" style="flex: 1; min-width: 120px; padding: 10px; background: rgba(0,200,255,0.3); border: 1px solid #00ccff; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+            <i class="fas fa-key"></i> Test Key
+          </button>
+          
+          <button onclick="copyAllKeys()" style="flex: 1; min-width: 120px; padding: 10px; background: rgba(255,0,88,0.3); border: 1px solid #ff0058; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s;">
+            <i class="fas fa-copy"></i> Copy Keys
           </button>
         </div>
+        
+        <p style="font-size: 12px; color: rgba(255,255,255,0.7); text-align: center; margin-top: 10px;">
+          Keys loaded: <span id="currentKeysCount" style="color: #00ffaa; font-weight: bold;">0</span> | 
+          Last check: <span id="lastCheckTime" style="color: #00ccff;">--:--:--</span>
+        </p>
+      </div>
+      
+      <div class="disclaimer">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>This tool is for educational purposes only. Use at your own risk.</p>
+      </div>
+      
+      <!-- Debug Buttons -->
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button onclick="clearSession()" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #ff0058, #ff0000); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+          <i class="fas fa-sign-out-alt"></i> Clear Session
+        </button>
+        <button onclick="location.reload()" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #ff7a00, #ff5500); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+          <i class="fas fa-sync-alt"></i> Reload App
+        </button>
       </div>
     </div>
   </div>
+</div>
 
   <!-- Notification Toast -->
   <div id="notification" class="notification">
@@ -678,24 +690,24 @@
     });
   </script>
 
-  <script>
-    // Update keys counter real-time
-    function updateKeysCounter() {
-      const count = window.VALID_KEYS ? window.VALID_KEYS.length : 0;
-      const counter = document.getElementById('currentKeysCount');
-      if (counter) counter.textContent = count;
-      
-      const timeElement = document.getElementById('lastCheckTime');
-      if (timeElement) {
-        timeElement.textContent = new Date().toLocaleTimeString();
-      }
+        <script>
+  // Update keys counter real-time
+  function updateKeysCounter() {
+    const count = window.VALID_KEYS ? window.VALID_KEYS.length : 0;
+    const counter = document.getElementById('currentKeysCount');
+    if (counter) counter.textContent = count;
+    
+    const timeElement = document.getElementById('lastCheckTime');
+    if (timeElement) {
+      timeElement.textContent = new Date().toLocaleTimeString();
     }
-    
-    // Update setiap 2 detik
-    setInterval(updateKeysCounter, 2000);
-    
-    // Initial update
-    setTimeout(updateKeysCounter, 1000);
-  </script>
+  }
+  
+  // Update setiap 2 detik
+  setInterval(updateKeysCounter, 2000);
+  
+  // Initial update
+  setTimeout(updateKeysCounter, 1000);
+</script>
 </body>
 </html>
