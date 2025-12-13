@@ -73,7 +73,10 @@
           </button>
           
           <div class="login-footer">
-            <p class="version">Version 1.0 • Injector Goddata • iOS 14.0-26.1</p>
+            <p class="version">Version 10.1 • pipcore/classMap • iOS 14.0-26.1</p>
+            <p style="font-size: 11px; color: rgba(255,122,0,0.7); margin-top: 5px; text-align: center;">
+              Test Keys: KUTO123, SAIFREE, TESTKEY
+            </p>
           </div>
         </div>
       </div>
@@ -635,7 +638,7 @@
           const session = localStorage.getItem('saiSession');
           const key = localStorage.getItem('loginKey');
           const keyUsed = localStorage.getItem('keyUsed');
-          const keysCount = VALID_LIFETIME_KEYS ? VALID_LIFETIME_KEYS.length : 'Loading...';
+          const keysCount = window.VALID_LIFETIME_KEYS ? window.VALID_LIFETIME_KEYS.length : 'Loading...';
           
           debugInfo.innerHTML = `
             Session: ${session || 'None'}<br>
