@@ -1,6 +1,3 @@
-// ==============================================
-// SAIKUTO v10.1 - FIXED KEYS SYSTEM
-// ==============================================
 console.log('🚀 SaiKuto v10.1 Initializing...');
 
 // Global variable untuk keys
@@ -50,14 +47,9 @@ async function loadKeys() {
     
     if (VALID_KEYS.length > 0) {
       console.log('✅ Keys successfully loaded from keys.json');
-      
-      // Update UI
-      updateKeysInfoUI();
-      
     } else {
       console.warn('⚠️ No valid keys found in keys.json, using fallback');
       VALID_KEYS = ['KUTO123', 'SAIFREE', 'TESTKEY', 'OBSIDIAN'];
-      updateKeysInfoUI();
     }
     
   } catch (error) {
@@ -68,43 +60,11 @@ async function loadKeys() {
     VALID_KEYS = ['KUTO123', 'SAIFREE', 'TESTKEY', 'OBSIDIAN'];
     console.log('🔄 Using fallback keys:', VALID_KEYS);
     
-    // Update UI
-    updateKeysInfoUI();
-    
     // Show error notification
     showNotification(`⚠️ Error loading keys.json. Using default keys.`);
   }
 }
 
-// Update UI dengan info keys
-function updateKeysInfoUI() {
-  setTimeout(() => {
-    // Update di login footer
-    const footer = document.querySelector('.login-footer');
-    if (footer) {
-      // Remove existing info jika ada
-      const existingInfo = footer.querySelector('.keys-info');
-      if (existingInfo) existingInfo.remove();
-    } // ← INI KURUNG YANG HILANG!
-    
-    // Update di debug info
-    const debugInfo = document.getElementById('debugInfo');
-    if (debugInfo) {
-      debugInfo.innerHTML = `
-        Keys Loaded: ${VALID_KEYS.length}<br>
-        First 3: ${VALID_KEYS.slice(0, 3).join(', ')}<br>
-        Last Load: ${new Date().toLocaleTimeString()}
-      `;
-    }
-    
-    // Update counter di Credits
-    const keysCounter = document.getElementById('currentKeysCount');
-    if (keysCounter) {
-      keysCounter.textContent = VALID_KEYS.length;
-    }
-    
-  }, 500);
-}
 // ==============================================
 // 2. CHECK LOGIN FUNCTION (FIXED)
 // ==============================================
@@ -408,76 +368,7 @@ function launchFreeFire() {
 }
 
 // ==============================================
-// 5. DEBUG & TEST FUNCTIONS
-// ==============================================
-
-// Reload keys manual
-window.reloadKeys = async function() {
-  console.log('🔄 Manually reloading keys...');
-  showNotification('🔄 Reloading keys from keys.json...');
-  await loadKeys();
-  showNotification(`✅ Reloaded ${VALID_KEYS.length} keys`);
-  return VALID_KEYS;
-};
-
-// Show all keys di console
-window.showAllKeys = function() {
-  console.log('🔑 === ALL VALID KEYS ===');
-  VALID_KEYS.forEach((key, index) => {
-    console.log(`${(index + 1).toString().padStart(2, '0')}. ${key}`);
-  });
-  console.log(`📊 Total: ${VALID_KEYS.length} keys`);
-  return VALID_KEYS;
-};
-
-// Test key tertentu
-window.testKey = function(keyToTest) {
-  if (!keyToTest) {
-    keyToTest = prompt('Enter key to test:');
-    if (!keyToTest) return false;
-  }
-  
-  const key = keyToTest.toUpperCase().trim();
-  const isValid = VALID_KEYS.includes(key);
-  
-  console.log(`🔍 Testing key: "${key}"`);
-  console.log(`Result: ${isValid ? '✅ VALID' : '❌ INVALID'}`);
-  
-  if (isValid) {
-    showNotification(`✅ Key "${key}" is VALID`);
-  } else {
-    // Cari key yang mirip
-    const similar = VALID_KEYS.filter(k => 
-      k.substring(0, 3) === key.substring(0, 3) ||
-      k.includes(key) || key.includes(k)
-    ).slice(0, 3);
-    
-    let message = `❌ Key "${key}" is INVALID`;
-    if (similar.length > 0) {
-      message += `\nSimilar keys: ${similar.join(', ')}`;
-    }
-    
-    showNotification(message);
-  }
-  
-  return isValid;
-};
-
-// Export keys ke clipboard
-window.copyAllKeys = function() {
-  const keysText = VALID_KEYS.join('\n');
-  navigator.clipboard.writeText(keysText)
-    .then(() => {
-      console.log('📋 Keys copied to clipboard');
-      showNotification(`📋 ${VALID_KEYS.length} keys copied to clipboard`);
-    })
-    .catch(err => {
-      console.error('Failed to copy keys:', err);
-    });
-};
-
-// ==============================================
-// 6. INITIALIZATION
+// 5. INITIALIZATION
 // ==============================================
 document.addEventListener('DOMContentLoaded', async function() {
   console.log('📱 DOM Content Loaded - Starting SaiKuto...');
@@ -572,7 +463,7 @@ function setupEventListeners() {
 }
 
 // ==============================================
-// 7. OVERRIDE DEFAULT BROWSER FUNCTIONS
+// 6. OVERRIDE DEFAULT BROWSER FUNCTIONS
 // ==============================================
 window.alert = function(message) {
   console.log('⚠️ Alert intercepted:', message);
@@ -593,7 +484,7 @@ window.prompt = function(message) {
 };
 
 // ==============================================
-// 8. SHAKE ANIMATION (untuk invalid key)
+// 7. SHAKE ANIMATION (untuk invalid key)
 // ==============================================
 const style = document.createElement('style');
 style.textContent = `
@@ -614,8 +505,4 @@ style.textContent = `
 }
 `;
 document.head.appendChild(style);
-
-// ==============================================
-// END OF SCRIPT
-// ==============================================
 console.log('✅ script.js loaded successfully');
