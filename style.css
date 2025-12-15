@@ -1220,21 +1220,6 @@ input:checked + .toggle-slider:before {
   display: block;
 }
 
-/* Debug info */
-.debug-info {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.7);
-  color: #00ff88;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 10px;
-  font-family: monospace;
-  z-index: 9999;
-  display: none;
-}
-
 /* Responsive improvements */
 @media (max-width: 375px) {
   .login-title {
@@ -1276,18 +1261,6 @@ button:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   transition: all 0.3s ease;
-}
-
-/* Console-like text untuk debug */
-.debug-console {
-  font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-  font-size: 12px;
-  background: rgba(0,0,0,0.8);
-  color: #00ffaa;
-  padding: 10px;
-  border-radius: 8px;
-  margin: 5px 0;
-  border-left: 3px solid #ff7a00;
 }
 
 /* Key status colors */
