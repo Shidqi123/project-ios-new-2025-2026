@@ -258,7 +258,7 @@ function logoutUser() {
 }
 
 // ==============================================
-// 4. SAII PROCESS FUNCTIONS (FIXED)
+// 4. SAII PROCESS FUNCTIONS (COMPLETELY FIXED)
 // ==============================================
 function startSaii() {
   if (!checkSession()) {
@@ -272,81 +272,120 @@ function startSaii() {
   const progressPercent = document.querySelector('.progress-percent');
   const progressLabel = document.querySelector('.progress-label span');
   
+  // Reset progress
   if (progressBar) progressBar.style.width = '0%';
   if (progressPercent) progressPercent.textContent = '0%';
   if (progressLabel) progressLabel.textContent = 'Initializing...';
   
-  const sequences = [
-    { lineId: 'line2', text: 'Checking system integrity...', delay: 500, typingSpeed: 40, progress: 20 },
-    { lineId: 'line3', text: 'Preparing Free Fire environment...', delay: 1500, typingSpeed: 40, progress: 50 },
-    { lineId: 'line4', text: 'Bypassing security protocols...', delay: 2500, typingSpeed: 40, progress: 75 },
-    { lineId: 'line5', text: 'Launching Free Fire with optimizations...', delay: 3500, typingSpeed: 50, progress: 100 }
-  ];
+  // Clear semua text elements terlebih dahulu
+  document.getElementById('text2').textContent = '';
+  document.getElementById('text3').textContent = '';
+  document.getElementById('text4').textContent = '';
+  document.getElementById('text5').textContent = '';
   
-  sequences.forEach((seq, index) => {
-    setTimeout(() => {
-      typeWithBlur(seq.lineId, seq.text, seq.typingSpeed, () => {
-        if (progressBar) progressBar.style.width = seq.progress + '%';
-        if (progressPercent) progressPercent.textContent = seq.progress + '%';
-        
-        if (progressLabel) {
-          if (seq.progress === 20) progressLabel.textContent = 'System check...';
-          if (seq.progress === 50) progressLabel.textContent = 'Preparing...';
-          if (seq.progress === 75) progressLabel.textContent = 'Security bypass...';
-          if (seq.progress === 100) progressLabel.textContent = 'Launching...';
-        }
-        
-        if (seq.progress === 100) {
-          setTimeout(() => launchFreeFire(), 800);
-        }
-      });
-    }, seq.delay);
-  });
+  // Reset semua line elements
+  const line2 = document.getElementById('line2');
+  const line3 = document.getElementById('line3');
+  const line4 = document.getElementById('line4');
+  const line5 = document.getElementById('line5');
+  
+  if (line2) {
+    line2.classList.remove('active');
+    line2.style.filter = 'blur(5px)';
+    line2.style.opacity = '0.8';
+  }
+  if (line3) {
+    line3.classList.remove('active');
+    line3.style.filter = 'blur(5px)';
+    line3.style.opacity = '0.8';
+  }
+  if (line4) {
+    line4.classList.remove('active');
+    line4.style.filter = 'blur(5px)';
+    line4.style.opacity = '0.8';
+  }
+  if (line5) {
+    line5.classList.remove('active');
+    line5.style.filter = 'blur(5px)';
+    line5.style.opacity = '0.8';
+  }
+  
+  // Step 1: Checking system integrity...
+  setTimeout(() => {
+    if (line2) {
+      line2.classList.add('active');
+      line2.style.filter = 'blur(0)';
+      line2.style.opacity = '1';
+    }
+    
+    const text2 = document.getElementById('text2');
+    if (text2) {
+      text2.textContent = 'Checking system integrity...';
+    }
+    
+    if (progressBar) progressBar.style.width = '20%';
+    if (progressPercent) progressPercent.textContent = '20%';
+    if (progressLabel) progressLabel.textContent = 'System check...';
+  }, 500);
+  
+  // Step 2: Preparing Free Fire environment...
+  setTimeout(() => {
+    if (line3) {
+      line3.classList.add('active');
+      line3.style.filter = 'blur(0)';
+      line3.style.opacity = '1';
+    }
+    
+    const text3 = document.getElementById('text3');
+    if (text3) {
+      text3.textContent = 'Preparing Free Fire environment...';
+    }
+    
+    if (progressBar) progressBar.style.width = '50%';
+    if (progressPercent) progressPercent.textContent = '50%';
+    if (progressLabel) progressLabel.textContent = 'Preparing...';
+  }, 1500);
+  
+  // Step 3: Bypassing security protocols...
+  setTimeout(() => {
+    if (line4) {
+      line4.classList.add('active');
+      line4.style.filter = 'blur(0)';
+      line4.style.opacity = '1';
+    }
+    
+    const text4 = document.getElementById('text4');
+    if (text4) {
+      text4.textContent = 'Bypassing security protocols...';
+    }
+    
+    if (progressBar) progressBar.style.width = '75%';
+    if (progressPercent) progressPercent.textContent = '75%';
+    if (progressLabel) progressLabel.textContent = 'Security bypass...';
+  }, 2500);
+  
+  // Step 4: Launching Free Fire with optimizations...
+  setTimeout(() => {
+    if (line5) {
+      line5.classList.add('active');
+      line5.style.filter = 'blur(0)';
+      line5.style.opacity = '1';
+    }
+    
+    const text5 = document.getElementById('text5');
+    if (text5) {
+      text5.textContent = 'Launching Free Fire with optimizations...';
+    }
+    
+    if (progressBar) progressBar.style.width = '100%';
+    if (progressPercent) progressPercent.textContent = '100%';
+    if (progressLabel) progressLabel.textContent = 'Launching...';
+    
+    // Launch Free Fire
+    setTimeout(() => launchFreeFire(), 800);
+  }, 3500);
 }
 
-// Typewriter effect untuk terminal (FIXED VERSION)
-// Typewriter effect untuk terminal (FIXED SIMPLE VERSION)
-function typeWithBlur(elementId, text, speed, callback) {
-  const element = document.getElementById(elementId);
-  
-  if (!element) {
-    console.error('❌ Element not found:', elementId);
-    return;
-  }
-  
-  // Cari element text di dalam element (bisa dengan id text2, text3, dll)
-  const textId = `text${elementId.replace('line', '')}`;
-  const textElement = document.getElementById(textId);
-  
-  if (!textElement) {
-    console.error('❌ Text element not found:', textId);
-    return;
-  }
-  
-  // Reset
-  textElement.textContent = '';
-  element.classList.remove('active');
-  element.style.filter = 'blur(5px)';
-  element.style.opacity = '0.8';
-  
-  setTimeout(() => {
-    element.classList.add('active');
-    element.style.filter = 'blur(0)';
-    element.style.opacity = '1';
-    
-    let i = 0;
-    function type() {
-      if (i < text.length) {
-        textElement.textContent += text.charAt(i);
-        i++;
-        setTimeout(type, speed);
-      } else if (callback) {
-        callback();
-      }
-    }
-    type();
-  }, 300);
-}
 // Launch Free Fire (FIXED VERSION)
 function launchFreeFire() {
   // Cek fitur yang diaktifkan (HAPUS headshotcrosshair)
