@@ -132,8 +132,8 @@ async function checkLogin() {
     // Redirect ke main screen
     setTimeout(() => {
       showScreen('mainScreen');
-      showNotification(`🎮 Lifetime access activated (${VALID_KEYS.length} keys available)`);
-    }, 800);
+      showNotification(`🎮 Lifetime access activated );
+    }
     
   } else {
     // ❌ LOGIN FAILED
