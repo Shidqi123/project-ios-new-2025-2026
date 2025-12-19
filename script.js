@@ -305,15 +305,25 @@ function startSaii() {
 }
 
 // Typewriter effect untuk terminal (FIXED VERSION)
+// Typewriter effect untuk terminal (FIXED SIMPLE VERSION)
 function typeWithBlur(elementId, text, speed, callback) {
   const element = document.getElementById(elementId);
-  const textElement = element ? element.querySelector('.text') : null;
   
-  if (!element || !textElement) {
+  if (!element) {
     console.error('❌ Element not found:', elementId);
     return;
   }
   
+  // Cari element text di dalam element (bisa dengan id text2, text3, dll)
+  const textId = `text${elementId.replace('line', '')}`;
+  const textElement = document.getElementById(textId);
+  
+  if (!textElement) {
+    console.error('❌ Text element not found:', textId);
+    return;
+  }
+  
+  // Reset
   textElement.textContent = '';
   element.classList.remove('active');
   element.style.filter = 'blur(5px)';
@@ -337,7 +347,6 @@ function typeWithBlur(elementId, text, speed, callback) {
     type();
   }, 300);
 }
-
 // Launch Free Fire (FIXED VERSION)
 function launchFreeFire() {
   // Cek fitur yang diaktifkan (HAPUS headshotcrosshair)
