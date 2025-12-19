@@ -956,6 +956,10 @@ input:checked + .toggle-slider:before {
   background: linear-gradient(135deg, #ff0058, #aa00ff);
 }
 
+#recoilcontrol:checked + .toggle-slider {
+  background: linear-gradient(135deg, #00aaff, #0088ff);
+}
+
 .theme-select {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1294,28 +1298,3 @@ button:hover {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
-/* ... (kode CSS sebelumnya tetap sama) ... */
-
-/* Custom toggle colors */
-#aim:checked + .toggle-slider {
-  background: linear-gradient(135deg, #00ff88, #00ccff);
-}
-
-#antiban:checked + .toggle-slider {
-  background: linear-gradient(135deg, #ff7a00, #ff0058);
-}
-
-#headshot:checked + .toggle-slider {
-  background: linear-gradient(135deg, #ff0058, #aa00ff);
-}
-
-#headshotcrosshair:checked + .toggle-slider {
-  background: linear-gradient(135deg, #ffaa00, #ff5500);
-}
-
-#recoilcontrol:checked + .toggle-slider {
-  background: linear-gradient(135deg, #00aaff, #0088ff);
-}
-
-/* ... (kode CSS selanjutnya tetap sama) ... */
