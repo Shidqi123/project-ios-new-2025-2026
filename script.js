@@ -258,7 +258,7 @@ function logoutUser() {
 }
 
 // ==============================================
-// 4. SAII PROCESS FUNCTIONS
+// 4. SAII PROCESS FUNCTIONS (FIXED)
 // ==============================================
 function startSaii() {
   if (!checkSession()) {
@@ -304,12 +304,15 @@ function startSaii() {
   });
 }
 
-// Typewriter effect untuk terminal
+// Typewriter effect untuk terminal (FIXED VERSION)
 function typeWithBlur(elementId, text, speed, callback) {
   const element = document.getElementById(elementId);
-  const textElement = document.getElementById(`text${elementId.replace('line', '')}`);
+  const textElement = element ? element.querySelector('.text') : null;
   
-  if (!element || !textElement) return;
+  if (!element || !textElement) {
+    console.error('❌ Element not found:', elementId);
+    return;
+  }
   
   textElement.textContent = '';
   element.classList.remove('active');
@@ -335,13 +338,12 @@ function typeWithBlur(elementId, text, speed, callback) {
   }, 300);
 }
 
-// Launch Free Fire
+// Launch Free Fire (FIXED VERSION)
 function launchFreeFire() {
-  // Cek fitur yang diaktifkan
+  // Cek fitur yang diaktifkan (HAPUS headshotcrosshair)
   const aimAssist = document.getElementById('aim')?.checked || false;
   const antiBan = document.getElementById('antiban')?.checked || false;
   const headshot = document.getElementById('headshot')?.checked || false;
-  const headshotCrosshair = document.getElementById('headshotcrosshair')?.checked || false;
   const recoilControl = document.getElementById('recoilcontrol')?.checked || false;
   
   // Hitung total fitur yang aktif
@@ -349,7 +351,6 @@ function launchFreeFire() {
     aimAssist ? 'Aim Assist' : null,
     antiBan ? 'Anti-Ban' : null,
     headshot ? 'Headshot Opt' : null,
-    headshotCrosshair ? 'HS Crosshair' : null,
     recoilControl ? 'Recoil Control' : null
   ].filter(Boolean);
   
@@ -359,12 +360,11 @@ function launchFreeFire() {
     showNotification('🚀 Launching Free Fire...');
   }
   
-  // Simpan settings
+  // Simpan settings (HAPUS headshotCrosshair)
   const settings = {
     aimAssist: aimAssist,
     antiBan: antiBan,
     headshot: headshot,
-    headshotCrosshair: headshotCrosshair,
     recoilControl: recoilControl,
     timestamp: Date.now()
   };
@@ -456,9 +456,13 @@ function setupEventListeners() {
     toggle.addEventListener('change', function() {
       const saved = localStorage.getItem('ffSettings');
       let settings = saved ? JSON.parse(saved) : {};
-      settings[this.id] = this.checked;
-      localStorage.setItem('ffSettings', JSON.stringify(settings));
-      console.log(`Toggle ${this.id}: ${this.checked ? 'ON' : 'OFF'}`);
+      
+      // Hanya simpan jika bukan headshotcrosshair
+      if (this.id !== 'headshotcrosshair') {
+        settings[this.id] = this.checked;
+        localStorage.setItem('ffSettings', JSON.stringify(settings));
+        console.log(`Toggle ${this.id}: ${this.checked ? 'ON' : 'OFF'}`);
+      }
     });
   });
   
