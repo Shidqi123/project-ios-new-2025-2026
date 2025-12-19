@@ -132,8 +132,8 @@ async function checkLogin() {
     // Redirect ke main screen
     setTimeout(() => {
       showScreen('mainScreen');
-      showNotification(`🎮 Lifetime access activated );
-    }
+      showNotification(`🎮 Lifetime access activated`);
+    }, 500);
     
   } else {
     // ❌ LOGIN FAILED
@@ -154,17 +154,13 @@ async function checkLogin() {
       })
       .slice(0, 3);
     
-    // Buat pesan error
+    // Buat pesan error TANPA menampilkan keys
     let errorMessage = `❌ Invalid access key`;
     
     if (suggestions.length > 0) {
       errorMessage += `\nTry: ${suggestions.join(', ')}`;
-    } else if (VALID_KEYS.length > 0) {
-      errorMessage += `\nAvailable keys: ${VALID_KEYS.slice(0, 3).join(', ')}...`;
-    }
-    
-    if (VALID_KEYS.length > 0) {
-      errorMessage += `\n(Total ${VALID_KEYS.length} keys loaded)`;
+    } else {
+      errorMessage += `\nPlease check your key and try again`;
     }
     
     showNotification(errorMessage);
