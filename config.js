@@ -1,4 +1,3 @@
-
 // Configuration File for SaiKuto
 
 const APP_CONFIG = {
@@ -27,6 +26,9 @@ const APP_CONFIG = {
   enabledFeatures: {
     aimAssist: true,
     antiBan: true,
+    headshot: true,
+    headshotCrosshair: true,
+    recoilControl: true,
     performanceMode: true,
     reducePing: true,
     highFPS: true,
