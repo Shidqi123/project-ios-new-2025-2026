@@ -463,6 +463,73 @@
               <span class="toggle-slider"></span>
             </label>
           </div>
+
+          <!-- HEADSHOT TRAINING FEATURES -->
+<div class="section-card">
+  <h3 class="section-title">
+    <i class="fas fa-crosshairs"></i>
+    HEADSHOT TRAINING
+  </h3>
+  
+  <!-- Headshot Training Toggle -->
+  <div class="setting-item">
+    <div class="setting-info">
+      <h4>Headshot Trainer</h4>
+      <p>Practice headshot accuracy</p>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="headshotTrainer">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+  
+  <!-- Training Canvas -->
+  <div id="trainingCanvasContainer" style="display: none; margin-top: 15px;">
+    <div style="position: relative; width: 100%; height: 200px; background: #111; border-radius: 10px; overflow: hidden; border: 2px solid #ff7a00;">
+      <canvas id="headshotCanvas" width="300" height="200" style="width: 100%; height: 100%; cursor: crosshair;"></canvas>
+      
+      <!-- Stats Overlay -->
+      <div style="position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between;">
+        <div style="background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 5px;">
+          <div style="font-size: 11px; color: #8a8a8e;">ACCURACY</div>
+          <div style="font-size: 16px; font-weight: bold; color: #00ffaa;" id="hsAccuracy">0%</div>
+        </div>
+        <div style="background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 5px;">
+          <div style="font-size: 11px; color: #8a8a8e;">HEADSHOTS</div>
+          <div style="font-size: 16px; font-weight: bold; color: #ff0058;" id="hsCount">0</div>
+        </div>
+        <div style="background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 5px;">
+          <div style="font-size: 11px; color: #8a8a8e;">TIME</div>
+          <div style="font-size: 16px; font-weight: bold; color: #ff7a00;" id="hsTime">0s</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Controls -->
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <button id="startTraining" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #00ff88, #00ccff); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer;">
+        <i class="fas fa-play"></i> START
+      </button>
+      <button id="resetTraining" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #ff0058, #cc0046); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer;">
+        <i class="fas fa-redo"></i> RESET
+      </button>
+    </div>
+    
+    <!-- Sensitivity Calculator -->
+    <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+      <div style="display: flex; align-items: center; margin-bottom: 8px;">
+        <span style="flex: 1; font-size: 13px;">Sensitivity:</span>
+        <input type="range" id="sensitivitySlider" min="1" max="100" value="50" style="flex: 2;">
+        <span id="sensValue" style="margin-left: 10px; font-weight: bold; color: #ff7a00;">50</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <span style="flex: 1; font-size: 13px;">Target Speed:</span>
+        <input type="range" id="speedSlider" min="1" max="100" value="30" style="flex: 2;">
+        <span id="speedValue" style="margin-left: 10px; font-weight: bold; color: #00ffaa;">30</span>
+      </div>
+    </div>
+  </div>
+</div>
           
           <div style="margin-top: 15px; padding: 12px; background: rgba(255,122,0,0.1); border-radius: 10px; border: 1px solid rgba(255,122,0,0.2);">
             <p style="font-size: 12px; color: #ff7a00; text-align: center; margin: 0;">
