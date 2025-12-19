@@ -345,9 +345,20 @@ function launchFreeFire() {
   const aimAssist = document.getElementById('aim')?.checked || false;
   const antiBan = document.getElementById('antiban')?.checked || false;
   const headshot = document.getElementById('headshot')?.checked || false;
+  const headshotCrosshair = document.getElementById('headshotcrosshair')?.checked || false;
+  const recoilControl = document.getElementById('recoilcontrol')?.checked || false;
   
-  if (aimAssist || antiBan || headshot) {
-    showNotification('🚀 Launching Free Fire with enabled features');
+  // Hitung total fitur yang aktif
+  const enabledFeatures = [
+    aimAssist ? 'Aim Assist' : null,
+    antiBan ? 'Anti-Ban' : null,
+    headshot ? 'Headshot Opt' : null,
+    headshotCrosshair ? 'HS Crosshair' : null,
+    recoilControl ? 'Recoil Control' : null
+  ].filter(Boolean);
+  
+  if (enabledFeatures.length > 0) {
+    showNotification(`🚀 Launching Free Fire with ${enabledFeatures.length} features enabled`);
   } else {
     showNotification('🚀 Launching Free Fire...');
   }
@@ -357,6 +368,8 @@ function launchFreeFire() {
     aimAssist: aimAssist,
     antiBan: antiBan,
     headshot: headshot,
+    headshotCrosshair: headshotCrosshair,
+    recoilControl: recoilControl,
     timestamp: Date.now()
   };
   localStorage.setItem('ffSettings', JSON.stringify(settings));
