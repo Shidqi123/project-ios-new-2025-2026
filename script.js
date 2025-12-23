@@ -386,7 +386,7 @@ function startSaii() {
   }, 3500);
 }
 
-// Launch Free Fire (FIXED VERSION)
+// Launch Free Fire (FIXED VERSION - REAL LAUNCH)
 function launchFreeFire() {
   // Cek fitur yang diaktifkan (HAPUS headshotcrosshair)
   const aimAssist = document.getElementById('aim')?.checked || false;
@@ -418,11 +418,66 @@ function launchFreeFire() {
   };
   localStorage.setItem('ffSettings', JSON.stringify(settings));
   
-  // Simulasi launch process
+  // ✅ REAL LAUNCH CODE - Mencoba berbagai skema URL untuk membuka Free Fire
+  const freeFireSchemes = [
+    'freefire://',                    // Skema utama Free Fire
+    'freefiremax://',                // Free Fire MAX
+    'com.dts.freefireth://',         // Package name untuk Android
+    'https://freefiremobile.com/',   // Website resmi
+    'https://play.google.com/store/apps/details?id=com.dts.freefireth', // Play Store
+    'https://apps.apple.com/app/free-fire/id1300096749' // App Store
+  ];
+  
+  console.log('🎮 Attempting to launch Free Fire...');
+  
+  let launchSuccess = false;
+  
+  // Coba setiap skema sampai berhasil
+  for (const scheme of freeFireSchemes) {
+    try {
+      console.log(`Trying scheme: ${scheme}`);
+      
+      if (scheme.startsWith('http')) {
+        // Untuk link web, buka di tab baru
+        window.open(scheme, '_blank');
+        launchSuccess = true;
+        break;
+      } else {
+        // Untuk deep links, coba location.href
+        window.location.href = scheme;
+        // Beri waktu untuk proses redirect
+        setTimeout(() => {
+          launchSuccess = true;
+        }, 100);
+        break;
+      }
+    } catch (error) {
+      console.log(`Failed with scheme ${scheme}:`, error);
+      continue;
+    }
+  }
+  
+  // Fallback jika semua skema gagal
   setTimeout(() => {
-    // Kembali ke main screen
-    showScreen('mainScreen');
-    showNotification('✅ Free Fire launched successfully!');
+    if (!launchSuccess) {
+      console.log('❌ All direct schemes failed, showing fallback message');
+      showNotification('📱 Free Fire app not found!\nPlease install Free Fire from your app store.');
+      
+      // Tampilkan instruksi untuk pengguna iOS
+      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        showNotification('📲 For iOS: Open App Store and install Free Fire');
+      } else {
+        showNotification('📲 For Android: Open Google Play Store and install Free Fire');
+      }
+    } else {
+      console.log('✅ Free Fire launch initiated');
+    }
+    
+    // Kembali ke main screen setelah beberapa detik
+    setTimeout(() => {
+      showScreen('mainScreen');
+      showNotification('✅ Free Fire launch process completed');
+    }, 2000);
   }, 1500);
 }
 
